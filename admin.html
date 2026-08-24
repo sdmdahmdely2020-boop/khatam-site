@@ -144,6 +144,20 @@
     <div class="msg hidden" id="adMsg"></div>
     <div id="adsList" style="margin-top:16px;"></div>
   </div>
+
+  <div class="card">
+    <h2>Données de l'application</h2>
+    <p class="sub">Voir tous les comptes et documents actuellement en base, et en supprimer si besoin. Une suppression est définitive.</p>
+
+    <div class="row" style="margin-bottom:14px;">
+      <button class="btn" onclick="loadOverview()">Voir toutes les données</button>
+      <button class="btn btn-danger" onclick="resetDemoData()">Supprimer les données de démonstration</button>
+    </div>
+    <p class="sub" style="margin:-6px 0 14px;">Le bouton rouge supprime uniquement les 2 professeurs, 2 élèves et documents de démonstration créés automatiquement au lancement du site (repérables ci-dessous par le badge "Démo") — vos vrais comptes ne sont jamais touchés.</p>
+
+    <div id="overviewCounts"></div>
+    <div id="overviewBody"></div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -376,6 +390,88 @@ async function deleteAd(id){
     await adminFetch(`/admin/ads/${id}`, { method:'DELETE' });
     showToast('Annonce supprimée.');
     loadAds();
+  }catch(e){ showToast('Erreur : ' + e.message); }
+}
+
+function roleLabel(r){ return r === 'PROFESSOR' ? 'Professeur' : (r === 'STUDENT' ? 'Élève' : r); }
+
+async function loadOverview(){
+  const countsEl = document.getElementById('overviewCounts');
+  const bodyEl = document.getElementById('overviewBody');
+  countsEl.innerHTML = '<div class="empty">Chargement…</div>';
+  bodyEl.innerHTML = '';
+  try{
+    const data = await adminFetch('/admin/overview');
+    const c = data.counts;
+    countsEl.innerHTML = `
+      <p class="sub" style="margin-bottom:14px;">
+        ${data.users.length} compte(s) · ${data.documents.length} document(s) ·
+        ${c.purchases} achat(s) · ${c.withdrawals} retrait(s) · ${c.ads} annonce(s) ·
+        ${c.favorites} favori(s) · ${c.likes} like(s) · ${c.aiSubmissions} correction(s) IA
+      </p>`;
+
+    const usersHtml = data.users.length ? data.users.map(u => `
+      <div class="item">
+        <div class="top">
+          <div class="title">${escapeHtml(u.fullName)} ${u.isSeedAccount ? '<span class="badge">Démo</span>' : ''}</div>
+          <span class="badge">${roleLabel(u.role)}</span>
+        </div>
+        <div class="meta">Téléphone : ${escapeHtml(u.phone)}</div>
+        ${u.role === 'PROFESSOR' ? `<div class="meta">${u.documentsCount} document(s) publié(s) · Solde : ${u.walletBalance} MRU</div>` : ''}
+        <div class="meta">Créé le ${formatDate(u.createdAt)}</div>
+        <div class="actions">
+          <button class="btn btn-danger" onclick="deleteUser('${u.id}', ${JSON.stringify(u.fullName)})">Supprimer ce compte</button>
+        </div>
+      </div>
+    `).join('') : '<div class="empty">Aucun compte.</div>';
+
+    const docsHtml = data.documents.length ? data.documents.map(d => `
+      <div class="item">
+        <div class="top">
+          <div class="title">${escapeHtml(d.title)}</div>
+          <div class="amount">${d.free ? 'Gratuit' : d.prix + ' MRU'}</div>
+        </div>
+        <div class="meta">${escapeHtml(d.matiere)} · ${d.annee} · Professeur : ${escapeHtml(d.professorName)}</div>
+        <div class="meta">Publié le ${formatDate(d.createdAt)}</div>
+        <div class="actions">
+          <button class="btn btn-danger" onclick="deleteDocument('${d.id}', ${JSON.stringify(d.title)})">Supprimer ce document</button>
+        </div>
+      </div>
+    `).join('') : '<div class="empty">Aucun document.</div>';
+
+    bodyEl.innerHTML = `
+      <h2 style="margin-top:18px;">Comptes</h2>
+      ${usersHtml}
+      <h2 style="margin-top:18px;">Documents</h2>
+      ${docsHtml}
+    `;
+  }catch(e){ countsEl.innerHTML = `<div class="empty">Erreur : ${escapeHtml(e.message)}</div>`; }
+}
+
+async function deleteUser(id, name){
+  if(!confirm(`Supprimer définitivement le compte de "${name}" ? Tous ses documents, achats, favoris et retraits seront aussi supprimés. Cette action est irréversible.`)) return;
+  try{
+    await adminFetch(`/admin/users/${id}`, { method:'DELETE' });
+    showToast('Compte supprimé.');
+    loadOverview();
+  }catch(e){ showToast('Erreur : ' + e.message); }
+}
+
+async function deleteDocument(id, title){
+  if(!confirm(`Supprimer définitivement le document "${title}" ? Cette action est irréversible.`)) return;
+  try{
+    await adminFetch(`/admin/documents/${id}`, { method:'DELETE' });
+    showToast('Document supprimé.');
+    loadOverview();
+  }catch(e){ showToast('Erreur : ' + e.message); }
+}
+
+async function resetDemoData(){
+  if(!confirm('Supprimer tous les comptes et documents de démonstration (créés automatiquement au lancement du site) ? Vos vrais comptes ne seront pas touchés. Cette action est irréversible.')) return;
+  try{
+    const data = await adminFetch('/admin/reset-demo-data', { method:'POST' });
+    showToast(data.message);
+    loadOverview();
   }catch(e){ showToast('Erreur : ' + e.message); }
 }
 
