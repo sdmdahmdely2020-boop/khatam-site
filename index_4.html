@@ -1,0 +1,2566 @@
+<title>Khatam</title>
+<!-- Google AdSense — vérification du site + annonces automatiques (compte : pub-7496094954152473) -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7496094954152473" crossorigin="anonymous"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ============ Tokens ============ */
+  :root{
+    --paper:#F3EEDD;
+    --paper-raised:#FCFAF2;
+    --paper-sunken:#EAE2C8;
+    --ink:#1E2A26;
+    --ink-muted:#5B655B;
+    --ink-faint:#8B9188;
+    --line:#DCD1AE;
+    --line-strong:#C9BB8E;
+    --accent:#0F6E5C;
+    --accent-strong:#0B4F42;
+    --accent-soft:#DCEAE3;
+    --gold:#B4842A;
+    --gold-strong:#8F6A20;
+    --gold-soft:#F1E2BC;
+    --status-good:#1F7A4D;
+    --status-warn:#95681E;
+    --status-warn-soft:#F2E2BE;
+    --status-critical:#B23A2E;
+    --status-critical-soft:#F3DAD6;
+    --shadow: 0 1px 2px rgba(30,42,38,.06), 0 8px 24px -12px rgba(30,42,38,.22);
+    --radius-s:6px;
+    --radius-m:10px;
+    --radius-l:16px;
+    --font-display:'Bitter', Georgia, 'Times New Roman', serif;
+    --font-body:'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-mono:'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#101C18;
+      --paper-raised:#16241F;
+      --paper-sunken:#0B1512;
+      --ink:#EDE7D6;
+      --ink-muted:#A6B2A9;
+      --ink-faint:#71847A;
+      --line:#26382F;
+      --line-strong:#324A3E;
+      --accent:#3FBE9B;
+      --accent-strong:#63D3B4;
+      --accent-soft:#193A31;
+      --gold:#E1B75E;
+      --gold-strong:#F2CE85;
+      --gold-soft:#3B3018;
+      --status-good:#3FAE72;
+      --status-warn:#D9A53D;
+      --status-warn-soft:#3B3018;
+      --status-critical:#E4796A;
+      --status-critical-soft:#3B1D19;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 28px -14px rgba(0,0,0,.55);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#101C18;
+    --paper-raised:#16241F;
+    --paper-sunken:#0B1512;
+    --ink:#EDE7D6;
+    --ink-muted:#A6B2A9;
+    --ink-faint:#71847A;
+    --line:#26382F;
+    --line-strong:#324A3E;
+    --accent:#3FBE9B;
+    --accent-strong:#63D3B4;
+    --accent-soft:#193A31;
+    --gold:#E1B75E;
+    --gold-strong:#F2CE85;
+    --gold-soft:#3B3018;
+    --status-good:#3FAE72;
+    --status-warn:#D9A53D;
+    --status-warn-soft:#3B3018;
+    --status-critical:#E4796A;
+    --status-critical-soft:#3B1D19;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 28px -14px rgba(0,0,0,.55);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--font-body);
+    font-size:15.5px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{
+    font-family:var(--font-display);
+    font-weight:700;
+    color:var(--ink);
+    margin:0;
+    text-wrap:balance;
+    letter-spacing:-0.01em;
+  }
+  p{margin:0;}
+  a{color:inherit;}
+  button{font-family:inherit;}
+  ::selection{background:var(--accent);color:#fff;}
+  .num{font-family:var(--font-mono);font-variant-numeric:tabular-nums;}
+
+  .hidden{display:none !important;}
+  img,svg{display:block;max-width:100%;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important;transition-duration:0.001ms !important;}
+  }
+
+  /* ============ Shell ============ */
+  #app{min-height:100vh;}
+  .view{display:none;}
+  .view.active{display:block;}
+
+  .container{max-width:1180px;margin:0 auto;padding:0 28px;}
+  @media (max-width:640px){.container{padding:0 18px;}}
+
+  /* ============ Buttons ============ */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    border-radius:var(--radius-s);
+    border:1px solid transparent;
+    font-family:var(--font-body);
+    font-weight:600;
+    font-size:14.5px;
+    padding:11px 20px;
+    cursor:pointer;
+    transition:transform .12s ease, background .15s ease, border-color .15s ease;
+    white-space:nowrap;
+  }
+  .btn:active{transform:translateY(1px);}
+  .btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  .btn-primary{background:var(--accent);color:#fff;}
+  .btn-primary:hover{background:var(--accent-strong);}
+  .btn-gold{background:var(--gold);color:#2A1F08;}
+  .btn-gold:hover{background:var(--gold-strong);}
+  .btn-ghost{background:transparent;color:var(--ink);border-color:var(--line-strong);}
+  .btn-ghost:hover{background:var(--paper-sunken);}
+  .btn-text{background:transparent;color:var(--accent);padding:8px 4px;}
+  .btn-text:hover{text-decoration:underline;}
+  .btn-sm{padding:7px 14px;font-size:13px;}
+  .btn-block{width:100%;}
+  .btn[disabled]{opacity:.55;cursor:not-allowed;}
+
+  .icon{width:18px;height:18px;flex:none;}
+  .icon-sm{width:15px;height:15px;}
+
+  /* ============ Landing: letterhead header ============ */
+  .letterhead{
+    border-bottom:1px solid var(--line);
+    background:var(--paper);
+    position:sticky;top:0;z-index:40;
+    backdrop-filter:blur(6px);
+  }
+  .letterhead-inner{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 0;
+  }
+  .brand{display:flex;align-items:center;gap:10px;cursor:pointer;background:none;border:none;padding:0;}
+  .brand-mark{
+    width:34px;height:34px;border-radius:50%;
+    background:var(--accent);color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--font-display);font-weight:700;font-size:15px;
+    flex:none;
+  }
+  .brand-word{font-family:var(--font-display);font-weight:700;font-size:20px;letter-spacing:-0.01em;}
+  .brand-tag{font-size:11px;color:var(--ink-muted);font-weight:500;letter-spacing:.02em;}
+  .nav-links{display:flex;gap:28px;align-items:center;}
+  .nav-links a{font-size:14px;font-weight:500;color:var(--ink-muted);text-decoration:none;}
+  .nav-links a:hover{color:var(--ink);}
+  .nav-cta{display:flex;gap:10px;align-items:center;}
+  .nav-hide-mobile{display:flex;}
+  @media (max-width:820px){.nav-hide-mobile{display:none;}}
+
+  /* ============ Hero (dark "stage" — deliberate fixed visual world) ============ */
+  .hero-stage{
+    position:relative;
+    background:
+      radial-gradient(1100px 620px at 18% -12%, rgba(63,190,155,.32), transparent 60%),
+      radial-gradient(900px 520px at 90% 4%, rgba(225,183,94,.22), transparent 55%),
+      linear-gradient(180deg, #0A1512 0%, #0E1F19 100%);
+  }
+  .hero-stage::after{
+    content:"";position:absolute;left:0;right:0;bottom:0;height:90px;pointer-events:none;
+    background:linear-gradient(180deg, transparent, var(--paper));
+  }
+  .hero{padding:60px 0 86px;position:relative;}
+  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;}
+  @media (max-width:900px){.hero-grid{grid-template-columns:1fr;gap:36px;}}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+    padding:6px 12px;border-radius:100px;
+    margin-bottom:18px;
+    background:rgba(63,190,155,.16);color:#8FE0C4;
+  }
+  .hero h1{font-size:42px;line-height:1.1;margin-bottom:18px;color:#F7F3E7;}
+  @media (max-width:640px){.hero h1{font-size:30px;}}
+  .hero-sub{font-size:16.5px;color:rgba(243,238,222,.72);max-width:48ch;margin-bottom:30px;}
+  .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:34px;}
+  .hero-proof{display:flex;gap:26px;flex-wrap:wrap;}
+  .proof-item{display:flex;flex-direction:column;}
+  .proof-num{font-family:var(--font-mono);font-weight:600;font-size:20px;color:#F7F3E7;}
+  .proof-label{font-size:12.5px;color:rgba(243,238,222,.5);}
+
+  /* 3D hero scene */
+  .hero-3d{position:relative;perspective:1200px;}
+  .hero-layer{transition:transform .18s ease-out;will-change:transform;}
+  .symbol{
+    width:46px;height:46px;border-radius:14px;
+    background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);
+    backdrop-filter:blur(6px);
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--font-display);font-weight:700;font-size:18px;color:#EFE9D6;
+    box-shadow:0 10px 26px rgba(0,0,0,.35);
+    animation:floatSlow 6s ease-in-out infinite;
+  }
+  @keyframes floatSlow{0%,100%{transform:translateY(0);}50%{transform:translateY(-13px);}}
+
+  .doc-mock{position:relative;padding:20px 6px 6px;max-width:340px;margin:0 auto;}
+  .doc-card{
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-radius:var(--radius-m);
+    box-shadow:0 20px 50px -14px rgba(0,0,0,.5);
+    padding:26px 26px 30px;
+    transform:rotate(-1.4deg);
+    position:relative;
+  }
+  .doc-card::before{
+    content:"";position:absolute;inset:8px;
+    border:1px dashed var(--line-strong);
+    border-radius:6px;
+    pointer-events:none;
+  }
+  .doc-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;}
+  .doc-title{font-family:var(--font-display);font-weight:700;font-size:15px;}
+  .doc-sub{font-size:12px;color:var(--ink-muted);margin-top:2px;}
+  .doc-lines span{display:block;height:8px;border-radius:2px;background:var(--paper-sunken);margin-bottom:9px;}
+  .doc-lines span:nth-child(1){width:96%;}
+  .doc-lines span:nth-child(2){width:88%;}
+  .doc-lines span:nth-child(3){width:92%;}
+  .doc-lines span:nth-child(4){width:64%;}
+  .seal-wrap{position:absolute;top:-16px;right:-16px;perspective:400px;}
+  .seal-rock{animation:sealRock 5s ease-in-out infinite;transform-style:preserve-3d;}
+  @keyframes sealRock{0%,100%{transform:rotateY(-16deg) rotateX(5deg);}50%{transform:rotateY(16deg) rotateX(-5deg);}}
+  .seal{
+    width:88px;height:88px;border-radius:50%;
+    background:var(--gold-soft);
+    border:2px solid var(--gold);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 12px 26px -8px rgba(0,0,0,.4);
+  }
+  .seal-inner{
+    width:70px;height:70px;border-radius:50%;
+    border:1px dashed var(--gold-strong);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;
+  }
+  .seal-inner .icon{color:var(--gold-strong);width:20px;height:20px;margin-bottom:2px;}
+  .seal-word{font-family:var(--font-display);font-weight:700;font-size:9.5px;letter-spacing:.04em;color:var(--gold-strong);}
+  .doc-float-wrap{position:absolute;bottom:-18px;left:-22px;}
+  .doc-float-bob{animation:floatSlow 5.5s ease-in-out infinite;animation-delay:.4s;}
+  .doc-float-card{
+    background:var(--paper-raised);border:1px solid var(--line);
+    border-radius:var(--radius-s);box-shadow:0 14px 30px -10px rgba(0,0,0,.4);
+    padding:10px 14px;display:flex;align-items:center;gap:10px;
+  }
+  .doc-float-card .icon{color:var(--accent);}
+  .doc-float-card .t{font-size:12px;font-weight:600;}
+  .doc-float-card .s{font-size:11px;color:var(--ink-muted);}
+
+  .hero-character{position:absolute;left:-8%;bottom:-4%;width:150px;z-index:0;filter:drop-shadow(0 18px 24px rgba(0,0,0,.4));}
+  .hero-character-bob{animation:floatSlow 6.5s ease-in-out infinite;animation-delay:.8s;}
+  @media (max-width:900px){.hero-character{display:none;}}
+
+  /* generic tilt (3D card hover) */
+  .tilt{transition:transform .15s ease-out;transform-style:preserve-3d;will-change:transform;}
+
+  /* ============ Sections ============ */
+  section.page-section{padding:64px 0;}
+  .section-tinted{background:var(--paper-raised);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+  .section-head{max-width:64ch;margin-bottom:38px;}
+  .section-kicker{font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--gold-strong);margin-bottom:10px;}
+  .section-head h2{font-size:29px;margin-bottom:12px;}
+  .section-head p{color:var(--ink-muted);font-size:15.5px;}
+
+  .feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+  @media (max-width:860px){.feature-grid{grid-template-columns:1fr 1fr;}}
+  @media (max-width:600px){.feature-grid{grid-template-columns:1fr;}}
+  .feature-card{
+    background:var(--paper-raised);border:1px solid var(--line);
+    border-radius:var(--radius-m);padding:24px;
+  }
+  .section-tinted .feature-card{background:var(--paper);}
+  .feature-icon{
+    width:38px;height:38px;border-radius:var(--radius-s);
+    background:var(--accent-soft);color:var(--accent-strong);
+    display:flex;align-items:center;justify-content:center;margin-bottom:14px;
+  }
+  .feature-card h3{font-size:16px;margin-bottom:8px;}
+  .feature-card p{font-size:14px;color:var(--ink-muted);}
+
+  .steps-cols{display:grid;grid-template-columns:1fr 1fr;gap:40px;}
+  @media (max-width:760px){.steps-cols{grid-template-columns:1fr;}}
+  .steps-col-title{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+  .steps-col-title .role-pill{font-size:12px;}
+  .steps-avatar{width:34px;height:44px;flex:none;}
+  .step-row{display:flex;gap:14px;padding:14px 0;border-top:1px solid var(--line);}
+  .step-row:first-of-type{border-top:none;}
+  .step-num{
+    font-family:var(--font-mono);font-weight:600;font-size:13px;
+    width:26px;height:26px;border-radius:50%;flex:none;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--paper-sunken);color:var(--ink-muted);
+  }
+  .step-body h4{font-size:14.5px;font-weight:700;margin-bottom:3px;}
+  .step-body p{font-size:13.5px;color:var(--ink-muted);}
+
+  .payment-panel{
+    display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center;
+  }
+  @media (max-width:860px){.payment-panel{grid-template-columns:1fr;}}
+  .phone-mock{
+    background:var(--ink);border-radius:26px;padding:16px;
+    max-width:270px;margin:0 auto;box-shadow:var(--shadow);
+  }
+  .phone-screen{
+    background:var(--paper-raised);border-radius:16px;padding:18px 16px;min-height:340px;
+  }
+  .phone-notif{
+    background:var(--paper);border:1px solid var(--line);border-radius:12px;
+    padding:12px;display:flex;gap:10px;margin-top:20px;box-shadow:var(--shadow);
+  }
+  .phone-notif .icon{color:var(--accent);}
+  .phone-notif .t{font-size:12.5px;font-weight:700;}
+  .phone-notif .s{font-size:11.5px;color:var(--ink-muted);margin-top:2px;}
+  .wallet-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+  .wallet-chip{
+    font-size:11px;font-weight:600;padding:5px 10px;border-radius:100px;
+    border:1px solid var(--line-strong);color:var(--ink-muted);
+  }
+  .gateway-list{display:flex;flex-direction:column;gap:12px;margin-top:22px;}
+  .gateway-row{
+    display:flex;align-items:center;gap:12px;
+    background:var(--paper-raised);border:1px solid var(--line);
+    border-radius:var(--radius-s);padding:12px 14px;
+  }
+  .gateway-badge{
+    width:36px;height:36px;border-radius:8px;flex:none;
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--font-display);font-weight:700;font-size:13px;color:#fff;
+  }
+  .gateway-row h5{font-size:13.5px;margin-bottom:2px;}
+  .gateway-row p{font-size:12px;color:var(--ink-muted);}
+
+  /* revenue model cards */
+  .revenue-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+  @media (max-width:860px){.revenue-grid{grid-template-columns:1fr;}}
+  .revenue-card{
+    background:var(--paper-raised);border:1px solid var(--line);border-radius:var(--radius-l);
+    padding:26px;display:flex;flex-direction:column;gap:12px;
+  }
+  .revenue-num{
+    font-family:var(--font-mono);font-weight:700;font-size:26px;color:var(--gold-strong);
+  }
+  .revenue-card h3{font-size:16px;}
+  .revenue-card p{font-size:13.5px;color:var(--ink-muted);}
+
+  .compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;}
+  @media (max-width:760px){.compare-grid{grid-template-columns:1fr;}}
+  .compare-card{
+    background:var(--paper-raised);border:1px solid var(--line);border-radius:var(--radius-l);
+    padding:26px;
+  }
+  .compare-card.gold{border-color:var(--gold);}
+  .compare-card.teal{border-color:var(--accent);}
+  .compare-head{display:flex;align-items:center;gap:14px;margin-bottom:18px;}
+  .compare-avatar{width:44px;height:58px;flex:none;}
+  .compare-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:11px;}
+  .compare-list li{display:flex;gap:10px;font-size:14px;align-items:flex-start;}
+  .compare-list .icon{flex:none;margin-top:2px;}
+  .compare-card.gold .compare-list .icon{color:var(--gold-strong);}
+  .compare-card.teal .compare-list .icon{color:var(--accent-strong);}
+
+  .cta-band{
+    background:var(--ink);color:var(--paper);
+    border-radius:var(--radius-l);
+    padding:46px 40px;
+    display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;
+  }
+  .cta-band h2{color:var(--paper);font-size:25px;}
+  .cta-band p{color:#B9C4BD;font-size:14.5px;margin-top:8px;}
+
+  footer.site-footer{padding:36px 0 46px;border-top:1px solid var(--line);}
+  .footer-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
+  .footer-inner p{font-size:12.5px;color:var(--ink-faint);}
+
+  /* ============ Role pill ============ */
+  .role-pill{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:12px;font-weight:700;letter-spacing:.02em;
+    padding:4px 10px;border-radius:100px;
+  }
+  .role-pill.student{background:var(--accent-soft);color:var(--accent-strong);}
+  .role-pill.professor{background:var(--gold-soft);color:var(--gold-strong);}
+
+  /* ============ App shell (dashboards) ============ */
+  .app-shell{display:flex;min-height:100vh;}
+  .sidebar{
+    width:236px;flex:none;
+    background:var(--paper-raised);border-right:1px solid var(--line);
+    display:flex;flex-direction:column;padding:20px 16px;
+    position:sticky;top:0;height:100vh;
+  }
+  .sidebar-brand{display:flex;align-items:center;gap:10px;padding:6px 6px 22px;cursor:pointer;background:none;border:none;}
+  .side-section-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-faint);margin:14px 8px 8px;}
+  .side-link{
+    display:flex;align-items:center;gap:11px;
+    padding:10px 12px;border-radius:var(--radius-s);
+    font-size:14px;font-weight:600;color:var(--ink-muted);
+    cursor:pointer;border:none;background:none;width:100%;text-align:left;
+  }
+  .side-link .icon{color:var(--ink-faint);}
+  .side-link:hover{background:var(--paper-sunken);color:var(--ink);}
+  .side-link.active{background:var(--accent-soft);color:var(--accent-strong);}
+  .side-link.active .icon{color:var(--accent-strong);}
+  .side-badge{
+    margin-left:auto;font-family:var(--font-mono);font-size:11px;
+    background:var(--paper-sunken);color:var(--ink-muted);
+    padding:1px 7px;border-radius:100px;
+  }
+  .sidebar-foot{margin-top:auto;display:flex;flex-direction:column;gap:6px;}
+
+  .main-col{flex:1;min-width:0;}
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+    padding:20px 30px;border-bottom:1px solid var(--line);
+    background:var(--paper);position:sticky;top:0;z-index:20;
+    flex-wrap:wrap;
+  }
+  .topbar h1{font-size:21px;}
+  .topbar-sub{font-size:12.5px;color:var(--ink-muted);margin-top:3px;}
+  .content{padding:26px 30px 60px;}
+
+  @media (max-width:860px){
+    .sidebar{
+      position:fixed;bottom:0;left:0;right:0;top:auto;width:100%;height:auto;
+      flex-direction:row;justify-content:space-around;
+      padding:8px 6px calc(8px + env(safe-area-inset-bottom));
+      border-right:none;border-top:1px solid var(--line);z-index:50;
+      overflow-x:auto;
+    }
+    .sidebar-brand,.side-section-label,.sidebar-foot{display:none;}
+    .side-link{flex-direction:column;gap:3px;font-size:10px;padding:6px 4px;text-align:center;flex:none;min-width:60px;}
+    .side-link .icon{width:19px;height:19px;}
+    .side-badge{display:none;}
+    .main-col{padding-bottom:64px;}
+    .content{padding:18px 16px 40px;}
+    .topbar{padding:14px 16px;}
+  }
+
+  /* ============ Stat tiles ============ */
+  .stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px;}
+  @media (max-width:900px){.stat-row{grid-template-columns:1fr 1fr;}}
+  .stat-tile{
+    background:var(--paper-raised);border:1px solid var(--line);border-radius:var(--radius-m);
+    padding:18px 18px 16px;
+  }
+  .stat-label{font-size:12px;color:var(--ink-muted);font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+  .stat-value{font-family:var(--font-mono);font-size:23px;font-weight:600;letter-spacing:-.01em;}
+  .stat-delta{font-size:12px;margin-top:6px;font-weight:600;}
+  .stat-delta.up{color:var(--status-good);}
+  .stat-delta.flat{color:var(--ink-faint);}
+
+  /* ============ Chart ============ */
+  .chart-card{
+    background:var(--paper-raised);border:1px solid var(--line);border-radius:var(--radius-m);
+    padding:20px 22px 14px;margin-bottom:28px;
+  }
+  .chart-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;flex-wrap:wrap;gap:6px;}
+  .chart-head h3{font-size:14.5px;font-weight:700;}
+  .chart-head .total{font-family:var(--font-mono);font-size:13px;color:var(--ink-muted);}
+  .bars-wrap{position:relative;height:150px;display:flex;align-items:flex-end;gap:14px;padding-top:10px;margin-top:10px;}
+  .bars-wrap::before{
+    content:"";position:absolute;left:0;right:0;top:10px;height:1px;background:var(--line);
+  }
+  .bar-col{flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;position:relative;}
+  .bar{
+    width:100%;max-width:34px;border-radius:5px 5px 3px 3px;
+    background:var(--accent);
+    position:relative;cursor:pointer;
+    transition:background .12s ease;
+  }
+  .bar:hover{background:var(--accent-strong);}
+  .bar-month{font-size:11px;color:var(--ink-faint);margin-top:8px;}
+  .bar-tooltip{
+    position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);
+    background:var(--ink);color:var(--paper);
+    font-size:11.5px;font-family:var(--font-mono);
+    padding:5px 9px;border-radius:6px;white-space:nowrap;
+    opacity:0;pointer-events:none;transition:opacity .12s ease;
+  }
+  .bar-col:hover .bar-tooltip{opacity:1;}
+
+  /* ============ Filters / search ============ */
+  .filter-bar{
+    display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:22px;
+  }
+  .search-box{
+    display:flex;align-items:center;gap:8px;
+    border:1px solid var(--line-strong);border-radius:var(--radius-s);
+    padding:9px 12px;background:var(--paper-raised);
+    flex:1;min-width:180px;
+  }
+  .search-box .icon{color:var(--ink-faint);}
+  .search-box input{border:none;outline:none;background:none;color:var(--ink);font-size:14px;width:100%;font-family:inherit;}
+  .search-box input::placeholder{color:var(--ink-faint);}
+  select.filter-select{
+    border:1px solid var(--line-strong);border-radius:var(--radius-s);
+    background:var(--paper-raised);color:var(--ink);
+    padding:9px 10px;font-size:13.5px;font-family:inherit;font-weight:500;
+  }
+  .filter-reset{font-size:13px;color:var(--accent);background:none;border:none;cursor:pointer;font-weight:600;padding:8px 4px;}
+
+  /* ============ Document cards (student) ============ */
+  .doc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(258px,1fr));gap:16px;}
+  .doc-card2{
+    background:var(--paper-raised);border:1px solid var(--line);border-radius:var(--radius-m);
+    padding:18px;display:flex;flex-direction:column;gap:12px;
+  }
+  .dc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+  .dc-badges{display:flex;gap:6px;flex-wrap:wrap;}
+  .badge{
+    display:inline-flex;align-items:center;gap:3px;
+    font-size:10.5px;font-weight:700;letter-spacing:.02em;
+    padding:3px 8px;border-radius:100px;
+    background:var(--paper-sunken);color:var(--ink-muted);
+  }
+  .badge.free{background:var(--accent-soft);color:var(--accent-strong);}
+  .badge.ia{background:var(--gold-soft);color:var(--gold-strong);}
+  .badge.boost{background:var(--gold);color:#2A1F08;}
+  .fav-btn{background:none;border:none;cursor:pointer;color:var(--ink-faint);padding:2px;flex:none;}
+  .fav-btn.active{color:var(--status-critical);}
+  .dc-title{font-family:var(--font-display);font-weight:700;font-size:15px;line-height:1.3;}
+  .dc-meta{font-size:12.5px;color:var(--ink-muted);display:flex;gap:6px;flex-wrap:wrap;}
+  .dc-prof-row{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .dc-prof{font-size:12px;color:var(--ink-faint);display:flex;align-items:center;gap:6px;}
+  .like-btn{
+    display:flex;align-items:center;gap:5px;background:none;border:none;cursor:pointer;
+    color:var(--ink-faint);font-size:11.5px;font-weight:600;padding:2px 4px;flex:none;
+  }
+  .like-btn.active{color:var(--accent-strong);}
+  .dc-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:auto;padding-top:8px;border-top:1px solid var(--line);flex-wrap:wrap;}
+  .dc-price{font-family:var(--font-mono);font-weight:600;font-size:14.5px;white-space:nowrap;flex:none;}
+  .dc-price.free{color:var(--accent-strong);}
+  .dc-actions{display:flex;gap:6px;flex-wrap:wrap;}
+  .unlocked-tag{display:flex;align-items:center;gap:6px;color:var(--status-good);font-size:12.5px;font-weight:700;}
+
+  .empty-state{
+    text-align:center;padding:60px 20px;color:var(--ink-muted);
+  }
+  .empty-state .icon{width:34px;height:34px;margin:0 auto 12px;color:var(--ink-faint);}
+  .empty-state h3{font-size:15px;margin-bottom:6px;color:var(--ink);}
+  .empty-state p{font-size:13.5px;}
+
+  /* premium banner */
+  .premium-banner{
+    display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;
+    background:var(--paper-raised);border:1.5px solid var(--gold);border-radius:var(--radius-m);
+    padding:16px 18px;margin-bottom:20px;
+  }
+  .premium-banner .pb-icon{
+    width:38px;height:38px;border-radius:10px;background:var(--gold-soft);color:var(--gold-strong);
+    display:flex;align-items:center;justify-content:center;flex:none;
+  }
+  .premium-banner .pb-title{font-weight:700;font-size:14px;}
+  .premium-banner .pb-sub{font-size:12.5px;color:var(--ink-muted);}
+  .premium-banner.active{border-color:var(--accent);}
+  .premium-banner.active .pb-icon{background:var(--accent-soft);color:var(--accent-strong);}
+
+  /* Bannière publicitaire (annonceurs locaux / annonces étrangères) */
+  .sponsor-banner{
+    display:block;position:relative;border-radius:var(--radius-m);overflow:hidden;
+    margin-bottom:20px;border:1px solid var(--line);background:var(--paper-raised);
+  }
+  .sponsor-banner img{display:block;width:100%;max-height:140px;object-fit:cover;}
+  .sponsor-banner-tag{
+    position:absolute;bottom:8px;left:8px;background:rgba(30,42,38,.72);color:#F7F3E7;
+    font-size:10.5px;padding:3px 8px;border-radius:20px;letter-spacing:.02em;
+  }
+
+  /* AI grading */
+  .ai-doc-row{
+    display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;
+    background:var(--paper-raised);border:1px solid var(--line);border-radius:var(--radius-m);
+    padding:16px 18px;margin-bottom:12px;
+  }
+  .ai-doc-row h4{font-size:14px;margin-bottom:3px;}
+  .ai-doc-row p{font-size:12.5px;color:var(--ink-muted);}
+  .ai-score-ring{
+    width:52px;height:52px;border-radius:50%;flex:none;
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--font-mono);font-weight:700;font-size:14px;
+    border:3px solid var(--accent);color:var(--accent-strong);
+  }
+  .ai-score-ring.mid{border-color:var(--gold);color:var(--gold-strong);}
+  .ai-score-ring.low{border-color:var(--status-critical);color:var(--status-critical);}
+  .ai-feedback-list{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-direction:column;gap:8px;}
+  .ai-feedback-list li{display:flex;gap:8px;font-size:13px;align-items:flex-start;}
+  .ai-feedback-list li.good .fico{color:var(--status-good);}
+  .ai-feedback-list li.bad .fico{color:var(--status-critical);}
+  .ai-feedback-list .fico{flex:none;margin-top:1px;}
+  .ai-history-item{
+    display:flex;justify-content:space-between;align-items:center;gap:10px;
+    padding:10px 0;border-top:1px solid var(--line);font-size:13px;
+  }
+
+  /* ============ Tables (professor) ============ */
+  .table-card{
+    background:var(--paper-raised);border:1px solid var(--line);border-radius:var(--radius-m);
+    overflow:hidden;margin-bottom:28px;
+  }
+  .table-scroll{overflow-x:auto;}
+  table.data-table{width:100%;border-collapse:collapse;min-width:640px;}
+  .data-table th{
+    text-align:left;font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
+    color:var(--ink-faint);padding:12px 16px;border-bottom:1px solid var(--line);background:var(--paper-sunken);
+  }
+  .data-table td{padding:13px 16px;font-size:13.5px;border-bottom:1px solid var(--line);vertical-align:middle;}
+  .data-table tr:last-child td{border-bottom:none;}
+  .data-table td.num,.data-table th.num{text-align:right;font-family:var(--font-mono);}
+  .row-title{font-weight:600;}
+  .row-sub{font-size:11.5px;color:var(--ink-faint);margin-top:2px;}
+  .status-chip{
+    display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;
+    padding:3px 9px;border-radius:100px;
+  }
+  .status-chip.good{background:var(--accent-soft);color:var(--accent-strong);}
+  .status-chip.warn{background:var(--status-warn-soft);color:var(--status-warn);}
+
+  /* ============ Forms / cards ============ */
+  .card{background:var(--paper-raised);border:1px solid var(--line);border-radius:var(--radius-m);padding:22px;}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media (max-width:640px){.form-grid{grid-template-columns:1fr;}}
+  .field{display:flex;flex-direction:column;gap:6px;}
+  .field.span2{grid-column:1 / -1;}
+  .field label{font-size:12.5px;font-weight:700;color:var(--ink-muted);}
+  .field input,.field select,.field textarea{
+    border:1px solid var(--line-strong);border-radius:var(--radius-s);
+    padding:10px 12px;font-size:14px;background:var(--paper);color:var(--ink);font-family:inherit;
+  }
+  .field textarea{resize:vertical;}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--accent);outline-offset:1px;}
+  .field-hint{font-size:11.5px;color:var(--ink-faint);}
+  .field-check{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:var(--ink);}
+  .field-check input{width:auto;}
+  .file-drop{
+    border:1.5px dashed var(--line-strong);border-radius:var(--radius-s);
+    padding:20px;text-align:center;color:var(--ink-muted);font-size:13px;cursor:pointer;
+  }
+  .file-drop:hover{border-color:var(--accent);color:var(--accent-strong);}
+  .file-drop .icon{margin:0 auto 8px;color:var(--ink-faint);}
+
+  .section-title-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;}
+  .section-title-row h2{font-size:18px;}
+
+  /* ============ Modal ============ */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(16,24,20,.5);
+    display:flex;align-items:center;justify-content:center;padding:20px;z-index:100;
+  }
+  .modal{
+    background:var(--paper-raised);border-radius:var(--radius-l);
+    width:100%;max-width:420px;box-shadow:var(--shadow);
+    max-height:88vh;overflow-y:auto;
+  }
+  .modal-pad{padding:26px;}
+  .modal-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;}
+  .modal-close{background:none;border:none;cursor:pointer;color:var(--ink-faint);padding:4px;}
+  .modal-close:hover{color:var(--ink);}
+  .modal h3{font-size:18px;margin-bottom:4px;}
+  .modal-sub{font-size:13px;color:var(--ink-muted);}
+
+  .role-choice{display:flex;flex-direction:column;gap:12px;margin-top:6px;}
+  .role-opt{
+    display:flex;align-items:center;gap:14px;
+    border:1.5px solid var(--line-strong);border-radius:var(--radius-m);
+    padding:16px;cursor:pointer;background:var(--paper);text-align:left;width:100%;
+  }
+  .role-opt:hover{border-color:var(--accent);}
+  .role-opt .ric{
+    width:40px;height:40px;border-radius:10px;flex:none;
+    display:flex;align-items:center;justify-content:center;color:#fff;
+  }
+  .role-opt.student .ric{background:var(--accent);}
+  .role-opt.professor .ric{background:var(--gold);}
+  .role-opt h4{font-size:14.5px;margin-bottom:2px;}
+  .role-opt p{font-size:12.5px;color:var(--ink-muted);}
+
+  .doc-summary{
+    display:flex;gap:12px;align-items:flex-start;
+    background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-s);
+    padding:14px;margin-bottom:18px;
+  }
+  .doc-summary .dsi{
+    width:38px;height:38px;border-radius:8px;background:var(--gold-soft);color:var(--gold-strong);
+    display:flex;align-items:center;justify-content:center;flex:none;
+  }
+  .doc-summary h4{font-size:13.5px;margin-bottom:2px;}
+  .doc-summary .price{font-family:var(--font-mono);font-weight:700;font-size:15px;margin-top:4px;}
+
+  .pay-methods{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+  .pay-method{
+    display:flex;align-items:center;gap:10px;
+    border:1.5px solid var(--line-strong);border-radius:var(--radius-s);
+    padding:11px 12px;cursor:pointer;background:var(--paper);
+  }
+  .pay-method.selected{border-color:var(--accent);background:var(--accent-soft);}
+  .pay-method .gb{width:28px;height:28px;border-radius:6px;flex:none;display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--font-display);font-weight:700;font-size:11px;}
+  .pay-method h5{font-size:13px;}
+  .pay-method p{font-size:11px;color:var(--ink-muted);}
+
+  .pay-status{text-align:center;padding:14px 6px 4px;}
+  .pay-status .spin{
+    width:40px;height:40px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--accent);
+    margin:0 auto 16px;animation:spin .8s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .pay-status .check{
+    width:48px;height:48px;border-radius:50%;background:var(--accent-soft);color:var(--accent-strong);
+    display:flex;align-items:center;justify-content:center;margin:0 auto 14px;
+  }
+  .pay-status h4{font-size:15.5px;margin-bottom:6px;}
+  .pay-status p{font-size:13px;color:var(--ink-muted);}
+
+  /* ============ Secure viewer (anti-leak) ============ */
+  .secure-banner{
+    display:flex;align-items:flex-start;gap:8px;
+    background:var(--status-critical-soft);color:var(--status-critical);
+    border-radius:var(--radius-s);padding:10px 12px;font-size:12.5px;font-weight:600;
+    margin-bottom:16px;
+  }
+  .secure-doc{
+    position:relative;overflow:hidden;
+    background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-s);
+    padding:22px;user-select:none;-webkit-user-select:none;
+  }
+  .wm-layer{
+    position:absolute;inset:-40px;
+    display:flex;flex-wrap:wrap;gap:34px;
+    transform:rotate(-28deg);
+    pointer-events:none;
+  }
+  .wm-tile{
+    font-size:10.5px;font-weight:600;color:var(--ink);opacity:.14;white-space:nowrap;
+  }
+
+  /* ============ Ad gate ============ */
+  .ad-frame{
+    background:var(--ink);border-radius:var(--radius-m);overflow:hidden;
+  }
+  .ad-fake{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+    padding:44px 20px;color:#EDE7D6;text-align:center;
+  }
+  .ad-fake .icon{width:34px;height:34px;color:var(--gold);}
+  .ad-fake span{font-size:13px;font-weight:600;}
+  .ad-progress{height:5px;background:rgba(255,255,255,.15);}
+  .ad-progress-bar{height:100%;width:0%;background:var(--gold);}
+  @keyframes adFill{from{width:0%;}to{width:100%;}}
+
+  /* ============ Toast ============ */
+  .toast{
+    position:fixed;bottom:26px;left:50%;transform:translateX(-50%);
+    background:var(--ink);color:var(--paper);
+    padding:12px 18px;border-radius:var(--radius-s);
+    font-size:13.5px;font-weight:600;box-shadow:var(--shadow);
+    display:flex;align-items:center;gap:10px;z-index:200;
+    max-width:90vw;
+  }
+  .toast .icon{color:var(--accent-strong);flex:none;}
+  @media (max-width:860px){.toast{bottom:78px;}}
+</style>
+
+<div id="app">
+
+  <!-- ============================================================ LANDING ============================================================ -->
+  <section id="view-landing" class="view active">
+    <header class="letterhead">
+      <div class="container letterhead-inner">
+        <button class="brand" onclick="goLanding()">
+          <span class="brand-mark">Kh</span>
+          <span>
+            <span class="brand-word">Khatam</span><br>
+            <span class="brand-tag">Bac Mauritanien · Série C</span>
+          </span>
+        </button>
+        <nav class="nav-links nav-hide-mobile">
+          <a href="#fonctionnalites">Fonctionnalités</a>
+          <a href="#paiement">Paiement</a>
+          <a href="#economie">Modèle économique</a>
+          <a href="#profs-eleves">Professeurs &amp; élèves</a>
+        </nav>
+        <div class="nav-cta">
+          <button class="btn btn-ghost btn-sm" onclick="openAuthModal()">Se connecter</button>
+          <button class="btn btn-primary btn-sm" onclick="openAuthModal()">Commencer</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="hero-stage">
+      <div class="hero container">
+        <div class="hero-grid">
+          <div>
+            <span class="eyebrow">Conçu pour la Série C mauritanienne</span>
+            <h1>Tout le programme de Série C au même endroit — et une IA qui corrige vos copies.</h1>
+            <p class="hero-sub">Sujets, cours, exercices, vidéos et corrections vérifiées en mathématiques, physique-chimie, philosophie, français et anglais. Soumettez votre copie : l'IA la compare au corrigé du professeur et vous attribue une note détaillée.</p>
+            <div class="hero-actions">
+              <button class="btn btn-primary" onclick="openAuthModal('student')">
+                Je suis élève <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </button>
+              <button class="btn btn-gold" onclick="openAuthModal('professor')">
+                Je suis professeur <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </button>
+            </div>
+            <div class="hero-proof">
+              <div class="proof-item"><span class="proof-num">190+</span><span class="proof-label">ressources Série C</span></div>
+              <div class="proof-item"><span class="proof-num">6</span><span class="proof-label">types de contenu</span></div>
+              <div class="proof-item"><span class="proof-num">2020–2026</span><span class="proof-label">années disponibles</span></div>
+            </div>
+          </div>
+
+          <div class="hero-3d" id="heroStage">
+            <div class="hero-layer" data-depth="0.55" style="position:absolute;top:2%;left:2%;z-index:2;">
+              <div class="symbol" style="animation-delay:0s;">∫</div>
+            </div>
+            <div class="hero-layer" data-depth="0.35" style="position:absolute;top:76%;left:-2%;z-index:2;">
+              <div class="symbol" style="animation-delay:1.1s;">π</div>
+            </div>
+            <div class="hero-layer" data-depth="0.65" style="position:absolute;top:-2%;right:14%;z-index:2;">
+              <div class="symbol" style="animation-delay:.6s;">√x</div>
+            </div>
+            <div class="hero-layer" data-depth="0.42" style="position:absolute;top:62%;right:0%;z-index:2;">
+              <div class="symbol" style="animation-delay:1.7s;">Σ</div>
+            </div>
+
+            <div class="hero-layer hero-character" data-depth="0.8">
+              <div class="hero-character-bob">
+                <svg viewBox="0 0 200 260" width="150" height="195">
+                  <ellipse cx="100" cy="248" rx="58" ry="9" fill="rgba(0,0,0,.32)"/>
+                  <path d="M58 258 L53 152 Q100 122 147 152 L142 258 Z" fill="#1C6B57"/>
+                  <path d="M44 132 Q100 92 156 132 L150 222 Q100 242 50 222 Z" fill="#0B4F3F"/>
+                  <rect x="68" y="152" width="64" height="46" rx="7" fill="#0A3B30"/>
+                  <rect x="73" y="157" width="54" height="34" rx="3" fill="#CFE8DD"/>
+                  <line x1="80" y1="167" x2="118" y2="167" stroke="#0B4F3F" stroke-width="2"/>
+                  <line x1="80" y1="175" x2="110" y2="175" stroke="#0B4F3F" stroke-width="2"/>
+                  <circle cx="100" cy="90" r="42" fill="#C98B5E"/>
+                  <path d="M54 96 Q58 38 100 33 Q142 38 146 96 Q140 58 100 53 Q60 58 54 96Z" fill="#0F6E5C"/>
+                  <path d="M57 90 Q53 142 69 168 L75 100 Z" fill="#0F6E5C"/>
+                  <path d="M143 90 Q147 142 131 168 L125 100 Z" fill="#0F6E5C"/>
+                  <circle cx="84" cy="93" r="4" fill="#1E2A26"/>
+                  <circle cx="116" cy="93" r="4" fill="#1E2A26"/>
+                  <path d="M87 109 Q100 118 113 109" stroke="#1E2A26" stroke-width="3" fill="none" stroke-linecap="round"/>
+                </svg>
+              </div>
+            </div>
+
+            <div class="hero-layer doc-mock" data-depth="1" style="z-index:3;">
+              <div class="doc-card">
+                <div class="doc-head">
+                  <div>
+                    <div class="doc-title">Corrigé — Mathématiques</div>
+                    <div class="doc-sub">Série C · Session 2026</div>
+                  </div>
+                </div>
+                <div class="doc-lines"><span></span><span></span><span></span><span></span></div>
+                <div class="seal-wrap">
+                  <div class="seal-rock">
+                    <div class="seal">
+                      <div class="seal-inner">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg>
+                        <span class="seal-word">VÉRIFIÉ</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="doc-float-wrap">
+                <div class="doc-float-bob">
+                  <div class="doc-float-card">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13M9 9l12-2M6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM18 19a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/></svg>
+                    <div><div class="t">Copie notée par l'IA</div><div class="s">16/20 · selon le corrigé du Pr. Sidi Ahmed</div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FEATURES -->
+    <section class="page-section" id="fonctionnalites">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-kicker">Pourquoi Khatam</div>
+          <h2>Mieux qu'un groupe WhatsApp ou une page Facebook</h2>
+          <p>Les groupes d'entraide partagent des photos floues et des corrections non vérifiées. Khatam organise, authentifie et rémunère le travail des professeurs de Série C.</p>
+        </div>
+        <div class="feature-grid">
+          <div class="feature-card tilt">
+            <div class="feature-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg></div>
+            <h3>Qualité vérifiée</h3>
+            <p>Seuls les professeurs approuvés peuvent publier. Chaque document porte le sceau Khatam.</p>
+          </div>
+          <div class="feature-card tilt">
+            <div class="feature-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg></div>
+            <h3>Pas seulement des examens</h3>
+            <p>Cours, fiches de révision, exercices corrigés, vidéos et examens blancs — tout le programme de Série C, matière par matière.</p>
+          </div>
+          <div class="feature-card tilt">
+            <div class="feature-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13M9 9l12-2M6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM18 19a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/></svg></div>
+            <h3>Correction notée par l'IA</h3>
+            <p>Soumettez votre copie sur un corrigé : l'IA la compare à la correction du professeur et attribue une note sur 20 avec des remarques détaillées.</p>
+          </div>
+          <div class="feature-card tilt">
+            <div class="feature-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 8h20M6 16h.01M10 16h4"/><rect x="2" y="5" width="20" height="14" rx="2"/></svg></div>
+            <h3>Paiement mobile local</h3>
+            <p>Bankily, Masrivi et Sedad — pas de carte bancaire nécessaire. Déblocage instantané.</p>
+          </div>
+          <div class="feature-card tilt">
+            <div class="feature-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6l-8-4Z"/></svg></div>
+            <h3>Sujets officiels gratuits</h3>
+            <p>Les anciens sujets d'examen restent gratuits ; seuls les cours, exercices et corrections détaillées sont payants.</p>
+          </div>
+          <div class="feature-card tilt">
+            <div class="feature-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+            <h3>Revenus pour les professeurs</h3>
+            <p>Un tableau de bord clair du solde, des ventes, et un retrait mensuel vers Bankily ou Masrivi.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="page-section section-tinted">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-kicker">Comment ça marche</div>
+          <h2>Un parcours simple, pensé pour deux publics</h2>
+        </div>
+        <div class="steps-cols">
+          <div>
+            <div class="steps-col-title">
+              <svg class="steps-avatar" viewBox="0 0 60 76"><ellipse cx="30" cy="72" rx="18" ry="3" fill="rgba(0,0,0,.12)"/><path d="M16 76 L14 42 Q30 32 46 42 L44 76Z" fill="#0F6E5C"/><circle cx="30" cy="24" r="14" fill="#C98B5E"/><path d="M16 27 Q17 10 30 9 Q43 10 44 27 Q41 17 30 15 Q19 17 16 27Z" fill="#0B4F42"/></svg>
+              <span class="role-pill student">Élève</span>
+            </div>
+            <div class="step-row"><span class="step-num">1</span><div class="step-body"><h4>Parcourir</h4><p>Filtrez par matière, type de contenu et année pour trouver la bonne ressource.</p></div></div>
+            <div class="step-row"><span class="step-num">2</span><div class="step-body"><h4>Prévisualiser gratuitement</h4><p>Consultez un aperçu avant de payer quoi que ce soit.</p></div></div>
+            <div class="step-row"><span class="step-num">3</span><div class="step-body"><h4>Débloquer par mobile</h4><p>Confirmez avec Bankily ou Masrivi et téléchargez immédiatement.</p></div></div>
+            <div class="step-row"><span class="step-num">4</span><div class="step-body"><h4>Soumettre sa copie</h4><p>Sur un corrigé, envoyez votre réponse et recevez une note IA détaillée.</p></div></div>
+          </div>
+          <div>
+            <div class="steps-col-title">
+              <svg class="steps-avatar" viewBox="0 0 60 76"><ellipse cx="30" cy="72" rx="18" ry="3" fill="rgba(0,0,0,.12)"/><path d="M15 76 L13 46 Q30 36 45 46 L43 76Z" fill="#8F6A20"/><circle cx="30" cy="27" r="13" fill="#C98B5E"/><path d="M18 24 Q17 13 30 12 Q43 13 42 24 Q40 17 30 15 Q20 17 18 24Z" fill="#1E2A26"/></svg>
+              <span class="role-pill professor">Professeur</span>
+            </div>
+            <div class="step-row"><span class="step-num">1</span><div class="step-body"><h4>Publier</h4><p>Sujets, cours, exercices, vidéos ou examens blancs — vous choisissez le type de contenu et le prix.</p></div></div>
+            <div class="step-row"><span class="step-num">2</span><div class="step-body"><h4>Activer la correction IA</h4><p>Sur un corrigé, autorisez les élèves à soumettre leur copie pour une note automatique.</p></div></div>
+            <div class="step-row"><span class="step-num">3</span><div class="step-body"><h4>Être vérifié</h4><p>Votre profil et vos documents reçoivent le sceau Khatam.</p></div></div>
+            <div class="step-row"><span class="step-num">4</span><div class="step-body"><h4>Encaisser</h4><p>Suivez vos ventes et retirez votre solde chaque mois.</p></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAYMENT -->
+    <section class="page-section" id="paiement">
+      <div class="container">
+        <div class="payment-panel">
+          <div>
+            <div class="section-kicker">Paiement mauritanien</div>
+            <h2 style="font-size:26px;margin-bottom:14px;">Conçu pour Bankily, Masrivi et Sedad — pas pour les cartes bancaires</h2>
+            <p style="color:var(--ink-muted);font-size:15px;margin-bottom:20px;">L'élève entre son numéro de téléphone, reçoit une notification de paiement, et confirme. Le document se débloque automatiquement — sans jamais quitter Khatam.</p>
+            <div class="gateway-list">
+              <div class="gateway-row"><div class="gateway-badge" style="background:#0F6E5C;">BK</div><div><h5>Bankily</h5><p>Attijari Bank Mauritanie</p></div></div>
+              <div class="gateway-row"><div class="gateway-badge" style="background:#B4842A;">MV</div><div><h5>Masrivi</h5><p>BCM Mauritanie</p></div></div>
+              <div class="gateway-row"><div class="gateway-badge" style="background:#4A5A8F;">SD</div><div><h5>Sedad</h5><p>Portefeuille mobile national</p></div></div>
+            </div>
+          </div>
+          <div class="phone-mock">
+            <div class="phone-screen">
+              <div style="font-size:11px;color:var(--ink-faint);margin-bottom:4px;">Khatam</div>
+              <div style="font-family:var(--font-display);font-weight:700;font-size:15px;">Débloquer le corrigé</div>
+              <div style="font-size:12.5px;color:var(--ink-muted);margin-top:4px;">Physique-Chimie · Série C · 2025</div>
+              <div style="font-family:var(--font-mono);font-size:22px;font-weight:600;margin-top:14px;">200 MRU</div>
+              <div class="wallet-row">
+                <span class="wallet-chip">Bankily</span>
+                <span class="wallet-chip">Masrivi</span>
+              </div>
+              <div class="phone-notif">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+                <div><div class="t">Confirmez sur votre téléphone</div><div class="s">Bankily · Code envoyé au 22 XX XX XX</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- REVENUE MODEL -->
+    <section class="page-section section-tinted" id="economie">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-kicker">Modèle économique</div>
+          <h2>Comment Khatam gagne de l'argent — sans jamais faire payer les sujets officiels</h2>
+          <p>Trois sources de revenus, toutes alignées avec l'intérêt des élèves et des professeurs : Khatam ne gagne que lorsqu'il apporte une vraie valeur.</p>
+        </div>
+        <div class="revenue-grid">
+          <div class="revenue-card tilt">
+            <div class="revenue-num">15%</div>
+            <h3>Commission sur chaque vente</h3>
+            <p>Prélevée automatiquement lors du paiement Bankily/Masrivi. Pas de vente, pas de commission — le reste est versé au professeur.</p>
+          </div>
+          <div class="revenue-card tilt">
+            <div class="revenue-num">Abonnement</div>
+            <h3>Élève Premium</h3>
+            <p>Accès illimité à toute la Série C et corrections IA illimitées, pour un forfait mensuel ou « spécial session Bac ». Revenu récurrent et prévisible.</p>
+          </div>
+          <div class="revenue-card tilt">
+            <div class="revenue-num">Boost</div>
+            <h3>Mise en avant pour les professeurs</h3>
+            <p>Les professeurs peuvent payer pour apparaître en tête des résultats de recherche sur leur matière pendant 7 jours.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COMPARE ROLES -->
+    <section class="page-section" id="profs-eleves">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-kicker">Deux comptes, un objectif</div>
+          <h2>Ce que vous obtenez selon votre profil</h2>
+        </div>
+        <div class="compare-grid">
+          <div class="compare-card teal tilt">
+            <div class="compare-head">
+              <svg class="compare-avatar" viewBox="0 0 60 76"><ellipse cx="30" cy="72" rx="18" ry="3" fill="rgba(0,0,0,.12)"/><path d="M16 76 L14 42 Q30 32 46 42 L44 76Z" fill="#0F6E5C"/><circle cx="30" cy="24" r="14" fill="#C98B5E"/><path d="M16 27 Q17 10 30 9 Q43 10 44 27 Q41 17 30 15 Q19 17 16 27Z" fill="#0B4F42"/></svg>
+              <div><h3>Compte Élève</h3><p style="font-size:12.5px;color:var(--ink-muted);">Gratuit à créer</p></div>
+            </div>
+            <ul class="compare-list">
+              <li><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg><span>Parcourir par matière, année et type de contenu</span></li>
+              <li><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg><span>Aperçu gratuit avant tout paiement</span></li>
+              <li><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg><span>Copie soumise et notée par l'IA sur 20</span></li>
+              <li><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg><span>Déblocage instantané par Bankily / Masrivi</span></li>
+            </ul>
+            <button class="btn btn-primary btn-block" style="margin-top:20px;" onclick="openAuthModal('student')">Créer un compte élève</button>
+          </div>
+          <div class="compare-card gold tilt">
+            <div class="compare-head">
+              <svg class="compare-avatar" viewBox="0 0 60 76"><ellipse cx="30" cy="72" rx="18" ry="3" fill="rgba(0,0,0,.12)"/><path d="M15 76 L13 46 Q30 36 45 46 L43 76Z" fill="#8F6A20"/><circle cx="30" cy="27" r="13" fill="#C98B5E"/><path d="M18 24 Q17 13 30 12 Q43 13 42 24 Q40 17 30 15 Q20 17 18 24Z" fill="#1E2A26"/></svg>
+              <div><h3>Compte Professeur</h3><p style="font-size:12.5px;color:var(--ink-muted);">Vérification requise</p></div>
+            </div>
+            <ul class="compare-list">
+              <li><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg><span>Publier sujets, cours, exercices, vidéos et examens blancs</span></li>
+              <li><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg><span>Activer la correction automatique par IA</span></li>
+              <li><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg><span>Tableau de bord des revenus et des ventes</span></li>
+              <li><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg><span>Retrait mensuel vers Bankily ou Masrivi</span></li>
+            </ul>
+            <button class="btn btn-gold btn-block" style="margin-top:20px;" onclick="openAuthModal('professor')">Créer un compte professeur</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page-section">
+      <div class="container">
+        <div class="cta-band">
+          <div>
+            <h2>Prêt à réviser avec des documents fiables ?</h2>
+            <p>Rejoignez Khatam gratuitement — le premier document est toujours à consulter en aperçu.</p>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="openAuthModal('student')">Je suis élève</button>
+            <button class="btn btn-ghost" style="border-color:#3A4A44;color:var(--paper);" onclick="openAuthModal('professor')">Je suis professeur</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <div class="brand"><span class="brand-mark" style="width:26px;height:26px;font-size:12px;">Kh</span><span class="brand-word" style="font-size:15px;">Khatam</span></div>
+        <p>Prototype de démonstration — Khatam n'est pas encore un service en ligne réel. Aucun paiement n'est traité.</p>
+      </div>
+    </footer>
+  </section>
+
+  <!-- ============================================================ STUDENT DASHBOARD ============================================================ -->
+  <section id="view-student" class="view">
+    <div class="app-shell">
+      <aside class="sidebar">
+        <button class="sidebar-brand" onclick="goLanding()">
+          <span class="brand-mark">Kh</span><span class="brand-word" style="font-size:16px;">Khatam</span>
+        </button>
+        <div class="side-section-label">Espace élève</div>
+        <button class="side-link active" data-stab="browse" onclick="setStudentTab('browse')">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          Parcourir
+        </button>
+        <button class="side-link" data-stab="ai" onclick="setStudentTab('ai')">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1 2 3.5V13a4 4 0 0 1-2 3.46V18a4 4 0 0 1-8 0v-1.54A4 4 0 0 1 6 13v-2.5A4 4 0 0 1 8 7V6a4 4 0 0 1 4-4Z"/><path d="M9 21h6"/></svg>
+          Correction IA
+        </button>
+        <button class="side-link" data-stab="favorites" onclick="setStudentTab('favorites')">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg>
+          Favoris <span class="side-badge" id="favCount">0</span>
+        </button>
+        <button class="side-link" data-stab="mine" onclick="setStudentTab('mine')">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          Mes documents <span class="side-badge" id="mineCount">0</span>
+        </button>
+        <div class="sidebar-foot">
+          <button class="side-link" onclick="openSecurityModal()">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+            Sécurité du compte
+          </button>
+          <button class="side-link" onclick="logout()">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+            Se déconnecter
+          </button>
+        </div>
+      </aside>
+
+      <div class="main-col">
+        <div class="topbar">
+          <div>
+            <h1 id="studentTitle">Parcourir les documents</h1>
+            <div class="topbar-sub" id="studentSub">Série C — sujets, cours, exercices, vidéos et corrections vérifiées</div>
+          </div>
+          <span class="role-pill student">Compte élève</span>
+        </div>
+        <div class="content">
+
+          <div id="student-browse-panel">
+            <div class="premium-banner" id="premiumBanner">
+              <div style="display:flex;gap:12px;align-items:center;">
+                <span class="pb-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 2 2.6 6.2L21 9l-5 4.6L17.5 21 12 17.3 6.5 21 8 13.6 3 9l6.4-.8Z"/></svg></span>
+                <div><div class="pb-title" id="pbTitle">Passez Premium</div><div class="pb-sub" id="pbSub">Accès illimité à toute la Série C + corrections IA illimitées</div></div>
+              </div>
+              <button class="btn btn-gold btn-sm" id="pbBtn" onclick="openPremiumModal()">Découvrir — dès 500 MRU/mois</button>
+            </div>
+
+            <a id="sponsorBanner" class="sponsor-banner hidden" href="#" target="_blank" rel="noopener" onclick="trackAdClick(this)">
+              <img id="sponsorBannerImg" src="" alt="">
+              <span class="sponsor-banner-tag">Annonce · <span id="sponsorBannerName"></span></span>
+            </a>
+
+            <div class="filter-bar">
+              <div class="search-box">
+                <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+                <input type="text" id="fSearch" placeholder="Rechercher une matière ou un titre…" oninput="applyFilters()">
+              </div>
+              <select class="filter-select" id="fType" onchange="applyFilters()">
+                <option value="all">Tous les types</option>
+                <option value="sujet">Sujets d'examen</option>
+                <option value="corrige">Corrigés</option>
+                <option value="cours">Cours &amp; fiches</option>
+                <option value="exercices">Exercices corrigés</option>
+                <option value="video">Vidéos</option>
+                <option value="blanc">Examens blancs</option>
+              </select>
+              <select class="filter-select" id="fAnnee" onchange="applyFilters()">
+                <option value="all">Toutes les années</option>
+              </select>
+              <select class="filter-select" id="fMatiere" onchange="applyFilters()">
+                <option value="all">Toutes les matières</option>
+              </select>
+              <button class="filter-reset" onclick="resetFilters()">Réinitialiser</button>
+            </div>
+            <div class="doc-grid" id="docGrid"></div>
+          </div>
+
+          <div id="student-ai-panel" class="hidden">
+            <p style="font-size:13.5px;color:var(--ink-muted);margin-bottom:18px;max-width:64ch;">Soumettez votre copie sur un corrigé débloqué : l'IA la compare à la correction du professeur et vous attribue une note sur 20, avec des remarques détaillées.</p>
+            <div id="aiEligibleList"></div>
+            <div class="section-title-row" style="margin-top:26px;"><h2>Vos corrections récentes</h2></div>
+            <div class="card" id="aiHistoryCard"><div id="aiHistoryList"></div></div>
+          </div>
+
+          <div id="student-favorites-panel" class="hidden">
+            <div class="doc-grid" id="favGrid"></div>
+          </div>
+
+          <div id="student-mine-panel" class="hidden">
+            <div class="doc-grid" id="mineGrid"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ PROFESSOR DASHBOARD ============================================================ -->
+  <section id="view-professor" class="view">
+    <div class="app-shell">
+      <aside class="sidebar">
+        <button class="sidebar-brand" onclick="goLanding()">
+          <span class="brand-mark">Kh</span><span class="brand-word" style="font-size:16px;">Khatam</span>
+        </button>
+        <div class="side-section-label">Espace professeur</div>
+        <button class="side-link active" data-ptab="overview" onclick="setProfTab('overview')">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 15l4-5 3 3 5-7"/></svg>
+          Revenus
+        </button>
+        <button class="side-link" data-ptab="documents" onclick="setProfTab('documents')">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          Mes documents <span class="side-badge" id="profDocCount">0</span>
+        </button>
+        <button class="side-link" data-ptab="upload" onclick="setProfTab('upload')">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          Publier un document
+        </button>
+        <button class="side-link" data-ptab="wallet" onclick="setProfTab('wallet')">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M22 10H2M17 15h.01"/></svg>
+          Portefeuille
+        </button>
+        <div class="sidebar-foot">
+          <button class="side-link" onclick="openSecurityModal()">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+            Sécurité du compte
+          </button>
+          <button class="side-link" onclick="logout()">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+            Se déconnecter
+          </button>
+        </div>
+      </aside>
+
+      <div class="main-col">
+        <div class="topbar">
+          <div>
+            <h1 id="profTitle">Tableau de bord des revenus</h1>
+            <div class="topbar-sub" id="profSub">Pr. Sidi Mohamed · Mathématiques &amp; Physique-Chimie · Série C</div>
+          </div>
+          <span class="role-pill professor">Compte professeur</span>
+        </div>
+        <div class="content">
+
+          <div id="prof-overview-panel">
+            <div class="stat-row">
+              <div class="stat-tile">
+                <div class="stat-label">Solde disponible</div>
+                <div class="stat-value num" id="statBalance">—</div>
+                <div class="stat-delta flat">Après commission Khatam (15%)</div>
+              </div>
+              <div class="stat-tile">
+                <div class="stat-label">Revenus ce mois</div>
+                <div class="stat-value num" id="statMonth">—</div>
+                <div class="stat-delta up">↑ 18% vs mois dernier</div>
+              </div>
+              <div class="stat-tile">
+                <div class="stat-label">Documents en ligne</div>
+                <div class="stat-value num" id="statDocs">—</div>
+                <div class="stat-delta flat" id="statDocsSub">—</div>
+              </div>
+              <div class="stat-tile">
+                <div class="stat-label">Copies corrigées par l'IA</div>
+                <div class="stat-value num" id="statAiCount">—</div>
+                <div class="stat-delta up">↑ 5 cette semaine</div>
+              </div>
+            </div>
+
+            <div class="chart-card">
+              <div class="chart-head">
+                <h3>Revenus des 6 derniers mois</h3>
+                <span class="total num" id="chartTotal">—</span>
+              </div>
+              <div class="bars-wrap" id="earningsChart"></div>
+            </div>
+
+            <div class="section-title-row"><h2>Documents les plus vendus</h2></div>
+            <div class="table-card">
+              <div class="table-scroll">
+                <table class="data-table">
+                  <thead><tr><th>Document</th><th>Type</th><th class="num">Vues</th><th class="num">Ventes</th><th class="num">Revenu</th></tr></thead>
+                  <tbody id="topDocsBody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="section-title-row"><h2>Dernières corrections par l'IA</h2></div>
+            <div class="table-card">
+              <div class="table-scroll">
+                <table class="data-table">
+                  <thead><tr><th>Élève</th><th>Document</th><th class="num">Note</th><th>Date</th></tr></thead>
+                  <tbody id="aiSubmissionsBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div id="prof-documents-panel" class="hidden">
+            <div class="section-title-row">
+              <h2>Mes documents</h2>
+              <button class="btn btn-gold btn-sm" onclick="setProfTab('upload')">+ Publier un document</button>
+            </div>
+            <div class="table-card">
+              <div class="table-scroll">
+                <table class="data-table">
+                  <thead><tr><th>Document</th><th>Type</th><th class="num">Prix</th><th class="num">Vues</th><th class="num">Ventes</th><th class="num">Revenu</th><th>Statut</th></tr></thead>
+                  <tbody id="allDocsBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div id="prof-upload-panel" class="hidden">
+            <div class="card" style="max-width:640px;">
+              <h2 style="font-size:18px;margin-bottom:4px;">Publier un nouveau document</h2>
+              <p style="font-size:13px;color:var(--ink-muted);margin-bottom:20px;">Il sera visible par les élèves après vérification du sceau Khatam (instantanée dans cette démo).</p>
+              <div class="form-grid">
+                <div class="field span2">
+                  <label>Titre du document</label>
+                  <input type="text" id="upTitle" placeholder="Ex. Corrigé complet — Physique-Chimie">
+                </div>
+                <div class="field">
+                  <label>Type de contenu</label>
+                  <select id="upType" onchange="onUpTypeChange()">
+                    <option value="sujet">Sujet d'examen</option>
+                    <option value="corrige">Corrigé</option>
+                    <option value="cours">Cours / fiche de révision</option>
+                    <option value="exercices">Exercices corrigés</option>
+                    <option value="video">Vidéo de cours</option>
+                    <option value="blanc">Examen blanc</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Matière</label>
+                  <input type="text" id="upMatiere" placeholder="Ex. Mathématiques">
+                </div>
+                <div class="field">
+                  <label>Session (année)</label>
+                  <select id="upAnnee">
+                    <option>2026</option><option>2025</option><option>2024</option><option>2023</option><option>2022</option><option>2021</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Prix (MRU)</label>
+                  <input type="number" id="upPrix" value="200" min="0" step="10">
+                  <span class="field-hint">0 MRU = document gratuit</span>
+                </div>
+                <div class="field span2 hidden" id="aiToggleField">
+                  <label class="field-check"><input type="checkbox" id="upAiGrading"> Activer la correction automatique par IA</label>
+                  <span class="field-hint">Les élèves pourront soumettre leur copie et recevoir une note IA basée sur ce corrigé.</span>
+                </div>
+                <div class="field span2">
+                  <label id="upFileLabel">Fichier PDF</label>
+                  <input type="file" id="upFile" accept="application/pdf" style="display:none;" onchange="onUpFileChange()">
+                  <div class="file-drop" onclick="document.getElementById('upFile').click()">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16V4m0 0 4 4m-4-4-4 4M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+                    <span id="fileDropLabel">Cliquez pour choisir un fichier PDF</span>
+                  </div>
+                </div>
+              </div>
+              <button class="btn btn-primary btn-block" style="margin-top:20px;" onclick="submitUpload()">Publier le document</button>
+            </div>
+          </div>
+
+          <div id="prof-wallet-panel" class="hidden">
+            <div class="stat-row" style="grid-template-columns:1fr 1fr;">
+              <div class="stat-tile">
+                <div class="stat-label">Solde disponible</div>
+                <div class="stat-value num" id="walletBalance">—</div>
+                <button class="btn btn-gold btn-sm" style="margin-top:12px;" onclick="openWithdrawModal()">Demander un retrait</button>
+              </div>
+              <div class="stat-tile">
+                <div class="stat-label">Total retiré à ce jour</div>
+                <div class="stat-value num" id="walletWithdrawn">0 MRU</div>
+                <div class="stat-delta flat">Vers Bankily / Masrivi</div>
+              </div>
+            </div>
+
+            <div class="card" style="margin-bottom:28px;border-color:var(--accent);">
+              <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;">
+                <div><h3 style="font-size:15px;margin-bottom:4px;">Mettre mes documents en avant</h3><p style="font-size:13px;color:var(--ink-muted);">Apparaissez en tête des résultats de recherche pendant 7 jours.</p></div>
+                <button class="btn btn-primary btn-sm" id="boostBtn" onclick="activateBoost()">Activer le Boost — 500 MRU</button>
+              </div>
+            </div>
+
+            <div class="section-title-row"><h2>Historique des retraits</h2></div>
+            <div class="table-card">
+              <div class="table-scroll">
+                <table class="data-table">
+                  <thead><tr><th>Date</th><th>Méthode</th><th>Numéro</th><th class="num">Montant</th><th>Statut</th></tr></thead>
+                  <tbody id="withdrawBody">
+                    <tr><td colspan="5"><div class="empty-state" style="padding:34px 10px;"><p>Aucun retrait pour le moment.</p></div></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div id="modalRoot" class="modal-overlay hidden" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modalBody"></div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script>
+/* ============================================================ DATA (Série C uniquement) ============================================================ */
+const TYPE_META = {
+  sujet:{label:"Sujet d'examen", icon:'<svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6l-8-4Z"/></svg>'},
+  corrige:{label:'Corrigé', icon:'<svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>'},
+  cours:{label:'Cours & fiche', icon:'<svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg>'},
+  exercices:{label:'Exercices', icon:'<svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>'},
+  video:{label:'Vidéo', icon:'<svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="m10 9 5 3-5 3Z"/></svg>'},
+  blanc:{label:'Examen blanc', icon:'<svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg>'},
+};
+
+/* ============================================================ API (backend réel) ============================================================
+   Ce fichier appelle un vrai backend Node.js/Express déployé sur Render.
+   Voir le dépôt khatam-backend pour le code serveur complet. */
+const API_BASE = 'https://khatam-backend-i6zn.onrender.com/api';
+
+let authToken = localStorage.getItem('khatam_token') || null;
+let currentUser = null;
+try{ currentUser = JSON.parse(localStorage.getItem('khatam_user') || 'null'); }catch(e){ currentUser = null; }
+
+async function apiFetch(path, opts={}){
+  const headers = Object.assign({}, opts.headers||{});
+  const isForm = opts.body instanceof FormData;
+  if(!isForm) headers['Content-Type'] = 'application/json';
+  if(authToken) headers['Authorization'] = 'Bearer ' + authToken;
+  headers['X-Device-Id'] = getDeviceId();
+  let res;
+  try{
+    res = await fetch(API_BASE + path, Object.assign({}, opts, {headers}));
+  }catch(networkErr){
+    throw Object.assign(new Error("Impossible de contacter le serveur Khatam. Vérifiez votre connexion."), {status:0});
+  }
+  let data = null;
+  try{ data = await res.json(); }catch(e){}
+  if(!res.ok){
+    const err = new Error((data && data.message) || ('Erreur ' + res.status));
+    err.status = res.status; err.data = data;
+    throw err;
+  }
+  return data;
+}
+function apiGet(path){ return apiFetch(path, {method:'GET'}); }
+function apiPost(path, body){ return apiFetch(path, {method:'POST', body: body instanceof FormData ? body : JSON.stringify(body||{})}); }
+async function apiFetchBlob(path){
+  const res = await fetch(API_BASE + path, {
+    headers:{ 'Authorization':'Bearer '+authToken, 'X-Device-Id': getDeviceId() }
+  });
+  if(!res.ok){
+    let data = {}; try{ data = await res.json(); }catch(e){}
+    throw Object.assign(new Error(data.message || ('Erreur ' + res.status)), {status:res.status});
+  }
+  return res.blob();
+}
+
+let CATALOG = [];
+let MY_DOCS = [];
+let walletData = {balance:0, withdrawn:0, sales:[], withdrawals:[]};
+
+/* Note : ce tableau reste une donnée d'illustration — le backend actuel n'expose pas
+   encore d'endpoint listant les copies soumises par les élèves à un professeur donné. */
+const PROF_AI_SUBMISSIONS = [
+  {student:'A. Mint S.', doc:'Corrigé détaillé — Mathématiques', note:16, date:'21/08/2026'},
+  {student:'M. Ould A.', doc:'Corrigé détaillé — Physique-Chimie', note:11, date:'20/08/2026'},
+  {student:'F. Mint L.', doc:'Corrigé détaillé — Mathématiques', note:18, date:'19/08/2026'},
+  {student:'S. Ould M.', doc:'Corrigé détaillé — Physique-Chimie', note:9, date:'18/08/2026'},
+  {student:'K. Mint H.', doc:'Corrigé détaillé — Mathématiques', note:14, date:'17/08/2026'},
+];
+
+async function loadCatalog(){
+  const headers = { 'X-Device-Id': getDeviceId() };
+  if(currentUser) headers['X-Viewer-Id'] = currentUser.id;
+  const res = await fetch(API_BASE + '/documents?serie=C', { headers });
+  const data = await res.json();
+  CATALOG = (data.documents||[]).map(d=>({
+    id: d.id, title: d.title, matiere: d.matiere, annee: d.annee, type: d.type,
+    prix: d.prix, free: d.free, adUnlock: d.adUnlock, aiGrading: d.aiGrading,
+    unlocked: d.unlocked, views: d.views, statut: d.statut,
+    professorId: d.professor.id, prof: d.professor.fullName,
+    professorBoosted: d.professorBoosted, professorLikes: d.professorLikes,
+  }));
+  populateFilterOptions();
+  if(currentUser && currentUser.role==='PROFESSOR'){
+    MY_DOCS = CATALOG.filter(d=>d.professorId===currentUser.id);
+  }
+}
+async function loadWallet(){
+  try{ walletData = await apiGet('/wallet'); }
+  catch(e){ showToast('Impossible de charger le portefeuille : '+e.message); }
+}
+
+/* ============================================================ PUBLICITÉ (annonceurs locaux + espace prêt pour AdSense) ============================================================
+   Deux emplacements réels : "banner" (bandeau au-dessus du catalogue) et
+   "ad-gate" (affichée pendant le déblocage gratuit par pub, voir openAdGateModal).
+   Ce sont des annonces d'annonceurs locaux gérées depuis le panneau d'administration
+   (admin.html). Pour des annonces internationales (Google AdSense), voir le bloc
+   commenté ADSENSE_PUBLISHER_ID plus bas — s'active en une ligne une fois le compte
+   AdSense approuvé, sans toucher au reste de ce système. */
+const ADSENSE_PUBLISHER_ID = 'ca-pub-7496094954152473'; // compte AdSense de Sidi Mohamed — annonces automatiques activées via le script dans <head>
+
+async function fetchActiveAd(placement){
+  try{
+    const res = await fetch(API_BASE + '/ads/active?placement=' + placement);
+    const data = await res.json();
+    return data.ad || null;
+  }catch(e){ return null; }
+}
+function adImgSrc(ad){
+  return ad.imageUrl.startsWith('http') ? ad.imageUrl : API_BASE.replace('/api','') + ad.imageUrl;
+}
+function trackAdClick(el){
+  const id = el.dataset.adId;
+  if(id) fetch(API_BASE + '/ads/' + id + '/click', {method:'POST'}).catch(()=>{});
+}
+async function loadSponsorBanner(){
+  const el = document.getElementById('sponsorBanner');
+  const ad = await fetchActiveAd('banner');
+  if(!ad || !ad.imageUrl){ el.classList.add('hidden'); return; }
+  el.href = ad.targetUrl || '#';
+  el.dataset.adId = ad.id;
+  document.getElementById('sponsorBannerImg').src = adImgSrc(ad);
+  document.getElementById('sponsorBannerName').textContent = ad.advertiserName;
+  el.classList.remove('hidden');
+  fetch(API_BASE + '/ads/' + ad.id + '/impression', {method:'POST'}).catch(()=>{});
+}
+function docSalesStats(){
+  const byTitle = {};
+  (walletData.sales||[]).forEach(s=>{
+    byTitle[s.title] = byTitle[s.title] || {ventes:0, revenue:0};
+    byTitle[s.title].ventes++;
+    byTitle[s.title].revenue += s.amount;
+  });
+  return byTitle;
+}
+function computeMonthlyEarnings(){
+  const now = new Date();
+  const buckets = [];
+  for(let i=5;i>=0;i--){
+    const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
+    buckets.push({label: d.toLocaleDateString('fr-FR',{month:'short'}), year:d.getFullYear(), month:d.getMonth(), total:0});
+  }
+  (walletData.sales||[]).forEach(s=>{
+    if(!s.confirmedAt) return;
+    const dt = new Date(s.confirmedAt.replace(' ','T')+'Z');
+    const b = buckets.find(x=>x.year===dt.getFullYear() && x.month===dt.getMonth());
+    if(b) b.total += s.amount;
+  });
+  return buckets;
+}
+function logout(){
+  authToken = null; currentUser = null;
+  localStorage.removeItem('khatam_token'); localStorage.removeItem('khatam_user');
+  goLanding();
+}
+
+/* ============================================================ STATE ============================================================ */
+function loadSet(key){ try{ return new Set(JSON.parse(localStorage.getItem(key)||'[]')); }catch(e){ return new Set(); } }
+function saveSet(key, set){ try{ localStorage.setItem(key, JSON.stringify([...set])); }catch(e){} }
+function loadArr(key){ try{ return JSON.parse(localStorage.getItem(key)||'[]'); }catch(e){ return []; } }
+function saveArr(key, arr){ try{ localStorage.setItem(key, JSON.stringify(arr)); }catch(e){} }
+
+let favorites = loadSet('khatam_favorites');
+let unlocked  = loadSet('khatam_unlocked');
+let aiHistory = loadArr('khatam_ai_history');
+let premiumActive = localStorage.getItem('khatam_premium') === '1'; // fonctionnalité d'abonnement — reste simulée, non couverte par le backend actuel
+let likedProfs = loadSet('khatam_liked_profs'); // suivi local (par navigateur) des professeurs déjà aimés, en plus du compteur réel côté serveur
+function isBoostActive(){ return !!(currentUser && currentUser.boostActiveUntil && new Date(currentUser.boostActiveUntil) > new Date()); }
+let pendingDoc = null;
+let pendingMethod = 'bankily';
+let pendingPurchaseId = null;
+let pendingAiDoc = null;
+let pendingAdDoc = null;
+let pendingPremiumPlan = {label:'Mensuel', price:500};
+
+/* ---- Appareil unique (démo) : un identifiant est généré une fois et associé au compte ---- */
+function getDeviceId(){
+  let id = localStorage.getItem('khatam_device_id');
+  if(!id){
+    id = 'APP-' + Math.random().toString(36).slice(2,6).toUpperCase() + '-' + Math.random().toString(36).slice(2,6).toUpperCase();
+    localStorage.setItem('khatam_device_id', id);
+  }
+  return id;
+}
+function getDeviceBoundSince(){
+  let ts = localStorage.getItem('khatam_device_since');
+  if(!ts){
+    ts = new Date().toLocaleDateString('fr-FR');
+    localStorage.setItem('khatam_device_since', ts);
+  }
+  return ts;
+}
+
+/* ============================================================ NAV ============================================================ */
+function showView(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0, behavior:'instant' in window ? 'instant' : 'auto'});
+}
+function goLanding(){ showView('view-landing'); }
+
+let authMode = 'login';
+let authRole = 'STUDENT';
+
+function openAuthModal(){
+  authMode = 'login'; authRole = 'STUDENT';
+  renderAuthModal();
+}
+function renderAuthModal(){
+  openModal(`
+    <div class="modal-pad">
+      <div class="modal-head">
+        <div><h3>${authMode==='login' ? 'Se connecter' : 'Créer un compte'}</h3><p class="modal-sub">Connecté au backend Khatam réel</p></div>
+        <button class="modal-close" onclick="closeModal()">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:18px;">
+        <button class="btn ${authMode==='login'?'btn-primary':'btn-ghost'} btn-sm" style="flex:1;" onclick="setAuthMode('login')">Connexion</button>
+        <button class="btn ${authMode==='signup'?'btn-primary':'btn-ghost'} btn-sm" style="flex:1;" onclick="setAuthMode('signup')">Inscription</button>
+      </div>
+      ${authMode==='signup' ? `
+      <div class="role-choice" style="margin-bottom:16px;">
+        <button class="role-opt student ${authRole==='STUDENT'?'selected':''}" onclick="setAuthRole('STUDENT')">
+          <span class="ric"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 14v7M5 21h14M12 3 2 8l10 5 10-5-10-5Z"/></svg></span>
+          <span><h4>Élève</h4></span>
+        </button>
+        <button class="role-opt professor ${authRole==='PROFESSOR'?'selected':''}" onclick="setAuthRole('PROFESSOR')">
+          <span class="ric"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6l-8-4Z"/></svg></span>
+          <span><h4>Professeur</h4></span>
+        </button>
+      </div>
+      <div class="field" style="margin-bottom:14px;"><label>Nom complet</label><input id="authName" placeholder="Votre nom"></div>
+      ` : ''}
+      <div class="field" style="margin-bottom:14px;"><label>Téléphone</label><input id="authPhone" type="tel" placeholder="22XXXXXXXX"></div>
+      <div class="field" style="margin-bottom:8px;"><label>Mot de passe</label><input id="authPassword" type="password" placeholder="••••••••"></div>
+      <p id="authError" class="hidden" style="color:#C0392B;font-size:12.5px;margin-bottom:10px;"></p>
+      <button class="btn btn-primary btn-block" id="authSubmitBtn" onclick="submitAuth()">${authMode==='login' ? 'Se connecter' : 'Créer mon compte'}</button>
+      <p style="font-size:11.5px;color:var(--ink-faint);margin-top:14px;">Comptes de démonstration (mot de passe demo1234) — professeur : 22200000001 · élève : 22211111111</p>
+    </div>
+  `);
+}
+function setAuthMode(m){ authMode = m; renderAuthModal(); }
+function setAuthRole(r){ authRole = r; renderAuthModal(); }
+
+async function submitAuth(){
+  const phoneEl = document.getElementById('authPhone');
+  const passEl = document.getElementById('authPassword');
+  const phone = phoneEl.value.trim();
+  const password = passEl.value;
+  const errEl = document.getElementById('authError');
+  errEl.classList.add('hidden');
+  const btn = document.getElementById('authSubmitBtn');
+  if(!phone || !password){ errEl.textContent = 'Téléphone et mot de passe requis.'; errEl.classList.remove('hidden'); return; }
+  btn.disabled = true; btn.textContent = 'Un instant…';
+  try{
+    let data;
+    if(authMode==='login'){
+      data = await apiPost('/auth/login', {phone, password, deviceId:getDeviceId(), deviceLabel:navigator.userAgent});
+    } else {
+      const fullName = document.getElementById('authName').value.trim();
+      if(!fullName) throw Object.assign(new Error('Le nom complet est requis.'), {status:400});
+      await apiPost('/auth/signup', {role:authRole, fullName, phone, password, serie:'C'});
+      data = await apiPost('/auth/login', {phone, password, deviceId:getDeviceId(), deviceLabel:navigator.userAgent});
+    }
+    authToken = data.token;
+    currentUser = data.user;
+    localStorage.setItem('khatam_token', authToken);
+    localStorage.setItem('khatam_user', JSON.stringify(currentUser));
+    closeModal();
+    await enterDashboard(currentUser.role==='STUDENT' ? 'student' : 'professor');
+  }catch(e){
+    btn.disabled = false; btn.textContent = authMode==='login' ? 'Se connecter' : 'Créer mon compte';
+    let msg = e.message;
+    if(e.status===409 && e.data && e.data.error==='DEVICE_MISMATCH') msg = 'Ce compte est déjà utilisé sur un autre téléphone. Un seul appareil est autorisé par compte.';
+    if(e.status===409 && e.data && e.data.error==='PHONE_TAKEN') msg = 'Ce numéro est déjà utilisé — connectez-vous plutôt.';
+    if(e.status===401) msg = 'Numéro ou mot de passe incorrect.';
+    errEl.textContent = msg;
+    errEl.classList.remove('hidden');
+  }
+}
+
+async function enterDashboard(role){
+  closeModal();
+  try{
+    await loadCatalog();
+  }catch(e){ showToast('Impossible de contacter le serveur Khatam : '+e.message); }
+  if(role==='student'){
+    renderDocGrid();
+    renderFavorites();
+    renderMine();
+    renderAiPanel();
+    renderPremiumBanner();
+    loadSponsorBanner();
+    showView('view-student');
+    enableTilts();
+  } else {
+    await loadWallet();
+    renderProfDashboard();
+    showView('view-professor');
+    enableTilts();
+  }
+}
+
+/* ============================================================ MODAL / TOAST ============================================================ */
+function openModal(html){
+  document.getElementById('modalBody').innerHTML = html;
+  document.getElementById('modalRoot').classList.remove('hidden');
+}
+let paymentPollActive = false;
+function closeModal(){
+  document.getElementById('modalRoot').classList.add('hidden');
+  document.getElementById('modalBody').innerHTML = '';
+  paymentPollActive = false;
+}
+let toastTimer=null;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.innerHTML = `<svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg><span>${msg}</span>`;
+  t.classList.remove('hidden');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.add('hidden'), 2600);
+}
+
+/* ============================================================ FORMAT ============================================================ */
+function fmtMRU(n){ return n===0 ? 'Gratuit' : n.toLocaleString('fr-FR') + ' MRU'; }
+function fmtAmount(n){ return n.toLocaleString('fr-FR') + ' MRU'; }
+function fmtNum(n){ return n.toLocaleString('fr-FR'); }
+
+/* ============================================================ STUDENT: FILTERS + GRID ============================================================ */
+function populateFilterOptions(){
+  const years = [...new Set(CATALOG.map(d=>d.annee))].sort((a,b)=>b-a);
+  const sel = document.getElementById('fAnnee');
+  years.forEach(y=>{ const o=document.createElement('option'); o.value=y; o.textContent=y; sel.appendChild(o); });
+  const matieres = [...new Set(CATALOG.map(d=>d.matiere))].sort();
+  const selM = document.getElementById('fMatiere');
+  matieres.forEach(m=>{ const o=document.createElement('option'); o.value=m; o.textContent=m; selM.appendChild(o); });
+}
+
+function sortCatalogForDisplay(list){
+  return [...list].sort((a,b)=>{
+    if(a.professorBoosted!==b.professorBoosted) return (b.professorBoosted?1:0)-(a.professorBoosted?1:0);
+    return (b.professorLikes||0) - (a.professorLikes||0);
+  });
+}
+async function toggleLikeProf(professorId){
+  try{
+    await apiPost('/professors/'+professorId+'/like', {});
+    if(likedProfs.has(professorId)) likedProfs.delete(professorId); else likedProfs.add(professorId);
+    saveSet('khatam_liked_profs', likedProfs);
+    await loadCatalog();
+    applyFilters(); renderFavorites(); renderMine();
+  }catch(e){ showToast('Erreur : '+e.message); }
+}
+
+function applyFilters(){
+  const q = document.getElementById('fSearch').value.trim().toLowerCase();
+  const type = document.getElementById('fType').value;
+  const annee = document.getElementById('fAnnee').value;
+  const matiere = document.getElementById('fMatiere').value;
+  const filtered = CATALOG.filter(d=>{
+    if(type!=='all' && d.type!==type) return false;
+    if(annee!=='all' && String(d.annee)!==annee) return false;
+    if(matiere!=='all' && d.matiere!==matiere) return false;
+    if(q && !(d.title.toLowerCase().includes(q) || d.matiere.toLowerCase().includes(q))) return false;
+    return true;
+  });
+  renderDocGrid(filtered);
+}
+function resetFilters(){
+  document.getElementById('fSearch').value='';
+  document.getElementById('fType').value='all';
+  document.getElementById('fAnnee').value='all';
+  document.getElementById('fMatiere').value='all';
+  renderDocGrid();
+}
+
+function docCardHTML(d){
+  const isFav = favorites.has(d.id);
+  const isUnlocked = d.free || d.unlocked || unlocked.has(d.id) || (premiumActive && d.prix>0);
+  const isBoosted = !!d.professorBoosted;
+  const liked = likedProfs.has(d.professorId);
+  const tm = TYPE_META[d.type];
+  let footHTML;
+  if(isUnlocked){
+    footHTML = `<span class="unlocked-tag"><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>${d.free?'Gratuit':'Débloqué'}</span><div class="dc-actions"><button class="btn btn-ghost btn-sm" onclick="openSecureViewer('${d.id}')">Ouvrir</button>${d.aiGrading ? `<button class="btn btn-primary btn-sm" onclick="openAiModal('${d.id}')">Corriger IA</button>` : ''}</div>`;
+  } else if(d.adUnlock){
+    footHTML = `<span class="dc-price">${fmtMRU(d.prix)}</span><div class="dc-actions"><button class="btn btn-ghost btn-sm" onclick="openPreview('${d.id}')">Aperçu</button><button class="btn btn-gold btn-sm" onclick="openAdGateModal('${d.id}')">Voir une pub</button><button class="btn btn-primary btn-sm" onclick="openPaymentModal('${d.id}')">Débloquer</button></div>`;
+  } else {
+    footHTML = `<span class="dc-price">${fmtMRU(d.prix)}</span><div class="dc-actions"><button class="btn btn-ghost btn-sm" onclick="openPreview('${d.id}')">Aperçu</button><button class="btn btn-primary btn-sm" onclick="openPaymentModal('${d.id}')">Débloquer</button></div>`;
+  }
+  return `
+  <div class="doc-card2 tilt">
+    <div class="dc-top">
+      <div class="dc-badges">
+        <span class="badge">${tm.icon}${tm.label}</span>
+        ${d.free ? '<span class="badge free">Gratuit</span>' : ''}
+        ${d.aiGrading ? '<span class="badge ia">✨ IA</span>' : ''}
+        ${d.adUnlock ? '<span class="badge">📺 Pub possible</span>' : ''}
+        ${isBoosted ? '<span class="badge boost">🚀 Mis en avant</span>' : ''}
+      </div>
+      <button class="fav-btn ${isFav?'active':''}" onclick="toggleFavorite('${d.id}')" aria-label="Favori">
+        <svg class="icon icon-sm" viewBox="0 0 24 24" fill="${isFav?'currentColor':'none'}" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg>
+      </button>
+    </div>
+    <div class="dc-title">${d.title}</div>
+    <div class="dc-meta"><span>${d.matiere}</span><span>·</span><span>Session ${d.annee}</span></div>
+    <div class="dc-prof-row">
+      <div class="dc-prof">
+        <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6l-8-4Z"/></svg>
+        ${d.prof}
+      </div>
+      <button class="like-btn ${liked?'active':''}" onclick="toggleLikeProf('${d.professorId}')" aria-label="Aimer ce professeur">
+        <svg class="icon icon-sm" viewBox="0 0 24 24" fill="${liked?'currentColor':'none'}" stroke="currentColor" stroke-width="2"><path d="M7 22V11M2 13v7a2 2 0 0 0 2 2h11.5a2 2 0 0 0 2-1.6l1.3-6A2 2 0 0 0 16.8 12H13V6a2 2 0 0 0-4 0v1.5L7 11"/></svg>
+        <span class="num">${d.professorLikes||0}</span>
+      </button>
+    </div>
+    <div class="dc-foot">
+      ${footHTML}
+    </div>
+  </div>`;
+}
+
+function renderDocGrid(list){
+  const data = sortCatalogForDisplay(list || CATALOG);
+  const grid = document.getElementById('docGrid');
+  grid.innerHTML = data.length ? data.map(docCardHTML).join('') : emptyStateHTML('Aucun document trouvé', "Essayez d'autres filtres ou réinitialisez la recherche.");
+  enableTilts();
+}
+function renderFavorites(){
+  const data = sortCatalogForDisplay(CATALOG.filter(d=>favorites.has(d.id)));
+  document.getElementById('favGrid').innerHTML = data.length ? data.map(docCardHTML).join('') : emptyStateHTML('Aucun favori pour le moment', "Cliquez sur le cœur d'un document pour le retrouver ici.");
+  document.getElementById('favCount').textContent = favorites.size;
+  enableTilts();
+}
+function renderMine(){
+  const data = sortCatalogForDisplay(CATALOG.filter(d=>d.free || d.unlocked || unlocked.has(d.id)));
+  document.getElementById('mineGrid').innerHTML = data.length ? data.map(docCardHTML).join('') : emptyStateHTML('Aucun document débloqué', 'Les documents gratuits et achetés apparaîtront ici.');
+  document.getElementById('mineCount').textContent = CATALOG.filter(d=>(d.unlocked || unlocked.has(d.id)) && !d.free).length;
+  enableTilts();
+}
+function emptyStateHTML(title, sub){
+  return `<div class="empty-state" style="grid-column:1/-1;">
+    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+    <h3>${title}</h3><p>${sub}</p>
+  </div>`;
+}
+
+function toggleFavorite(id){
+  if(favorites.has(id)) favorites.delete(id); else favorites.add(id);
+  saveSet('khatam_favorites', favorites);
+  applyFilters(); renderFavorites(); renderMine();
+}
+
+function setStudentTab(tab){
+  document.querySelectorAll('[data-stab]').forEach(b=>b.classList.toggle('active', b.dataset.stab===tab));
+  document.getElementById('student-browse-panel').classList.toggle('hidden', tab!=='browse');
+  document.getElementById('student-ai-panel').classList.toggle('hidden', tab!=='ai');
+  document.getElementById('student-favorites-panel').classList.toggle('hidden', tab!=='favorites');
+  document.getElementById('student-mine-panel').classList.toggle('hidden', tab!=='mine');
+  const titles = {
+    browse:['Parcourir les documents','Série C — sujets, cours, exercices, vidéos et corrections vérifiées'],
+    ai:['Correction IA','Soumettez votre copie et recevez une note détaillée'],
+    favorites:['Mes favoris','Documents que vous avez enregistrés pour plus tard'],
+    mine:['Mes documents','Sujets gratuits et corrections débloquées']
+  };
+  document.getElementById('studentTitle').textContent = titles[tab][0];
+  document.getElementById('studentSub').textContent = titles[tab][1];
+  if(tab==='favorites') renderFavorites();
+  if(tab==='mine') renderMine();
+  if(tab==='ai') renderAiPanel();
+}
+
+/* ============================================================ PREVIEW ============================================================ */
+function openPreview(id){
+  const d = CATALOG.find(x=>x.id===id);
+  openModal(`
+    <div class="modal-pad">
+      <div class="modal-head">
+        <div><h3>Aperçu</h3><p class="modal-sub">${d.title}</p></div>
+        <button class="modal-close" onclick="closeModal()"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="doc-card" style="transform:none;padding:20px;">
+        <div class="doc-lines"><span></span><span></span><span></span><span style="width:40%"></span></div>
+        <p style="font-size:12px;color:var(--ink-faint);margin-top:14px;">Aperçu limité à la première page — démonstration.</p>
+      </div>
+      <button class="btn btn-primary btn-block" style="margin-top:18px;" onclick="closeModal();openPaymentModal('${d.id}')">Débloquer le document complet — ${fmtMRU(d.prix)}</button>
+    </div>
+  `);
+}
+
+/* ============================================================ PAYMENT FLOW ============================================================ */
+function openPaymentModal(id){
+  pendingDoc = CATALOG.find(x=>x.id===id);
+  pendingMethod = 'bankily';
+  renderPaymentStep1();
+}
+function renderPaymentStep1(){
+  const d = pendingDoc;
+  const tm = TYPE_META[d.type];
+  openModal(`
+    <div class="modal-pad">
+      <div class="modal-head">
+        <div><h3>Débloquer le document</h3><p class="modal-sub">Paiement mobile sécurisé</p></div>
+        <button class="modal-close" onclick="closeModal()"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="doc-summary">
+        <span class="dsi">${tm.icon}</span>
+        <div>
+          <h4>${d.title}</h4>
+          <div style="font-size:12px;color:var(--ink-muted);">${tm.label} · Session ${d.annee}</div>
+          <div class="price">${fmtMRU(d.prix)}</div>
+        </div>
+      </div>
+      <div class="pay-methods" id="payMethods">
+        ${payMethodRow('bankily','Bankily','Attijari Bank Mauritanie','#0F6E5C','BK')}
+        ${payMethodRow('masrivi','Masrivi','BCM Mauritanie','#B4842A','MV')}
+        ${payMethodRow('sedad','Sedad','Portefeuille mobile national','#4A5A8F','SD')}
+      </div>
+      <p style="font-size:12px;color:var(--ink-muted);margin:0 0 16px;">À l'étape suivante, on vous donnera le numéro exact sur lequel envoyer l'argent.</p>
+      <button class="btn btn-primary btn-block" onclick="startPayment()">Continuer — ${fmtMRU(d.prix)}</button>
+    </div>
+  `);
+}
+function payMethodRow(key,name,sub,color,initials){
+  const sel = key===pendingMethod ? 'selected' : '';
+  return `<div class="pay-method ${sel}" onclick="selectMethod('${key}')">
+    <span class="gb" style="background:${color};">${initials}</span>
+    <div><h5>${name}</h5><p>${sub}</p></div>
+  </div>`;
+}
+function selectMethod(key){
+  pendingMethod = key;
+  document.getElementById('payMethods').innerHTML = `
+    ${payMethodRow('bankily','Bankily','Attijari Bank Mauritanie','#0F6E5C','BK')}
+    ${payMethodRow('masrivi','Masrivi','BCM Mauritanie','#B4842A','MV')}
+    ${payMethodRow('sedad','Sedad','Portefeuille mobile national','#4A5A8F','SD')}
+  `;
+}
+// Paiement réel : Bankily/Masrivi/Sedad n'ont pas d'API en libre-service (voir
+// README du backend, §4). L'élève paie donc directement sur son téléphone, en
+// dehors du site, au numéro affiché ci-dessous, puis colle ici le numéro de
+// reçu que son application lui donne. Le document ne se débloque qu'une fois
+// qu'un administrateur a vérifié et confirmé la réception de l'argent
+// (panneau d'administration) — jamais automatiquement depuis ce navigateur.
+async function startPayment(){
+  const doc = pendingDoc;
+  const methodNames = {bankily:'Bankily', masrivi:'Masrivi', sedad:'Sedad'};
+  openModal(`<div class="modal-pad"><div class="pay-status"><div class="spin"></div><h4>Un instant…</h4></div></div>`);
+  try{
+    const init = await apiPost('/payments/initiate', {documentId: doc.id, method: pendingMethod});
+    pendingPurchaseId = init.purchaseId;
+    openModal(`
+      <div class="modal-pad">
+        <div class="modal-head">
+          <div><h3>Envoyez l'argent</h3><p class="modal-sub">Paiement ${methodNames[pendingMethod]}</p></div>
+          <button class="modal-close" onclick="closeModal()"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+        </div>
+        <div class="doc-summary">
+          <div>
+            <p style="font-size:13px;margin:0 0 6px;">1. Ouvrez votre application <b>${methodNames[pendingMethod]}</b> et envoyez :</p>
+            <div class="price">${fmtMRU(init.amount)}</div>
+            <p style="font-size:12px;color:var(--ink-muted);margin:6px 0 0;">Au numéro</p>
+            <div class="proof-num" style="color:var(--accent-strong);font-size:20px;">${init.payTo}</div>
+          </div>
+        </div>
+        <p style="font-size:13px;margin:14px 0 8px;">2. Collez ici le <b>numéro de reçu</b> donné par votre application après l'envoi :</p>
+        <div class="field" style="margin-bottom:16px;">
+          <label>Numéro de reçu / référence</label>
+          <input type="text" id="payRef" placeholder="Ex. TXN123456">
+        </div>
+        <button class="btn btn-primary btn-block" onclick="submitPaymentReference()">J'ai payé — envoyer le reçu</button>
+      </div>
+    `);
+  }catch(e){
+    openModal(`
+      <div class="modal-pad">
+        <div class="pay-status"><h4>Impossible de démarrer le paiement</h4><p>${e.message}</p></div>
+        <button class="btn btn-primary btn-block" style="margin-top:14px;" onclick="closeModal()">Fermer</button>
+      </div>
+    `);
+  }
+}
+async function submitPaymentReference(){
+  const ref = (document.getElementById('payRef').value || '').trim();
+  if(!ref){ showToast('Entrez le numéro de reçu de votre paiement.'); return; }
+  const doc = pendingDoc;
+  openModal(`<div class="modal-pad"><div class="pay-status"><div class="spin"></div><h4>Envoi…</h4></div></div>`);
+  try{
+    await apiPost(`/payments/${pendingPurchaseId}/submit-reference`, {reference: ref});
+    openModal(`
+      <div class="modal-pad">
+        <div class="pay-status">
+          <div class="spin"></div>
+          <h4>En attente de vérification</h4>
+          <p>Votre reçu (${ref}) a été transmis. Un administrateur vérifie la réception de l'argent — ça prend généralement quelques minutes. Vous pouvez fermer cette fenêtre, le document se débloquera automatiquement.</p>
+        </div>
+        <button class="btn btn-block" style="margin-top:14px;" onclick="closeModal()">Fermer et continuer</button>
+      </div>
+    `);
+    pollPaymentStatus(pendingPurchaseId, doc.id);
+  }catch(e){
+    showToast('Erreur : ' + e.message);
+  }
+}
+async function pollPaymentStatus(purchaseId, docId){
+  paymentPollActive = true;
+  const doc = CATALOG.find(x=>x.id===docId) || pendingDoc;
+  for(let i=0; i<45 && paymentPollActive; i++){
+    await new Promise(r=>setTimeout(r, 4000));
+    if(!paymentPollActive) return;
+    try{
+      const res = await apiGet(`/payments/${purchaseId}/status`);
+      if(res.purchase.status === 'confirmed'){
+        unlocked.add(docId);
+        saveSet('khatam_unlocked', unlocked);
+        await loadCatalog();
+        applyFilters(); renderFavorites(); renderMine(); renderAiPanel();
+        showToast(`${doc ? doc.title : 'Document'} débloqué — paiement confirmé.`);
+        return;
+      }
+      if(res.purchase.status === 'failed'){
+        showToast('Paiement refusé — vérifiez le numéro de reçu ou contactez le support.');
+        return;
+      }
+    }catch(e){ /* on continue d'essayer silencieusement */ }
+  }
+}
+
+/* ============================================================ VISIONNEUSE SÉCURISÉE (anti-fuite) ============================================================ */
+async function openSecureViewer(id){
+  const d = CATALOG.find(x=>x.id===id);
+  openModal(`
+    <div class="modal-pad" style="max-width:640px;">
+      <div class="modal-head">
+        <div><h3>Visionneuse sécurisée</h3><p class="modal-sub">${d.title}</p></div>
+        <button class="modal-close" onclick="closeModal()"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="secure-banner">
+        <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+        <span>Document protégé — servi par le serveur avec un filigrane à votre nom, aucun fichier brut téléchargeable.</span>
+      </div>
+      <div id="secureViewerBody" style="min-height:220px;display:flex;align-items:center;justify-content:center;" oncontextmenu="event.preventDefault();showToast('Clic droit désactivé sur les documents Khatam');return false;">
+        <div class="spin"></div>
+      </div>
+      <p style="font-size:11.5px;color:var(--ink-faint);margin-top:12px;">Le capture d'écran et l'enregistrement vidéo ne peuvent techniquement être bloqués sur aucune plateforme web — mais toute copie diffusée reste identifiable grâce au filigrane appliqué ci-dessus, propre à votre compte.</p>
+    </div>
+  `);
+  try{
+    const blob = await apiFetchBlob('/documents/'+id+'/view');
+    const url = URL.createObjectURL(blob);
+    const body = document.getElementById('secureViewerBody');
+    if(body){
+      body.outerHTML = `<iframe id="secureViewerBody" src="${url}" style="width:100%;height:60vh;border:1px solid var(--line);border-radius:12px;background:#fff;" oncontextmenu="return false;"></iframe>`;
+    }
+  }catch(e){
+    const body = document.getElementById('secureViewerBody');
+    if(body) body.innerHTML = `<p style="color:#C0392B;font-size:13px;text-align:center;">Impossible d'ouvrir ce document : ${e.message}</p>`;
+  }
+}
+
+/* ============================================================ DÉBLOCAGE PAR PUBLICITÉ (examens & TD) ============================================================
+   Affiche une vraie annonce d'un annonceur local si une est active pour
+   l'emplacement "ad-gate" (gérée depuis admin.html). À défaut, et si un
+   compte Google AdSense est configuré (ADSENSE_PUBLISHER_ID), on pourrait
+   y afficher un bloc AdSense à la place — non activé tant qu'aucun compte
+   n'existe. En dernier recours, un message neutre reste affiché : le
+   décompte et le déblocage restent réels dans tous les cas. */
+async function openAdGateModal(id){
+  pendingAdDoc = CATALOG.find(x=>x.id===id);
+  let seconds = 5;
+  const ad = await fetchActiveAd('ad-gate');
+  const adBlock = ad && ad.imageUrl
+    ? `<a href="${ad.targetUrl||'#'}" target="_blank" rel="noopener" data-ad-id="${ad.id}" onclick="trackAdClick(this)" style="display:block;">
+         <img src="${adImgSrc(ad)}" alt="${ad.advertiserName}" style="width:100%;max-height:180px;object-fit:cover;border-radius:var(--radius-m);">
+         <div style="text-align:center;font-size:11px;color:var(--ink-faint);margin-top:6px;">Annonce · ${ad.advertiserName}</div>
+       </a>`
+    : `<div class="ad-frame"><div class="ad-fake">
+         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="m10 9 5 3-5 3Z"/></svg>
+         <span>Espace publicitaire — devenez annonceur sur Khatam</span>
+       </div></div>`;
+  if(ad) fetch(API_BASE + '/ads/' + ad.id + '/impression', {method:'POST'}).catch(()=>{});
+  openModal(`
+    <div class="modal-pad">
+      <div class="modal-head">
+        <div><h3>Publicité</h3><p class="modal-sub">${pendingAdDoc.title}</p></div>
+      </div>
+      ${adBlock}
+      <div class="ad-progress"><div class="ad-progress-bar" id="adProgressBar"></div></div>
+      <p id="adCountdown" style="text-align:center;font-size:13px;color:var(--ink-muted);margin-top:12px;">Déblocage dans ${seconds}s…</p>
+    </div>
+  `);
+  document.getElementById('adProgressBar').style.animation = 'adFill 5s linear forwards';
+  const timer = setInterval(async ()=>{
+    seconds -= 1;
+    const el = document.getElementById('adCountdown');
+    if(!el){ clearInterval(timer); return; }
+    if(seconds<=0){
+      clearInterval(timer);
+      try{
+        await apiPost('/documents/'+pendingAdDoc.id+'/ad-unlock', {watchedMs: 5000});
+        unlocked.add(pendingAdDoc.id);
+        saveSet('khatam_unlocked', unlocked);
+        await loadCatalog();
+        openModal(`
+          <div class="modal-pad">
+            <div class="pay-status">
+              <div class="check"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg></div>
+              <h4>Document débloqué</h4>
+              <p>${pendingAdDoc.title} est maintenant débloqué gratuitement grâce à la publicité.</p>
+            </div>
+            <button class="btn btn-primary btn-block" style="margin-top:14px;" onclick="closeModal();openSecureViewer('${pendingAdDoc.id}')">Ouvrir la visionneuse sécurisée</button>
+          </div>
+        `);
+        applyFilters(); renderFavorites(); renderMine(); renderAiPanel();
+      }catch(e){
+        openModal(`<div class="modal-pad"><div class="pay-status"><h4>Erreur</h4><p>${e.message}</p></div><button class="btn btn-primary btn-block" style="margin-top:14px;" onclick="closeModal()">Fermer</button></div>`);
+      }
+    } else {
+      el.textContent = `Déblocage dans ${seconds}s…`;
+    }
+  }, 1000);
+}
+
+/* ============================================================ SÉCURITÉ DU COMPTE (appareil unique — réellement appliqué côté serveur) ============================================================ */
+function openSecurityModal(){
+  const id = getDeviceId();
+  const since = (currentUser && currentUser.deviceBoundAt) ? currentUser.deviceBoundAt : getDeviceBoundSince();
+  openModal(`
+    <div class="modal-pad" id="securityModalBody">
+      <div class="modal-head">
+        <div><h3>Sécurité du compte</h3><p class="modal-sub">Un compte Khatam = un seul appareil</p></div>
+        <button class="modal-close" onclick="closeModal()"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="doc-summary">
+        <span class="dsi"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+        <div>
+          <h4>Appareil autorisé</h4>
+          <div style="font-size:12px;color:var(--ink-muted);">Associé le ${since}</div>
+          <div class="price num" style="font-size:13px;">${id}</div>
+        </div>
+      </div>
+      <p style="font-size:13px;color:var(--ink-muted);margin-bottom:16px;">Votre compte ne peut être ouvert que sur cet appareil : le serveur refuse toute connexion envoyée avec un autre identifiant d'appareil, y compris pour se reconnecter avec le même numéro depuis un autre téléphone.</p>
+      <button class="btn btn-ghost btn-block" onclick="simulateOtherDevice()">Voir à quoi ressemblerait un autre appareil (illustration)</button>
+    </div>
+  `);
+}
+function simulateOtherDevice(){
+  document.getElementById('securityModalBody').innerHTML = `
+    <div class="modal-head">
+      <div><h3>Connexion refusée</h3><p class="modal-sub">Compte déjà actif ailleurs</p></div>
+      <button class="modal-close" onclick="closeModal()"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="pay-status">
+      <div class="ai-score-ring low" style="margin:0 auto 14px;">✕</div>
+      <h4>409 DEVICE_MISMATCH</h4>
+      <p>C'est la réponse exacte que renverrait le serveur à un autre téléphone tentant de se connecter à ce compte. Un seul appareil est autorisé à la fois.</p>
+    </div>
+    <button class="btn btn-primary btn-block" style="margin-top:14px;" onclick="openSecurityModal()">Revenir à mon appareil</button>
+  `;
+}
+
+/* ============================================================ AI GRADING (student side) ============================================================ */
+function renderAiPanel(){
+  const eligible = CATALOG.filter(d=>d.aiGrading && (d.free || d.unlocked || unlocked.has(d.id) || premiumActive));
+  const locked = CATALOG.filter(d=>d.aiGrading && !(d.free || d.unlocked || unlocked.has(d.id) || premiumActive));
+  let html = '';
+  eligible.forEach(d=>{
+    html += `<div class="ai-doc-row">
+      <div><h4>${d.title}</h4><p>${d.matiere} · Session ${d.annee} · ${d.prof}</p></div>
+      <button class="btn btn-primary btn-sm" onclick="openAiModal('${d.id}')">Soumettre ma copie</button>
+    </div>`;
+  });
+  locked.forEach(d=>{
+    html += `<div class="ai-doc-row" style="opacity:.6;">
+      <div><h4>${d.title}</h4><p>${d.matiere} · Débloquez ce corrigé pour activer la correction IA</p></div>
+      <button class="btn btn-ghost btn-sm" onclick="openPaymentModal('${d.id}')">Débloquer</button>
+    </div>`;
+  });
+  document.getElementById('aiEligibleList').innerHTML = html || emptyStateHTML('Aucun corrigé éligible', 'Débloquez un corrigé avec correction IA pour commencer.');
+  renderAiHistory();
+}
+function renderAiHistory(){
+  const el = document.getElementById('aiHistoryList');
+  if(!aiHistory.length){ el.innerHTML = "<p style=\"font-size:13px;color:var(--ink-muted);\">Vous n'avez pas encore soumis de copie.</p>"; return; }
+  el.innerHTML = aiHistory.map(h=>{
+    const cls = h.score>=14?'':(h.score>=10?'mid':'low');
+    return `<div class="ai-history-item"><span>${h.doc}</span><span class="num" style="font-weight:700;">${h.score}/20 · ${h.date}</span></div>`;
+  }).join('');
+}
+function openAiModal(id){
+  const d = CATALOG.find(x=>x.id===id);
+  pendingAiDoc = d;
+  openModal(`
+    <div class="modal-pad">
+      <div class="modal-head">
+        <div><h3>Correction par IA</h3><p class="modal-sub">${d.title}</p></div>
+        <button class="modal-close" onclick="closeModal()"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <p style="font-size:13px;color:var(--ink-muted);margin-bottom:16px;">L'IA compare votre réponse au corrigé publié par ${d.prof} et vous attribue une note sur 20 avec des remarques détaillées.</p>
+      <div class="field" style="margin-bottom:12px;">
+        <label>Votre réponse</label>
+        <textarea id="aiAnswer" rows="5" placeholder="Collez ou décrivez votre réponse ici…"></textarea>
+      </div>
+      <button class="btn btn-primary btn-block" onclick="submitToAi()">Faire corriger par l'IA</button>
+      <p style="font-size:11px;color:var(--ink-faint);margin-top:10px;">Note calculée par le backend réel (encore un modèle heuristique simple pour l'instant — un vrai modèle de langage lisant le corrigé du professeur est la prochaine étape, voir le README du backend).</p>
+    </div>
+  `);
+}
+async function submitToAi(){
+  const d = pendingAiDoc;
+  const answerText = document.getElementById('aiAnswer').value.trim();
+  if(answerText.length < 10){ showToast('Réponse trop courte (10 caractères minimum).'); return; }
+  openModal(`
+    <div class="modal-pad">
+      <div class="pay-status">
+        <div class="spin" style="border-top-color:var(--gold);"></div>
+        <h4>L'IA analyse votre copie…</h4>
+        <p>Comparaison avec le corrigé de ${d.prof}</p>
+      </div>
+    </div>
+  `);
+  try{
+    const res = await apiPost('/documents/'+d.id+'/ai-grade', {answerText});
+    const score = res.submission.note;
+    const ringCls = score>=14 ? '' : (score>=10 ? 'mid' : 'low');
+    aiHistory.unshift({doc:d.title, score, date:new Date().toLocaleDateString('fr-FR')});
+    saveArr('khatam_ai_history', aiHistory);
+    openModal(`
+      <div class="modal-pad">
+        <div class="modal-head">
+          <div><h3>Résultat de la correction</h3><p class="modal-sub">${d.title}</p></div>
+          <button class="modal-close" onclick="closeModal()"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:6px;">
+          <div class="ai-score-ring ${ringCls}">${score}/20</div>
+          <p style="font-size:13px;color:var(--ink-muted);">${res.submission.feedback}</p>
+        </div>
+        <button class="btn btn-primary btn-block" style="margin-top:18px;" onclick="closeModal();openPreview('${d.id}')">Revoir le corrigé du professeur</button>
+      </div>
+    `);
+    renderAiPanel();
+  }catch(e){
+    openModal(`<div class="modal-pad"><div class="pay-status"><h4>Erreur</h4><p>${e.message}</p></div><button class="btn btn-primary btn-block" style="margin-top:14px;" onclick="closeModal()">Fermer</button></div>`);
+  }
+}
+
+/* ============================================================ PREMIUM (student subscription) ============================================================ */
+function renderPremiumBanner(){
+  const banner = document.getElementById('premiumBanner');
+  if(!banner) return;
+  banner.classList.toggle('active', premiumActive);
+  document.getElementById('pbTitle').textContent = premiumActive ? 'Premium actif' : 'Passez Premium';
+  document.getElementById('pbSub').textContent = premiumActive ? 'Accès illimité à toute la Série C + corrections IA illimitées' : 'Accès illimité à toute la Série C + corrections IA illimitées';
+  document.getElementById('pbBtn').textContent = premiumActive ? 'Gérer mon abonnement' : 'Découvrir — dès 500 MRU/mois';
+}
+function openPremiumModal(){
+  openModal(`
+    <div class="modal-pad">
+      <div class="modal-head">
+        <div><h3>Khatam Premium</h3><p class="modal-sub">Accès illimité + corrections IA illimitées</p></div>
+        <button class="modal-close" onclick="closeModal()"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="pay-methods" id="premiumPlans">
+        ${premiumPlanRow('Mensuel', 500, 'Renouvelé chaque mois')}
+        ${premiumPlanRow('Spécial Bac', 2500, "Valable jusqu'à la session du Bac")}
+      </div>
+      <div class="field" style="margin-bottom:16px;">
+        <label>Numéro de téléphone</label>
+        <input type="tel" id="premiumPhone" placeholder="22 XX XX XX" value="22 45 67 89">
+      </div>
+      <button class="btn btn-gold btn-block" onclick="startPremium()">S'abonner — ${fmtAmount(pendingPremiumPlan.price)}</button>
+    </div>
+  `);
+}
+function premiumPlanRow(label, price, sub){
+  const sel = label===pendingPremiumPlan.label ? 'selected' : '';
+  return `<div class="pay-method ${sel}" onclick="selectPremiumPlan('${label}', ${price})">
+    <span class="gb" style="background:var(--gold);">${fmtAmount(price)}</span>
+    <div><h5>${label}</h5><p>${sub}</p></div>
+  </div>`;
+}
+function selectPremiumPlan(label, price){
+  pendingPremiumPlan = {label, price};
+  openPremiumModal();
+}
+function startPremium(){
+  const phone = document.getElementById('premiumPhone').value || '22 XX XX XX';
+  openModal(`<div class="modal-pad"><div class="pay-status"><div class="spin"></div><h4>En attente de confirmation</h4><p>Notification envoyée pour l'abonnement ${pendingPremiumPlan.label} (${fmtAmount(pendingPremiumPlan.price)}) au ${phone}…</p></div></div>`);
+  setTimeout(()=>{
+    premiumActive = true;
+    localStorage.setItem('khatam_premium', '1');
+    openModal(`<div class="modal-pad"><div class="pay-status"><div class="check"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg></div><h4>Premium activé</h4><p>Vous avez maintenant accès à tous les documents Série C et aux corrections IA illimitées.</p></div><button class="btn btn-primary btn-block" style="margin-top:14px;" onclick="closeModal()">Fermer</button></div>`);
+    renderPremiumBanner();
+    applyFilters(); renderFavorites(); renderMine(); renderAiPanel();
+    showToast('Abonnement Premium activé');
+  }, 1700);
+}
+
+/* ============================================================ PROFESSOR DASHBOARD ============================================================ */
+function renderProfDashboard(){
+  const stats = docSalesStats();
+  const balance = walletData.balance || 0;
+  const withdrawn = walletData.withdrawn || 0;
+  const buckets = computeMonthlyEarnings();
+
+  document.getElementById('statBalance').textContent = fmtAmount(balance);
+  document.getElementById('statMonth').textContent = fmtAmount(buckets[buckets.length-1].total);
+  document.getElementById('statDocs').textContent = MY_DOCS.length;
+  document.getElementById('statDocsSub').textContent = MY_DOCS.filter(d=>d.statut==='publie').length + ' publiés';
+  document.getElementById('statAiCount').textContent = fmtNum(PROF_AI_SUBMISSIONS.length);
+  document.getElementById('profDocCount').textContent = MY_DOCS.length;
+  document.getElementById('walletBalance').textContent = fmtAmount(balance);
+  document.getElementById('walletWithdrawn').textContent = fmtAmount(withdrawn);
+
+  const total6mo = buckets.reduce((a,b)=>a+b.total,0);
+  document.getElementById('chartTotal').textContent = fmtAmount(total6mo) + ' sur 6 mois';
+  const max = Math.max(1, ...buckets.map(b=>b.total));
+  document.getElementById('earningsChart').innerHTML = buckets.map(b=>`
+    <div class="bar-col">
+      <div class="bar-tooltip">${fmtAmount(b.total)}</div>
+      <div class="bar" style="height:${Math.round((b.total/max)*100)}%;"></div>
+      <div class="bar-month">${b.label}</div>
+    </div>
+  `).join('');
+
+  const withStats = MY_DOCS.map(d=>Object.assign({}, d, stats[d.title] || {ventes:0, revenue:0}));
+  const topSorted = [...withStats].sort((a,b)=>b.ventes-a.ventes);
+  document.getElementById('topDocsBody').innerHTML = topSorted.length ? topSorted.map(d=>`
+    <tr>
+      <td><div class="row-title">${d.title}</div></td>
+      <td>${TYPE_META[d.type].label}</td>
+      <td class="num">${fmtNum(d.views)}</td>
+      <td class="num">${fmtNum(d.ventes)}</td>
+      <td class="num">${fmtAmount(d.revenue)}</td>
+    </tr>
+  `).join('') : '<tr><td colspan="5"><div class="empty-state" style="padding:34px 10px;"><p>Aucune vente pour le moment.</p></div></td></tr>';
+
+  document.getElementById('allDocsBody').innerHTML = withStats.length ? withStats.map(d=>`
+    <tr>
+      <td><div class="row-title">${d.title}</div><div class="row-sub">${d.aiGrading ? 'Correction IA activée' : 'Publié par vous'}</div></td>
+      <td>${TYPE_META[d.type].label}</td>
+      <td class="num">${fmtMRU(d.prix)}</td>
+      <td class="num">${fmtNum(d.views)}</td>
+      <td class="num">${fmtNum(d.ventes)}</td>
+      <td class="num">${fmtAmount(d.revenue)}</td>
+      <td><span class="status-chip ${d.statut==='publie'?'good':'warn'}">${d.statut==='publie'?'Publié':d.statut}</span></td>
+    </tr>
+  `).join('') : '<tr><td colspan="7"><div class="empty-state" style="padding:34px 10px;"><p>Aucun document publié pour le moment.</p></div></td></tr>';
+
+  document.getElementById('aiSubmissionsBody').innerHTML = PROF_AI_SUBMISSIONS.map(s=>`
+    <tr>
+      <td>${s.student}</td>
+      <td>${s.doc}</td>
+      <td class="num" style="font-weight:700;">${s.note}/20</td>
+      <td>${s.date}</td>
+    </tr>
+  `).join('');
+
+  const boosted = isBoostActive();
+  document.getElementById('boostBtn').disabled = boosted;
+  document.getElementById('boostBtn').textContent = boosted ? 'Boost actif' : 'Activer le Boost — 500 MRU';
+
+  renderWithdrawTable();
+}
+
+function setProfTab(tab){
+  document.querySelectorAll('[data-ptab]').forEach(b=>b.classList.toggle('active', b.dataset.ptab===tab));
+  ['overview','documents','upload','wallet'].forEach(t=>{
+    document.getElementById('prof-'+t+'-panel').classList.toggle('hidden', t!==tab);
+  });
+  const profLabel = currentUser ? (currentUser.fullName + (currentUser.matieres ? ' · '+currentUser.matieres : '') + ' · Série C') : '';
+  const titles = {
+    overview:['Tableau de bord des revenus', profLabel],
+    documents:['Mes documents','Gérer vos sujets, cours, exercices, vidéos et corrections publiés'],
+    upload:['Publier un document','Ajoutez une nouvelle ressource au catalogue Série C'],
+    wallet:['Portefeuille','Solde, retraits, Boost et méthodes de paiement']
+  };
+  document.getElementById('profTitle').textContent = titles[tab][0];
+  document.getElementById('profSub').textContent = titles[tab][1];
+}
+
+function onUpTypeChange(){
+  const type = document.getElementById('upType').value;
+  document.getElementById('aiToggleField').classList.toggle('hidden', type!=='corrige');
+  document.getElementById('upFileLabel').textContent = type==='video' ? 'Fichier vidéo' : 'Fichier PDF';
+}
+function onUpFileChange(){
+  const input = document.getElementById('upFile');
+  const label = document.getElementById('fileDropLabel');
+  label.textContent = (input.files && input.files[0]) ? (input.files[0].name + ' sélectionné ✓') : 'Cliquez pour choisir un fichier PDF';
+}
+async function submitUpload(){
+  const title = document.getElementById('upTitle').value.trim();
+  const matiere = document.getElementById('upMatiere').value.trim();
+  const annee = document.getElementById('upAnnee').value;
+  const type = document.getElementById('upType').value;
+  const prix = parseInt(document.getElementById('upPrix').value || '0', 10);
+  const aiGrading = type==='corrige' && document.getElementById('upAiGrading').checked;
+  const fileInput = document.getElementById('upFile');
+  if(!title || !matiere){ showToast('Titre et matière requis avant de publier'); return; }
+  if(!fileInput.files || !fileInput.files[0]){ showToast('Choisissez un fichier PDF avant de publier'); return; }
+  const fd = new FormData();
+  fd.append('title', title); fd.append('matiere', matiere); fd.append('serie','C');
+  fd.append('annee', annee); fd.append('type', type);
+  fd.append('prix', String(prix)); fd.append('free', prix===0 ? 'true' : 'false');
+  fd.append('aiGrading', aiGrading ? 'true' : 'false');
+  fd.append('file', fileInput.files[0]);
+  try{
+    await apiPost('/documents', fd);
+    document.getElementById('upTitle').value=''; document.getElementById('upMatiere').value='';
+    document.getElementById('upAiGrading').checked=false;
+    document.getElementById('fileDropLabel').textContent='Cliquez pour choisir un fichier PDF';
+    fileInput.value='';
+    await loadCatalog(); await loadWallet();
+    renderProfDashboard();
+    setProfTab('documents');
+    showToast('Document publié avec succès');
+  }catch(e){ showToast('Erreur : '+e.message); }
+}
+
+async function activateBoost(){
+  if(isBoostActive()) return;
+  try{
+    const res = await apiPost('/professors/me/boost', {});
+    currentUser.boostActiveUntil = res.boostActiveUntil;
+    localStorage.setItem('khatam_user', JSON.stringify(currentUser));
+    await loadWallet();
+    renderProfDashboard();
+    showToast('Boost activé — vos documents apparaissent en tête des résultats de recherche des élèves pendant 30 jours');
+  }catch(e){
+    showToast(e.status===402 ? 'Solde insuffisant pour activer le Boost' : ('Erreur : '+e.message));
+  }
+}
+
+function openWithdrawModal(){
+  openModal(`
+    <div class="modal-pad">
+      <div class="modal-head">
+        <div><h3>Demander un retrait</h3><p class="modal-sub">Solde disponible : ${fmtAmount(walletData.balance||0)}</p></div>
+        <button class="modal-close" onclick="closeModal()"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="pay-methods" id="wdMethods">
+        ${payMethodRow('bankily','Bankily','Attijari Bank Mauritanie','#0F6E5C','BK')}
+        ${payMethodRow('masrivi','Masrivi','BCM Mauritanie','#B4842A','MV')}
+      </div>
+      <div class="field" style="margin-bottom:12px;">
+        <label>Numéro de téléphone</label>
+        <input type="tel" id="wdPhone" placeholder="22 XX XX XX" value="22 45 67 89">
+      </div>
+      <div class="field" style="margin-bottom:18px;">
+        <label>Montant à retirer (MRU)</label>
+        <input type="number" id="wdAmount" value="${walletData.balance||0}" min="0" max="${walletData.balance||0}">
+        <span class="field-hint">Maximum : ${fmtAmount(walletData.balance||0)}</span>
+      </div>
+      <button class="btn btn-gold btn-block" onclick="confirmWithdraw()">Confirmer le retrait</button>
+    </div>
+  `);
+}
+async function confirmWithdraw(){
+  let amount = parseInt(document.getElementById('wdAmount').value || '0', 10);
+  if(amount<=0 || amount>(walletData.balance||0)){ showToast('Montant invalide'); return; }
+  const phone = document.getElementById('wdPhone').value || '22 XX XX XX';
+  openModal(`<div class="modal-pad"><div class="pay-status"><div class="spin"></div><h4>Retrait en cours</h4><p>Transfert de ${fmtAmount(amount)} vers ${methodNameOf(pendingMethod)} · ${phone}</p></div></div>`);
+  try{
+    await apiPost('/wallet/withdraw', {amount, method: pendingMethod, accountRef: phone});
+    await loadWallet();
+    openModal(`<div class="modal-pad"><div class="pay-status"><div class="check"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg></div><h4>Retrait envoyé</h4><p>${fmtAmount(amount)} arrivera sur votre compte ${methodNameOf(pendingMethod)} sous peu.</p></div><button class="btn btn-primary btn-block" style="margin-top:14px;" onclick="closeModal()">Fermer</button></div>`);
+    renderProfDashboard();
+  }catch(e){
+    openModal(`<div class="modal-pad"><div class="pay-status"><h4>Échec du retrait</h4><p>${e.message}</p></div><button class="btn btn-primary btn-block" style="margin-top:14px;" onclick="closeModal()">Fermer</button></div>`);
+  }
+}
+function methodNameOf(key){ return {bankily:'Bankily', masrivi:'Masrivi', sedad:'Sedad'}[key] || key; }
+function renderWithdrawTable(){
+  const body = document.getElementById('withdrawBody');
+  const history = walletData.withdrawals || [];
+  if(!history.length){
+    body.innerHTML = '<tr><td colspan="5"><div class="empty-state" style="padding:34px 10px;"><p>Aucun retrait pour le moment.</p></div></td></tr>';
+    return;
+  }
+  body.innerHTML = history.map(w=>`
+    <tr>
+      <td>${(w.createdAt||'').slice(0,10)}</td>
+      <td>${methodNameOf(w.method)}</td>
+      <td class="num">${w.accountRef}</td>
+      <td class="num">${fmtAmount(w.amount)}</td>
+      <td><span class="status-chip ${w.status==='paid'?'good':'warn'}">${w.status==='paid'?'Envoyé':'En attente'}</span></td>
+    </tr>
+  `).join('');
+}
+
+/* ============================================================ 3D: PARALLAX + TILT ============================================================ */
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function initParallax(){
+  if(reduceMotion) return;
+  const stage = document.getElementById('heroStage');
+  if(!stage) return;
+  const layers = stage.querySelectorAll('[data-depth]');
+  stage.addEventListener('mousemove', e=>{
+    const rect = stage.getBoundingClientRect();
+    const px = (e.clientX - rect.left)/rect.width - 0.5;
+    const py = (e.clientY - rect.top)/rect.height - 0.5;
+    layers.forEach(l=>{
+      const depth = parseFloat(l.dataset.depth);
+      const tx = (px * depth * 34).toFixed(1);
+      const ty = (py * depth * 34).toFixed(1);
+      const rx = (py * depth * -7).toFixed(1);
+      const ry = (px * depth * 7).toFixed(1);
+      l.style.transform = `translate3d(${tx}px, ${ty}px, 0) rotateX(${rx}deg) rotateY(${ry}deg)`;
+    });
+  });
+  stage.addEventListener('mouseleave', ()=>{
+    layers.forEach(l=> l.style.transform = '');
+  });
+}
+
+function tiltMove(e){
+  const el = e.currentTarget;
+  const r = el.getBoundingClientRect();
+  const px = (e.clientX-r.left)/r.width - 0.5;
+  const py = (e.clientY-r.top)/r.height - 0.5;
+  el.style.transform = `perspective(700px) rotateX(${(-py*7).toFixed(2)}deg) rotateY(${(px*7).toFixed(2)}deg) translateZ(2px)`;
+}
+function tiltLeave(e){ e.currentTarget.style.transform=''; }
+function enableTilts(){
+  if(reduceMotion) return;
+  document.querySelectorAll('.tilt').forEach(el=>{
+    if(el.dataset.tiltBound) return;
+    el.dataset.tiltBound = '1';
+    el.addEventListener('mousemove', tiltMove);
+    el.addEventListener('mouseleave', tiltLeave);
+  });
+}
+
+/* ============================================================ INIT ============================================================ */
+initParallax();
+enableTilts();
+if(authToken && currentUser){
+  // Une session existait déjà dans ce navigateur (rechargement de page) : on y revient directement.
+  enterDashboard(currentUser.role==='STUDENT' ? 'student' : 'professor');
+}
+</script>
