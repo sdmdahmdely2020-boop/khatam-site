@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Khatam — Administration</title>
+<style>
+  :root{
+    --bg:#F7F3E7; --card:#FFFFFF; --ink:#1E2A26; --ink-muted:#5B655B; --ink-faint:#8B9188;
+    --accent:#0F6E5C; --accent-strong:#0B4F42; --accent-soft:#DCEAE3;
+    --gold:#B4842A; --gold-strong:#8F6A20; --gold-soft:#F1E2BC;
+    --border:#E4DEC9; --danger:#B23B3B; --danger-soft:#F6E1E1;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    line-height:1.5;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:24px 20px 80px;}
+  header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;}
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand .logo{width:36px;height:36px;border-radius:10px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;}
+  .brand h1{font-size:18px;margin:0;}
+  .brand p{margin:0;font-size:12px;color:var(--ink-muted);}
+  .btn{
+    appearance:none;border:1px solid var(--border);background:var(--card);color:var(--ink);
+    padding:9px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;
+  }
+  .btn:hover{border-color:var(--accent);}
+  .btn-primary{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .btn-primary:hover{background:var(--accent-strong);}
+  .btn-danger{background:var(--danger);border-color:var(--danger);color:#fff;}
+  .btn-danger:hover{opacity:.9;}
+  .btn:disabled{opacity:.5;cursor:not-allowed;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px;}
+  .card h2{margin:0 0 4px;font-size:15px;}
+  .card .sub{margin:0 0 16px;font-size:12.5px;color:var(--ink-muted);}
+  .row{display:flex;gap:10px;flex-wrap:wrap;}
+  label{display:block;font-size:12px;font-weight:600;color:var(--ink-muted);margin-bottom:4px;}
+  input[type=text],input[type=password]{
+    width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:8px;
+    font-size:13px;background:var(--bg);color:var(--ink);
+  }
+  input:focus{outline:2px solid var(--accent);outline-offset:1px;}
+  .field{flex:1;min-width:160px;margin-bottom:10px;}
+  .empty{color:var(--ink-faint);font-size:13px;padding:16px 0;text-align:center;}
+  .item{border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;}
+  .item .top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:8px;}
+  .item .title{font-weight:700;font-size:14px;}
+  .item .amount{font-family:ui-monospace,Menlo,monospace;font-weight:700;color:var(--accent-strong);}
+  .item .meta{font-size:12.5px;color:var(--ink-muted);margin-bottom:2px;}
+  .badge{display:inline-block;background:var(--gold-soft);color:var(--gold-strong);font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;}
+  .ref{
+    font-family:ui-monospace,Menlo,monospace;background:var(--accent-soft);color:var(--accent-strong);
+    padding:2px 8px;border-radius:6px;font-size:12.5px;font-weight:600;
+  }
+  .actions{display:flex;gap:8px;margin-top:10px;}
+  #loginScreen{
+    min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
+  }
+  #loginScreen .box{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;max-width:360px;width:100%;}
+  #loginScreen h1{font-size:17px;margin:0 0 6px;}
+  #loginScreen p{font-size:13px;color:var(--ink-muted);margin:0 0 16px;}
+  .msg{font-size:12.5px;margin-top:8px;}
+  .msg.err{color:var(--danger);}
+  .msg.ok{color:var(--accent-strong);}
+  .hidden{display:none !important;}
+  .toast{
+    position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+    background:var(--ink);color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;
+    opacity:0;pointer-events:none;transition:opacity .2s;z-index:50;
+  }
+  .toast.show{opacity:1;}
+</style>
+</head>
+<body>
+
+<div id="loginScreen">
+  <div class="box">
+    <h1>Khatam — Administration</h1>
+    <p>Entrez la clé d'administration (ADMIN_KEY) pour accéder au panneau.</p>
+    <label for="keyInput">Clé d'administration</label>
+    <input type="password" id="keyInput" placeholder="••••••••••••••••" autocomplete="off">
+    <div style="margin-top:12px;"><button class="btn btn-primary" onclick="tryLogin()">Entrer</button></div>
+    <div class="msg err hidden" id="loginError"></div>
+  </div>
+</div>
+
+<div class="wrap hidden" id="mainScreen">
+  <header>
+    <div class="brand">
+      <div class="logo">Kh</div>
+      <div><h1>Administration Khatam</h1><p>Paiements, retraits et numéros de réception</p></div>
+    </div>
+    <div class="row">
+      <button class="btn" onclick="refreshAll()">Actualiser</button>
+      <button class="btn" onclick="logout()">Déconnexion</button>
+    </div>
+  </header>
+
+  <div class="card">
+    <h2>Numéros de réception</h2>
+    <p class="sub">Les numéros sur lesquels les élèves doivent envoyer l'argent. Affichés à l'élève au moment de payer.</p>
+    <div class="row">
+      <div class="field"><label>Bankily</label><input type="text" id="numBankily" placeholder="22200000000"></div>
+      <div class="field"><label>Masrivi</label><input type="text" id="numMasrivi" placeholder="22200000000"></div>
+      <div class="field"><label>Sedad</label><input type="text" id="numSedad" placeholder="22200000000"></div>
+    </div>
+    <button class="btn btn-primary" onclick="saveSettings()">Enregistrer</button>
+    <div class="msg hidden" id="settingsMsg"></div>
+  </div>
+
+  <div class="card">
+    <h2>Paiements en attente de vérification</h2>
+    <p class="sub">Vérifiez dans votre application Bankily/Masrivi/Sedad que le montant est bien arrivé, en comparant avec le numéro de reçu indiqué, puis confirmez ou refusez.</p>
+    <div id="purchasesList"></div>
+  </div>
+
+  <div class="card">
+    <h2>Demandes de retrait des professeurs</h2>
+    <p class="sub">Marquez "Payé" une fois que vous avez réellement envoyé l'argent au professeur.</p>
+    <div id="withdrawalsList"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API_BASE = 'https://khatam-backend-i6zn.onrender.com/api';
+let adminKey = localStorage.getItem('khatam_admin_key') || '';
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+async function adminFetch(path, opts={}){
+  const headers = Object.assign({'X-Admin-Key': adminKey}, opts.headers||{});
+  if(opts.body) headers['Content-Type'] = 'application/json';
+  const res = await fetch(API_BASE + path, Object.assign({}, opts, {headers}));
+  let data = null;
+  try{ data = await res.json(); }catch(e){}
+  if(!res.ok){
+    const err = new Error((data && data.message) || ('Erreur ' + res.status));
+    err.status = res.status;
+    throw err;
+  }
+  return data;
+}
+
+function tryLogin(){
+  const val = document.getElementById('keyInput').value.trim();
+  if(!val){ return; }
+  adminKey = val;
+  localStorage.setItem('khatam_admin_key', val);
+  enter();
+}
+function logout(){
+  adminKey = '';
+  localStorage.removeItem('khatam_admin_key');
+  document.getElementById('mainScreen').classList.add('hidden');
+  document.getElementById('loginScreen').classList.remove('hidden');
+}
+
+async function enter(){
+  try{
+    await adminFetch('/admin/settings');
+  }catch(e){
+    if(e.status === 401 || e.status === 503){
+      document.getElementById('loginError').textContent = e.status === 503
+        ? "ADMIN_KEY n'est pas configurée côté serveur — préviens Claude."
+        : 'Clé incorrecte.';
+      document.getElementById('loginError').classList.remove('hidden');
+      return;
+    }
+  }
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('mainScreen').classList.remove('hidden');
+  refreshAll();
+}
+
+async function refreshAll(){
+  await Promise.all([loadSettings(), loadPurchases(), loadWithdrawals()]);
+}
+
+async function loadSettings(){
+  try{
+    const data = await adminFetch('/admin/settings');
+    document.getElementById('numBankily').value = data.paymentNumbers.bankily || '';
+    document.getElementById('numMasrivi').value = data.paymentNumbers.masrivi || '';
+    document.getElementById('numSedad').value = data.paymentNumbers.sedad || '';
+  }catch(e){ showToast('Erreur réglages : ' + e.message); }
+}
+
+async function saveSettings(){
+  try{
+    await adminFetch('/admin/settings', { method:'PATCH', body: JSON.stringify({
+      bankily: document.getElementById('numBankily').value.trim() || null,
+      masrivi: document.getElementById('numMasrivi').value.trim() || null,
+      sedad: document.getElementById('numSedad').value.trim() || null,
+    })});
+    const msg = document.getElementById('settingsMsg');
+    msg.textContent = 'Enregistré.'; msg.className = 'msg ok';
+    showToast('Numéros enregistrés.');
+  }catch(e){ showToast('Erreur : ' + e.message); }
+}
+
+function methodLabel(m){
+  return { bankily:'Bankily', masrivi:'Masrivi', sedad:'Sedad' }[m] || m;
+}
+
+async function loadPurchases(){
+  const el = document.getElementById('purchasesList');
+  try{
+    const data = await adminFetch('/admin/purchases/pending');
+    if(!data.purchases.length){ el.innerHTML = '<div class="empty">Aucun paiement en attente.</div>'; return; }
+    el.innerHTML = data.purchases.map(p => `
+      <div class="item">
+        <div class="top">
+          <div class="title">${escapeHtml(p.documentTitle)}</div>
+          <div class="amount">${p.amount} MRU</div>
+        </div>
+        <div class="meta">Élève : ${escapeHtml(p.studentName)} · ${escapeHtml(p.studentPhone)}</div>
+        <div class="meta">Professeur : ${escapeHtml(p.professorName)}</div>
+        <div class="meta">Méthode : <span class="badge">${methodLabel(p.method)}</span></div>
+        <div class="meta">Numéro de reçu donné par l'élève : ${p.studentRef ? `<span class="ref">${escapeHtml(p.studentRef)}</span>` : '<em>non renseigné</em>'}</div>
+        <div class="meta">Demandé le ${formatDate(p.createdAt)}</div>
+        <div class="actions">
+          <button class="btn btn-primary" onclick="confirmPurchase('${p.id}')">Confirmer — argent reçu</button>
+          <button class="btn btn-danger" onclick="rejectPurchase('${p.id}')">Refuser</button>
+        </div>
+      </div>
+    `).join('');
+  }catch(e){ el.innerHTML = `<div class="empty">Erreur : ${escapeHtml(e.message)}</div>`; }
+}
+
+async function confirmPurchase(id){
+  if(!confirm('Confirmer : vous avez bien vérifié que l\'argent est arrivé sur votre compte ?')) return;
+  try{
+    await adminFetch(`/admin/purchases/${id}/confirm`, { method:'POST' });
+    showToast('Paiement confirmé, document débloqué pour l\'élève.');
+    loadPurchases();
+  }catch(e){ showToast('Erreur : ' + e.message); }
+}
+async function rejectPurchase(id){
+  if(!confirm('Refuser cet achat ? L\'élève devra recommencer.')) return;
+  try{
+    await adminFetch(`/admin/purchases/${id}/reject`, { method:'POST' });
+    showToast('Achat refusé.');
+    loadPurchases();
+  }catch(e){ showToast('Erreur : ' + e.message); }
+}
+
+async function loadWithdrawals(){
+  const el = document.getElementById('withdrawalsList');
+  try{
+    const data = await adminFetch('/admin/withdrawals/pending');
+    if(!data.withdrawals.length){ el.innerHTML = '<div class="empty">Aucune demande de retrait en attente.</div>'; return; }
+    el.innerHTML = data.withdrawals.map(w => `
+      <div class="item">
+        <div class="top">
+          <div class="title">${escapeHtml(w.professorName)}</div>
+          <div class="amount">${w.amount} MRU</div>
+        </div>
+        <div class="meta">À envoyer sur : <span class="ref">${escapeHtml(w.accountRef)}</span> via <span class="badge">${methodLabel(w.method)}</span></div>
+        <div class="meta">Téléphone du professeur : ${escapeHtml(w.professorPhone)}</div>
+        <div class="meta">Demandé le ${formatDate(w.createdAt)}</div>
+        <div class="actions">
+          <button class="btn btn-primary" onclick="markPaid('${w.id}')">Marquer payé</button>
+        </div>
+      </div>
+    `).join('');
+  }catch(e){ el.innerHTML = `<div class="empty">Erreur : ${escapeHtml(e.message)}</div>`; }
+}
+
+async function markPaid(id){
+  if(!confirm('Confirmer que vous avez réellement envoyé cet argent au professeur ?')) return;
+  try{
+    await adminFetch(`/admin/withdrawals/${id}/mark-paid`, { method:'POST' });
+    showToast('Retrait marqué payé.');
+    loadWithdrawals();
+  }catch(e){ showToast('Erreur : ' + e.message); }
+}
+
+function escapeHtml(s){
+  return String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function formatDate(s){
+  if(!s) return '';
+  return s.replace(' ', ' à ').slice(0, 16);
+}
+
+if(adminKey){ enter(); }
+</script>
+</body>
+</html>
