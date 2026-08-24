@@ -1,4 +1,5 @@
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Khatam</title>
 <!-- Google AdSense — vérification du site + annonces automatiques (compte : pub-7499694954152475) -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7499694954152475" crossorigin="anonymous"></script>
@@ -13,6 +14,18 @@
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+<!-- Détecte le mode "application installée" (icône sur l'écran d'accueil) le plus tôt
+     possible, avant tout rendu, pour éviter un effet de clignotement (la longue page
+     vitrine qui s'affiche une fraction de seconde avant d'être masquée). -->
+<script>
+  (function(){
+    try{
+      var standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+      if(standalone) document.documentElement.classList.add('is-pwa');
+    }catch(e){}
+  })();
+</script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -96,6 +109,12 @@
 
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
+  html{
+    /* Comportement "application" plutôt que "page web" : pas de rebond élastique en
+       haut/bas de page, pas de halo bleu au toucher sur les boutons/liens. */
+    overscroll-behavior-y:none;
+    -webkit-tap-highlight-color:transparent;
+  }
   body{
     background:var(--paper);
     color:var(--ink);
@@ -119,6 +138,13 @@
   .num{font-family:var(--font-mono);font-variant-numeric:tabular-nums;}
 
   .hidden{display:none !important;}
+
+  /* ============ Mode "application installée" ============
+     Une fois ajoutée à l'écran d'accueil, l'app doit s'ouvrir directement sur un
+     écran d'accueil compact (comme une vraie appli) plutôt que sur la longue page
+     vitrine destinée aux visiteurs du site web. */
+  .is-pwa #view-landing .marketing-extra{display:none;}
+  .is-pwa #view-landing .hero{padding-bottom:110px;}
   img,svg{display:block;max-width:100%;}
 
   @media (prefers-reduced-motion: reduce){
@@ -169,6 +195,7 @@
     background:var(--paper);
     position:sticky;top:0;z-index:40;
     backdrop-filter:blur(6px);
+    padding-top:env(safe-area-inset-top);
   }
   .letterhead-inner{
     display:flex;align-items:center;justify-content:space-between;
@@ -457,6 +484,7 @@
     padding:20px 30px;border-bottom:1px solid var(--line);
     background:var(--paper);position:sticky;top:0;z-index:20;
     flex-wrap:wrap;
+    padding-top:calc(20px + env(safe-area-inset-top));
   }
   .topbar h1{font-size:21px;}
   .topbar-sub{font-size:12.5px;color:var(--ink-muted);margin-top:3px;}
@@ -476,7 +504,7 @@
     .side-badge{display:none;}
     .main-col{padding-bottom:64px;}
     .content{padding:18px 16px 40px;}
-    .topbar{padding:14px 16px;}
+    .topbar{padding:14px 16px;padding-top:calc(14px + env(safe-area-inset-top));}
   }
 
   /* ============ Stat tiles ============ */
@@ -919,6 +947,7 @@
       </div>
     </div>
 
+    <div class="marketing-extra">
     <!-- FEATURES -->
     <section class="page-section" id="fonctionnalites">
       <div class="container">
@@ -1112,9 +1141,10 @@
     <footer class="site-footer">
       <div class="container footer-inner">
         <div class="brand"><span class="brand-mark" style="width:26px;height:26px;font-size:12px;">Kh</span><span class="brand-word" style="font-size:15px;">Khatam</span></div>
-        <p>Prototype de démonstration — Khatam n'est pas encore un service en ligne réel. Aucun paiement n'est traité.</p>
+        <p>Paiement par Bankily, Masrivi ou Sedad — déblocage vérifié manuellement sous peu de temps.</p>
       </div>
     </footer>
+    </div><!-- /.marketing-extra -->
   </section>
 
   <!-- ============================================================ STUDENT DASHBOARD ============================================================ -->
