@@ -1,6 +1,19 @@
+<meta charset="UTF-8">
 <title>Khatam</title>
 <!-- Google AdSense — vérification du site + annonces automatiques (compte : pub-7499694954152475) -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7499694954152475" crossorigin="anonymous"></script>
+
+<!-- Progressive Web App : permet "Ajouter à l'écran d'accueil" sur Android/iOS -->
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0F6E5C">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Khatam">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bitter:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -2562,5 +2575,16 @@ enableTilts();
 if(authToken && currentUser){
   // Une session existait déjà dans ce navigateur (rechargement de page) : on y revient directement.
   enterDashboard(currentUser.role==='STUDENT' ? 'student' : 'professor');
+}
+
+/* ============================================================ PWA : Service Worker ============================================================ */
+// Permet l'installation de l'app (icône sur l'écran d'accueil) et un démarrage plus rapide.
+// N'affecte jamais les appels à l'API (voir sw.js : l'hôte du backend est explicitement exclu du cache).
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch((err) => {
+      console.warn('[pwa] échec enregistrement du service worker', err);
+    });
+  });
 }
 </script>
