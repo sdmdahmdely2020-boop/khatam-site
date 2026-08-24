@@ -477,6 +477,9 @@
     padding:1px 7px;border-radius:100px;
   }
   .sidebar-foot{margin-top:auto;display:flex;flex-direction:column;gap:6px;}
+  /* Le tab "Compte" (sécurité + déconnexion) : ancré en bas de la barre latérale sur
+     desktop ; simple onglet parmi les autres dans la barre du bas sur mobile. */
+  .side-link[data-stab="account"],.side-link[data-ptab="account"]{margin-top:auto;}
 
   .main-col{flex:1;min-width:0;}
   .topbar{
@@ -499,7 +502,7 @@
       overflow-x:auto;
     }
     .sidebar-brand,.side-section-label,.sidebar-foot{display:none;}
-    .side-link{flex-direction:column;gap:3px;font-size:10px;padding:6px 4px;text-align:center;flex:none;min-width:60px;}
+    .side-link{flex-direction:column;gap:3px;font-size:10px;padding:6px 4px;text-align:center;flex:1 1 0;width:auto;min-width:56px;max-width:84px;}
     .side-link .icon{width:19px;height:19px;}
     .side-badge{display:none;}
     .main-col{padding-bottom:64px;}
@@ -1171,16 +1174,10 @@
           <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
           Mes documents <span class="side-badge" id="mineCount">0</span>
         </button>
-        <div class="sidebar-foot">
-          <button class="side-link" onclick="openSecurityModal()">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-            Sécurité du compte
-          </button>
-          <button class="side-link" onclick="logout()">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
-            Se déconnecter
-          </button>
-        </div>
+        <button class="side-link" data-stab="account" onclick="setStudentTab('account')">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          Compte
+        </button>
       </aside>
 
       <div class="main-col">
@@ -1247,6 +1244,29 @@
             <div class="doc-grid" id="mineGrid"></div>
           </div>
 
+          <div id="student-account-panel" class="hidden">
+            <div class="card" style="padding:22px;max-width:440px;">
+              <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;">
+                <span class="brand-mark" style="width:46px;height:46px;font-size:17px;flex:none;" id="studentAccountInitial">É</span>
+                <div>
+                  <div style="font-weight:700;font-size:16px;" id="studentAccountName">—</div>
+                  <div style="font-size:12.5px;color:var(--ink-muted);" id="studentAccountPhone">—</div>
+                </div>
+              </div>
+              <span class="role-pill student" style="margin-bottom:18px;display:inline-block;">Compte élève</span>
+              <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px;">
+                <button class="btn btn-ghost btn-block" onclick="openSecurityModal()">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+                  Sécurité du compte
+                </button>
+                <button class="btn btn-ghost btn-block" style="color:var(--status-critical);border-color:var(--status-critical-soft);" onclick="logout()">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+                  Se déconnecter
+                </button>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -1276,16 +1296,10 @@
           <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M22 10H2M17 15h.01"/></svg>
           Portefeuille
         </button>
-        <div class="sidebar-foot">
-          <button class="side-link" onclick="openSecurityModal()">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-            Sécurité du compte
-          </button>
-          <button class="side-link" onclick="logout()">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
-            Se déconnecter
-          </button>
-        </div>
+        <button class="side-link" data-ptab="account" onclick="setProfTab('account')">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          Compte
+        </button>
       </aside>
 
       <div class="main-col">
@@ -1448,6 +1462,29 @@
                     <tr><td colspan="5"><div class="empty-state" style="padding:34px 10px;"><p>Aucun retrait pour le moment.</p></div></td></tr>
                   </tbody>
                 </table>
+              </div>
+            </div>
+          </div>
+
+          <div id="prof-account-panel" class="hidden">
+            <div class="card" style="padding:22px;max-width:440px;">
+              <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;">
+                <span class="brand-mark" style="width:46px;height:46px;font-size:17px;flex:none;background:var(--gold);color:#2A1F08;" id="profAccountInitial">P</span>
+                <div>
+                  <div style="font-weight:700;font-size:16px;" id="profAccountName">—</div>
+                  <div style="font-size:12.5px;color:var(--ink-muted);" id="profAccountPhone">—</div>
+                </div>
+              </div>
+              <span class="role-pill professor" style="margin-bottom:18px;display:inline-block;">Compte professeur</span>
+              <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px;">
+                <button class="btn btn-ghost btn-block" onclick="openSecurityModal()">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+                  Sécurité du compte
+                </button>
+                <button class="btn btn-ghost btn-block" style="color:var(--status-critical);border-color:var(--status-critical-soft);" onclick="logout()">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+                  Se déconnecter
+                </button>
               </div>
             </div>
           </div>
@@ -1923,17 +1960,27 @@ function setStudentTab(tab){
   document.getElementById('student-ai-panel').classList.toggle('hidden', tab!=='ai');
   document.getElementById('student-favorites-panel').classList.toggle('hidden', tab!=='favorites');
   document.getElementById('student-mine-panel').classList.toggle('hidden', tab!=='mine');
+  document.getElementById('student-account-panel').classList.toggle('hidden', tab!=='account');
   const titles = {
     browse:['Parcourir les documents','Série C — sujets, cours, exercices, vidéos et corrections vérifiées'],
     ai:['Correction IA','Soumettez votre copie et recevez une note détaillée'],
     favorites:['Mes favoris','Documents que vous avez enregistrés pour plus tard'],
-    mine:['Mes documents','Sujets gratuits et corrections débloquées']
+    mine:['Mes documents','Sujets gratuits et corrections débloquées'],
+    account:['Mon compte','Sécurité et déconnexion']
   };
   document.getElementById('studentTitle').textContent = titles[tab][0];
   document.getElementById('studentSub').textContent = titles[tab][1];
   if(tab==='favorites') renderFavorites();
   if(tab==='mine') renderMine();
   if(tab==='ai') renderAiPanel();
+  if(tab==='account') renderStudentAccountPanel();
+}
+
+function renderStudentAccountPanel(){
+  if(!currentUser) return;
+  document.getElementById('studentAccountName').textContent = currentUser.fullName || 'Élève';
+  document.getElementById('studentAccountPhone').textContent = currentUser.phone || '';
+  document.getElementById('studentAccountInitial').textContent = (currentUser.fullName || 'É').trim().charAt(0).toUpperCase();
 }
 
 /* ============================================================ PREVIEW ============================================================ */
@@ -2431,7 +2478,7 @@ function renderProfDashboard(){
 
 function setProfTab(tab){
   document.querySelectorAll('[data-ptab]').forEach(b=>b.classList.toggle('active', b.dataset.ptab===tab));
-  ['overview','documents','upload','wallet'].forEach(t=>{
+  ['overview','documents','upload','wallet','account'].forEach(t=>{
     document.getElementById('prof-'+t+'-panel').classList.toggle('hidden', t!==tab);
   });
   const profLabel = currentUser ? (currentUser.fullName + (currentUser.matieres ? ' · '+currentUser.matieres : '') + ' · Série C') : '';
@@ -2439,10 +2486,19 @@ function setProfTab(tab){
     overview:['Tableau de bord des revenus', profLabel],
     documents:['Mes documents','Gérer vos sujets, cours, exercices, vidéos et corrections publiés'],
     upload:['Publier un document','Ajoutez une nouvelle ressource au catalogue Série C'],
-    wallet:['Portefeuille','Solde, retraits, Boost et méthodes de paiement']
+    wallet:['Portefeuille','Solde, retraits, Boost et méthodes de paiement'],
+    account:['Mon compte','Sécurité et déconnexion']
   };
   document.getElementById('profTitle').textContent = titles[tab][0];
   document.getElementById('profSub').textContent = titles[tab][1];
+  if(tab==='account') renderProfAccountPanel();
+}
+
+function renderProfAccountPanel(){
+  if(!currentUser) return;
+  document.getElementById('profAccountName').textContent = currentUser.fullName || 'Professeur';
+  document.getElementById('profAccountPhone').textContent = currentUser.phone || '';
+  document.getElementById('profAccountInitial').textContent = (currentUser.fullName || 'P').trim().charAt(0).toUpperCase();
 }
 
 function onUpTypeChange(){
