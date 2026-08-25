@@ -672,9 +672,9 @@
   .ai-doc-row h4{font-size:14px;margin-bottom:3px;}
   .ai-doc-row p{font-size:12.5px;color:var(--ink-muted);}
   .ai-score-ring{
-    width:52px;height:52px;border-radius:50%;flex:none;
+    width:58px;height:58px;border-radius:50%;flex:none;
     display:flex;align-items:center;justify-content:center;
-    font-family:var(--font-mono);font-weight:700;font-size:14px;
+    font-family:var(--font-mono);font-weight:700;font-size:12px;white-space:nowrap;
     border:3px solid var(--accent);color:var(--accent-strong);
   }
   .ai-score-ring.mid{border-color:var(--gold);color:var(--gold-strong);}
@@ -1786,6 +1786,7 @@ let pendingDoc = null;
 let pendingMethod = 'bankily';
 let pendingPurchaseId = null;
 let pendingAiDoc = null;
+let pendingAiFile = null; // Blob/File JPEG (ou PDF tel quel) prêt à être envoyé pour la correction IA — voir handleSubmissionFileChange()
 let pendingAdDoc = null;
 let pendingPremiumPlan = {label:'Mensuel', price:500};
 
@@ -2479,26 +2480,119 @@ function renderAiHistory(){
 function openAiModal(id){
   const d = CATALOG.find(x=>x.id===id);
   pendingAiDoc = d;
+  pendingAiFile = null;
   openModal(`
     <div class="modal-pad">
       <div class="modal-head">
         <div><h3>Correction par IA</h3><p class="modal-sub">${d.title}</p></div>
         <button class="modal-close" onclick="closeModal()"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
       </div>
-      <p style="font-size:13px;color:var(--ink-muted);margin-bottom:16px;">L'IA compare votre réponse au corrigé publié par ${d.prof} et vous attribue une note sur 20 avec des remarques détaillées.</p>
-      <div class="field" style="margin-bottom:12px;">
-        <label>Votre réponse</label>
-        <textarea id="aiAnswer" rows="5" placeholder="Collez ou décrivez votre réponse ici…"></textarea>
+      <p style="font-size:13px;color:var(--ink-muted);margin-bottom:16px;">L'IA lit votre copie et le corrigé publié par ${d.prof}, puis vous attribue une note sur 20 avec des remarques détaillées.</p>
+      <div class="field" style="margin-bottom:6px;">
+        <label>Votre copie (photo ou PDF)</label>
+        <div style="display:flex;gap:8px;margin:6px 0 0;">
+          <button type="button" class="btn btn-ghost btn-sm" style="flex:1;" onclick="document.getElementById('aiCameraInput').click()">
+            <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            Prendre une photo
+          </button>
+          <button type="button" class="btn btn-ghost btn-sm" style="flex:1;" onclick="document.getElementById('aiFileInput').click()">
+            <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+            Choisir un fichier
+          </button>
+        </div>
+        <input type="file" id="aiCameraInput" accept="image/*" capture="environment" style="display:none" onchange="handleSubmissionFileChange(this)">
+        <input type="file" id="aiFileInput" accept="image/*,application/pdf" style="display:none" onchange="handleSubmissionFileChange(this)">
+        <div id="aiFilePreviewBox"></div>
       </div>
+      <details style="margin:10px 0 12px;">
+        <summary style="font-size:12px;color:var(--ink-muted);cursor:pointer;">Ou tapez votre réponse à la place</summary>
+        <div class="field" style="margin-top:8px;">
+          <textarea id="aiAnswer" rows="4" placeholder="Collez ou décrivez votre réponse ici…"></textarea>
+        </div>
+      </details>
       <button class="btn btn-primary btn-block" onclick="submitToAi()">Faire corriger par l'IA</button>
-      <p style="font-size:11px;color:var(--ink-faint);margin-top:10px;">Note calculée par le backend réel (encore un modèle heuristique simple pour l'instant — un vrai modèle de langage lisant le corrigé du professeur est la prochaine étape, voir le README du backend).</p>
+      <p style="font-size:11px;color:var(--ink-faint);margin-top:10px;">Correction assurée par un vrai modèle d'IA qui compare votre copie au corrigé du professeur.</p>
     </div>
   `);
 }
+
+// Affiche un aperçu (miniature pour une image, icône pour un PDF) du fichier
+// sélectionné, avec un bouton pour le retirer avant envoi.
+function showAiFilePicked(name, previewUrl){
+  const box = document.getElementById('aiFilePreviewBox');
+  if(!box) return;
+  box.innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;margin-top:8px;padding:8px;border:1px solid var(--line);border-radius:10px;">
+      ${previewUrl
+        ? `<img src="${previewUrl}" style="width:44px;height:44px;object-fit:cover;border-radius:6px;flex:none;">`
+        : `<svg class="icon" style="width:28px;height:28px;flex:none;color:var(--ink-muted);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>`}
+      <span style="flex:1;font-size:12px;color:var(--ink-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${name}</span>
+      <button type="button" class="btn btn-ghost btn-sm" onclick="clearAiFile()">Retirer</button>
+    </div>`;
+}
+function clearAiFile(){
+  pendingAiFile = null;
+  const cam = document.getElementById('aiCameraInput'); if(cam) cam.value = '';
+  const fil = document.getElementById('aiFileInput'); if(fil) fil.value = '';
+  const box = document.getElementById('aiFilePreviewBox'); if(box) box.innerHTML = '';
+}
+
+// Gère la sélection d'une photo (appareil photo ou fichier) ou d'un PDF pour
+// la correction IA. Les PDF sont envoyés tels quels ; les images passent
+// systématiquement par convertImageToJpeg() — voir cette fonction pour
+// pourquoi (essentiellement : gérer le HEIC des iPhones, que le serveur ne
+// sait pas décoder).
+async function handleSubmissionFileChange(input){
+  const file = input.files && input.files[0];
+  if(!file) return;
+  if(file.type === 'application/pdf'){
+    if(file.size > 15*1024*1024){ showToast('PDF trop volumineux (15 Mo maximum).'); input.value=''; return; }
+    pendingAiFile = file;
+    showAiFilePicked(file.name, null);
+    return;
+  }
+  try{
+    const jpegBlob = await convertImageToJpeg(file);
+    pendingAiFile = new File([jpegBlob], 'copie.jpg', {type:'image/jpeg'});
+    showAiFilePicked(file.name, URL.createObjectURL(jpegBlob));
+  }catch(e){
+    showToast("Impossible de lire cette photo. Si elle vient d'un iPhone au format HEIC, essayez de choisir \"Le plus compatible\" dans Réglages > Appareil photo > Formats, ou choisissez un autre fichier.");
+    input.value = '';
+  }
+}
+
+// Convertit n'importe quelle image sélectionnée (y compris HEIC/HEIF pris
+// avec l'appareil photo d'un iPhone) en JPEG via <canvas> avant l'envoi. Le
+// serveur ne sait pas décoder le HEIC de façon fiable (voir
+// lib/submissionUpload.js côté backend) — on s'appuie donc sur le
+// décodeur du navigateur, qui affiche généralement l'image correctement même
+// quand elle est au format HEIC. Réduit aussi le poids de l'envoi, une photo
+// de téléphone pouvant peser plusieurs Mo.
+function convertImageToJpeg(file){
+  return new Promise((resolve, reject)=>{
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = ()=>{
+      const MAX = 1600;
+      let w = img.naturalWidth, h = img.naturalHeight;
+      if(!w || !h){ URL.revokeObjectURL(url); reject(new Error('empty image')); return; }
+      if(w > MAX || h > MAX){ const scale = MAX / Math.max(w, h); w = Math.round(w*scale); h = Math.round(h*scale); }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(url);
+      canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('toBlob failed')), 'image/jpeg', 0.85);
+    };
+    img.onerror = ()=>{ URL.revokeObjectURL(url); reject(new Error('decode failed')); };
+    img.src = url;
+  });
+}
+
 async function submitToAi(){
   const d = pendingAiDoc;
-  const answerText = document.getElementById('aiAnswer').value.trim();
-  if(answerText.length < 10){ showToast('Réponse trop courte (10 caractères minimum).'); return; }
+  const answerText = (document.getElementById('aiAnswer').value || '').trim();
+  if(!pendingAiFile && answerText.length < 10){ showToast('Envoyez une photo/PDF de votre copie, ou tapez une réponse plus longue (10 caractères minimum).'); return; }
+  const fileForUpload = pendingAiFile;
   openModal(`
     <div class="modal-pad">
       <div class="pay-status">
@@ -2509,11 +2603,27 @@ async function submitToAi(){
     </div>
   `);
   try{
-    const res = await apiPost('/documents/'+d.id+'/ai-grade', {answerText});
+    let res;
+    if(fileForUpload){
+      const form = new FormData();
+      form.append('answerFile', fileForUpload, fileForUpload.name || 'copie.jpg');
+      res = await apiPost('/documents/'+d.id+'/ai-grade', form);
+    }else{
+      res = await apiPost('/documents/'+d.id+'/ai-grade', {answerText});
+    }
     const score = res.submission.note;
     const ringCls = score>=14 ? '' : (score>=10 ? 'mid' : 'low');
+    const strengths = res.submission.strengths || [];
+    const weaknesses = res.submission.weaknesses || [];
     aiHistory.unshift({doc:d.title, score, date:new Date().toLocaleDateString('fr-FR')});
     saveArr('khatam_ai_history', aiHistory);
+    const checkIcon = `<svg class="icon icon-sm fico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>`;
+    const crossIcon = `<svg class="icon icon-sm fico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>`;
+    const feedbackListHTML = (strengths.length || weaknesses.length) ? `
+      <ul class="ai-feedback-list">
+        ${strengths.map(s=>`<li class="good">${checkIcon}<span>${s}</span></li>`).join('')}
+        ${weaknesses.map(w=>`<li class="bad">${crossIcon}<span>${w}</span></li>`).join('')}
+      </ul>` : '';
     openModal(`
       <div class="modal-pad">
         <div class="modal-head">
@@ -2524,9 +2634,11 @@ async function submitToAi(){
           <div class="ai-score-ring ${ringCls}">${score}/20</div>
           <p style="font-size:13px;color:var(--ink-muted);">${res.submission.feedback}</p>
         </div>
+        ${feedbackListHTML}
         <button class="btn btn-primary btn-block" style="margin-top:18px;" onclick="closeModal();openPreview('${d.id}')">Revoir le corrigé du professeur</button>
       </div>
     `);
+    pendingAiFile = null;
     renderAiPanel();
   }catch(e){
     openModal(`<div class="modal-pad"><div class="pay-status"><h4>Erreur</h4><p>${e.message}</p></div><button class="btn btn-primary btn-block" style="margin-top:14px;" onclick="closeModal()">Fermer</button></div>`);
