@@ -209,6 +209,15 @@
     font-family:var(--font-display);font-weight:700;font-size:15px;
     flex:none;
   }
+  .avatar-wrap{position:relative;flex:none;}
+  .avatar-photo{width:46px;height:46px;border-radius:50%;object-fit:cover;display:block;border:1px solid var(--line);}
+  .avatar-edit-btn{
+    position:absolute;bottom:-2px;right:-2px;width:22px;height:22px;border-radius:50%;
+    background:var(--ink);color:#fff;border:2px solid var(--paper);
+    display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;
+  }
+  .avatar-edit-btn svg{width:12px;height:12px;}
+  .avatar-edit-btn:hover{background:var(--accent);}
   .brand-word{font-family:var(--font-display);font-weight:700;font-size:20px;letter-spacing:-0.01em;}
   .brand-tag{font-size:11px;color:var(--ink-muted);font-weight:500;letter-spacing:.02em;}
   .nav-links{display:flex;gap:28px;align-items:center;}
@@ -577,9 +586,23 @@
   .doc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(258px,1fr));gap:16px;}
   .doc-card2{
     background:var(--paper-raised);border:1px solid var(--line);border-radius:var(--radius-m);
-    padding:18px;display:flex;flex-direction:column;gap:12px;
+    padding:0 0 18px;display:flex;flex-direction:column;gap:12px;overflow:hidden;
   }
-  .dc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+  .doc-card2 > .dc-top, .doc-card2 > .dc-title, .doc-card2 > .dc-meta,
+  .doc-card2 > .dc-prof-row, .doc-card2 > .dc-foot{ margin-left:18px;margin-right:18px; }
+  .dc-thumb{
+    position:relative;width:100%;aspect-ratio:3/2;background:var(--paper-sunken);
+    overflow:hidden;flex:none;
+  }
+  .dc-thumb img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block;user-select:none;-webkit-user-drag:none;pointer-events:none;}
+  .dc-thumb-lock{
+    position:absolute;bottom:8px;right:8px;display:flex;align-items:center;gap:4px;
+    background:rgba(20,20,20,.72);color:#fff;font-size:10.5px;font-weight:700;
+    padding:4px 9px;border-radius:100px;backdrop-filter:blur(3px);
+  }
+  .dc-thumb-lock svg{width:12px;height:12px;}
+  .dc-prof-avatar{width:18px;height:18px;border-radius:50%;object-fit:cover;flex:none;}
+  .dc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding-top:14px;}
   .dc-badges{display:flex;gap:6px;flex-wrap:wrap;}
   .badge{
     display:inline-flex;align-items:center;gap:3px;
@@ -785,6 +808,7 @@
   .pay-status p{font-size:13px;color:var(--ink-muted);}
 
   /* ============ Secure viewer (anti-leak) ============ */
+  .secure-modal, .secure-modal *{ user-select:none !important; -webkit-user-select:none !important; }
   .secure-banner{
     display:flex;align-items:flex-start;gap:8px;
     background:var(--status-critical-soft);color:var(--status-critical);
@@ -851,6 +875,7 @@
           <a href="#paiement">Paiement</a>
           <a href="#economie">Modèle économique</a>
           <a href="#profs-eleves">Professeurs &amp; élèves</a>
+          <a href="javascript:void(0)" onclick="goAbout()">À propos</a>
         </nav>
         <div class="nav-cta">
           <button class="btn btn-ghost btn-sm" onclick="openAuthModal()">Se connecter</button>
@@ -1145,9 +1170,77 @@
       <div class="container footer-inner">
         <div class="brand"><span class="brand-mark" style="width:26px;height:26px;font-size:12px;">Kh</span><span class="brand-word" style="font-size:15px;">Khatam</span></div>
         <p>Paiement par Bankily, Masrivi ou Sedad — déblocage vérifié manuellement sous peu de temps.</p>
+        <p style="margin-top:6px;"><a href="javascript:void(0)" onclick="goAbout()" style="color:var(--ink-muted);text-decoration:underline;">À propos du fondateur</a></p>
       </div>
     </footer>
     </div><!-- /.marketing-extra -->
+  </section>
+
+  <!-- ============================================================ À PROPOS DU FONDATEUR (page publique, indépendante des comptes) ============================================================ -->
+  <section id="view-about" class="view">
+    <header class="letterhead">
+      <div class="container letterhead-inner">
+        <button class="brand" onclick="goLanding()">
+          <span class="brand-mark">Kh</span>
+          <span>
+            <span class="brand-word">Khatam</span><br>
+            <span class="brand-tag">Bac Mauritanien · Série C</span>
+          </span>
+        </button>
+        <div class="nav-cta">
+          <button class="btn btn-ghost btn-sm" onclick="goLanding()">← Retour à l'accueil</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="page-section" style="padding-top:48px;">
+      <div class="container" style="max-width:760px;">
+        <div class="section-head" style="text-align:center;">
+          <div class="section-kicker">À propos</div>
+          <h2>Le fondateur de Khatam</h2>
+        </div>
+
+        <div class="card" style="padding:32px;display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap;margin-bottom:28px;">
+          <span class="brand-mark" style="width:76px;height:76px;font-size:28px;flex:none;">SM</span>
+          <div style="flex:1;min-width:220px;">
+            <h3 style="font-size:19px;margin-bottom:2px;">Sidi Mohamed</h3>
+            <p style="font-size:13px;color:var(--ink-muted);margin-bottom:14px;">Fondateur de Khatam</p>
+            <p style="font-size:14.5px;line-height:1.7;color:var(--ink);">
+              Étudiant mauritanien passionné de technologie et d'éducation, j'ai créé Khatam parce que je connais,
+              comme des milliers d'élèves de Série C avant moi, la difficulté de trouver des sujets de Bac fiables
+              et des corrections vérifiées — trop souvent dispersés entre groupes WhatsApp et photos illisibles.
+              Khatam rassemble ce travail en un seul endroit, rémunère les professeurs qui le produisent, et le rend
+              accessible depuis un simple téléphone, avec les moyens de paiement que tout le monde utilise déjà en
+              Mauritanie.
+            </p>
+          </div>
+        </div>
+
+        <div class="feature-grid" style="margin-bottom:8px;">
+          <div class="feature-card">
+            <div class="feature-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6l-8-4Z"/></svg></div>
+            <h3>La mission</h3>
+            <p>Donner à chaque élève mauritanien de Série C un accès simple, honnête et abordable aux meilleures ressources du Baccalauréat — où qu'il soit dans le pays.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+            <h3>Pour les professeurs</h3>
+            <p>Un moyen sérieux de valoriser et de monétiser un travail pédagogique qui, jusqu'ici, circulait gratuitement et sans reconnaissance.</p>
+          </div>
+        </div>
+
+        <p style="text-align:center;font-size:12.5px;color:var(--ink-faint);margin-top:24px;">
+          Une question, une suggestion, ou envie de rejoindre Khatam comme professeur ? Écrivez depuis la page d'accueil.
+        </p>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <div class="brand"><span class="brand-mark" style="width:26px;height:26px;font-size:12px;">Kh</span><span class="brand-word" style="font-size:15px;">Khatam</span></div>
+        <p>Paiement par Bankily, Masrivi ou Sedad — déblocage vérifié manuellement sous peu de temps.</p>
+      </div>
+    </footer>
   </section>
 
   <!-- ============================================================ STUDENT DASHBOARD ============================================================ -->
@@ -1247,7 +1340,14 @@
           <div id="student-account-panel" class="hidden">
             <div class="card" style="padding:22px;max-width:440px;">
               <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;">
-                <span class="brand-mark" style="width:46px;height:46px;font-size:17px;flex:none;" id="studentAccountInitial">É</span>
+                <div class="avatar-wrap">
+                  <span class="brand-mark" style="width:46px;height:46px;font-size:17px;" id="studentAccountInitial">É</span>
+                  <img class="avatar-photo hidden" id="studentAccountPhotoImg" alt="Photo de profil">
+                  <button class="avatar-edit-btn" onclick="document.getElementById('studentPhotoInput').click()" aria-label="Changer la photo de profil" title="Changer la photo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2Z"/><circle cx="12" cy="13" r="4"/></svg>
+                  </button>
+                  <input type="file" id="studentPhotoInput" accept="image/png,image/jpeg,image/webp" class="hidden" onchange="handleProfilePhotoChange(this)">
+                </div>
                 <div>
                   <div style="font-weight:700;font-size:16px;" id="studentAccountName">—</div>
                   <div style="font-size:12.5px;color:var(--ink-muted);" id="studentAccountPhone">—</div>
@@ -1469,7 +1569,14 @@
           <div id="prof-account-panel" class="hidden">
             <div class="card" style="padding:22px;max-width:440px;">
               <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;">
-                <span class="brand-mark" style="width:46px;height:46px;font-size:17px;flex:none;background:var(--gold);color:#2A1F08;" id="profAccountInitial">P</span>
+                <div class="avatar-wrap">
+                  <span class="brand-mark" style="width:46px;height:46px;font-size:17px;background:var(--gold);color:#2A1F08;" id="profAccountInitial">P</span>
+                  <img class="avatar-photo hidden" id="profAccountPhotoImg" alt="Photo de profil">
+                  <button class="avatar-edit-btn" onclick="document.getElementById('profPhotoInput').click()" aria-label="Changer la photo de profil" title="Changer la photo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2Z"/><circle cx="12" cy="13" r="4"/></svg>
+                  </button>
+                  <input type="file" id="profPhotoInput" accept="image/png,image/jpeg,image/webp" class="hidden" onchange="handleProfilePhotoChange(this)">
+                </div>
                 <div>
                   <div style="font-weight:700;font-size:16px;" id="profAccountName">—</div>
                   <div style="font-size:12.5px;color:var(--ink-muted);" id="profAccountPhone">—</div>
@@ -1556,6 +1663,13 @@ async function apiFetchBlob(path){
   return res.blob();
 }
 
+// Convertit une URL relative renvoyée par le backend (ex: "/uploads/photos/xxx.png")
+// en URL absolue vers le serveur Khatam — même principe que adImgSrc.
+function mediaUrl(relPath){
+  if(!relPath) return null;
+  return relPath.startsWith('http') ? relPath : API_BASE.replace('/api','') + relPath;
+}
+
 let CATALOG = [];
 let MY_DOCS = [];
 let walletData = {balance:0, withdrawn:0, sales:[], withdrawals:[]};
@@ -1578,8 +1692,8 @@ async function loadCatalog(){
   CATALOG = (data.documents||[]).map(d=>({
     id: d.id, title: d.title, matiere: d.matiere, annee: d.annee, type: d.type,
     prix: d.prix, free: d.free, adUnlock: d.adUnlock, aiGrading: d.aiGrading,
-    unlocked: d.unlocked, views: d.views, statut: d.statut,
-    professorId: d.professor.id, prof: d.professor.fullName,
+    unlocked: d.unlocked, views: d.views, statut: d.statut, previewUrl: d.previewUrl,
+    professorId: d.professor.id, prof: d.professor.fullName, professorPhotoUrl: d.professor.photoUrl,
     professorBoosted: d.professorBoosted, professorLikes: d.professorLikes,
   }));
   populateFilterOptions();
@@ -1700,6 +1814,7 @@ function showView(id){
   window.scrollTo({top:0, behavior:'instant' in window ? 'instant' : 'auto'});
 }
 function goLanding(){ showView('view-landing'); }
+function goAbout(){ showView('view-about'); }
 
 let authMode = 'login';
 let authRole = 'STUDENT';
@@ -1891,8 +2006,17 @@ function docCardHTML(d){
   } else {
     footHTML = `<span class="dc-price">${fmtMRU(d.prix)}</span><div class="dc-actions"><button class="btn btn-ghost btn-sm" onclick="openPreview('${d.id}')">Aperçu</button><button class="btn btn-primary btn-sm" onclick="openPaymentModal('${d.id}')">Débloquer</button></div>`;
   }
+  const profAvatar = d.professorPhotoUrl
+    ? `<img class="dc-prof-avatar" src="${mediaUrl(d.professorPhotoUrl)}" alt="">`
+    : `<svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6l-8-4Z"/></svg>`;
+  const thumbHTML = d.previewUrl ? `
+    <div class="dc-thumb" onclick="${isUnlocked ? `openSecureViewer('${d.id}')` : `openPreview('${d.id}')`}" style="cursor:pointer;">
+      <img src="${mediaUrl(d.previewUrl)}" alt="Aperçu — ${d.title}" loading="lazy" onerror="this.parentElement.style.display='none';">
+      ${!isUnlocked ? `<span class="dc-thumb-lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Aperçu</span>` : ''}
+    </div>` : '';
   return `
   <div class="doc-card2 tilt">
+    ${thumbHTML}
     <div class="dc-top">
       <div class="dc-badges">
         <span class="badge">${tm.icon}${tm.label}</span>
@@ -1909,7 +2033,7 @@ function docCardHTML(d){
     <div class="dc-meta"><span>${d.matiere}</span><span>·</span><span>Session ${d.annee}</span></div>
     <div class="dc-prof-row">
       <div class="dc-prof">
-        <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6l-8-4Z"/></svg>
+        ${profAvatar}
         ${d.prof}
       </div>
       <button class="like-btn ${liked?'active':''}" onclick="toggleLikeProf('${d.professorId}')" aria-label="Aimer ce professeur">
@@ -1981,22 +2105,62 @@ function renderStudentAccountPanel(){
   document.getElementById('studentAccountName').textContent = currentUser.fullName || 'Élève';
   document.getElementById('studentAccountPhone').textContent = currentUser.phone || '';
   document.getElementById('studentAccountInitial').textContent = (currentUser.fullName || 'É').trim().charAt(0).toUpperCase();
+  renderAvatarInto('studentAccountInitial', 'studentAccountPhotoImg', currentUser.photoUrl);
+}
+// Affiche la photo de profil si elle existe (et cache l'avatar à initiales),
+// sinon garde l'avatar à initiales visible. `initialId`/`imgId` sont les ids
+// des deux éléments déjà présents dans le DOM (voir account panels).
+function renderAvatarInto(initialId, imgId, photoUrl){
+  const initialEl = document.getElementById(initialId);
+  const imgEl = document.getElementById(imgId);
+  if(!initialEl || !imgEl) return;
+  if(photoUrl){
+    imgEl.src = mediaUrl(photoUrl);
+    imgEl.classList.remove('hidden');
+    initialEl.classList.add('hidden');
+  } else {
+    imgEl.classList.add('hidden');
+    initialEl.classList.remove('hidden');
+  }
+}
+// Dépose/remplace la photo de profil de l'utilisateur connecté (élève ou
+// professeur) — appelé par les deux <input type="file"> des panneaux Compte.
+async function handleProfilePhotoChange(inputEl){
+  const file = inputEl.files && inputEl.files[0];
+  if(!file) return;
+  if(file.size > 4*1024*1024){ showToast('Image trop lourde (4 Mo maximum)'); inputEl.value=''; return; }
+  const form = new FormData();
+  form.append('photo', file);
+  try{
+    const res = await apiPost('/auth/me/photo', form);
+    currentUser = res.user;
+    localStorage.setItem('khatam_user', JSON.stringify(currentUser));
+    if(currentUser.role==='STUDENT') renderStudentAccountPanel(); else renderProfAccountPanel();
+    showToast('Photo de profil mise à jour');
+  }catch(e){
+    showToast('Erreur : '+e.message);
+  }
+  inputEl.value='';
 }
 
 /* ============================================================ PREVIEW ============================================================ */
 function openPreview(id){
   const d = CATALOG.find(x=>x.id===id);
+  const unlockBtn = d.adUnlock
+    ? `<button class="btn btn-gold btn-block" style="margin-top:10px;" onclick="closeModal();openAdGateModal('${d.id}')">Débloquer gratuitement — regarder une pub</button>`
+    : '';
   openModal(`
     <div class="modal-pad">
       <div class="modal-head">
         <div><h3>Aperçu</h3><p class="modal-sub">${d.title}</p></div>
         <button class="modal-close" onclick="closeModal()"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
       </div>
-      <div class="doc-card" style="transform:none;padding:20px;">
-        <div class="doc-lines"><span></span><span></span><span></span><span style="width:40%"></span></div>
-        <p style="font-size:12px;color:var(--ink-faint);margin-top:14px;">Aperçu limité à la première page — démonstration.</p>
+      <div class="doc-card" style="transform:none;padding:0;overflow:hidden;" oncontextmenu="return false;">
+        <img src="${mediaUrl(d.previewUrl)}" alt="Aperçu — ${d.title}" style="width:100%;display:block;user-select:none;-webkit-user-drag:none;" draggable="false">
       </div>
-      <button class="btn btn-primary btn-block" style="margin-top:18px;" onclick="closeModal();openPaymentModal('${d.id}')">Débloquer le document complet — ${fmtMRU(d.prix)}</button>
+      <p style="font-size:12px;color:var(--ink-faint);margin-top:14px;">Aperçu de la 1ère page — le haut est visible, le reste est flouté jusqu'au déblocage.</p>
+      <button class="btn btn-primary btn-block" style="margin-top:4px;" onclick="closeModal();openPaymentModal('${d.id}')">Débloquer le document complet — ${fmtMRU(d.prix)}</button>
+      ${unlockBtn}
     </div>
   `);
 }
@@ -2140,30 +2304,42 @@ async function pollPaymentStatus(purchaseId, docId){
 }
 
 /* ============================================================ VISIONNEUSE SÉCURISÉE (anti-fuite) ============================================================ */
+// Visionneuse sécurisée — affiche chaque page en IMAGE (pas le PDF brut) :
+// le lecteur PDF natif du navigateur ajoute toujours ses propres boutons
+// "télécharger / imprimer", même sur un fichier filigrané ; en image, ce
+// bouton n'existe plus. Complété par des déterrents "meilleur effort" (clic
+// droit, sélection, glisser-déposer désactivés) — la capture d'écran reste
+// techniquement possible sur n'importe quelle plateforme web (voir bannière
+// ci-dessous), mais toute copie reste identifiable via le filigrane.
 async function openSecureViewer(id){
   const d = CATALOG.find(x=>x.id===id);
   openModal(`
-    <div class="modal-pad" style="max-width:640px;">
+    <div class="modal-pad secure-modal" style="max-width:640px;" oncontextmenu="event.preventDefault();showToast('Clic droit désactivé sur les documents Khatam');return false;">
       <div class="modal-head">
         <div><h3>Visionneuse sécurisée</h3><p class="modal-sub">${d.title}</p></div>
         <button class="modal-close" onclick="closeModal()"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
       </div>
       <div class="secure-banner">
         <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-        <span>Document protégé — servi par le serveur avec un filigrane à votre nom, aucun fichier brut téléchargeable.</span>
+        <span>Document protégé — rendu en image par le serveur avec un filigrane à votre nom, aucun fichier brut téléchargeable ni bouton d'impression.</span>
       </div>
-      <div id="secureViewerBody" style="min-height:220px;display:flex;align-items:center;justify-content:center;" oncontextmenu="event.preventDefault();showToast('Clic droit désactivé sur les documents Khatam');return false;">
+      <div id="secureViewerBody" style="min-height:220px;display:flex;align-items:center;justify-content:center;">
         <div class="spin"></div>
       </div>
-      <p style="font-size:11.5px;color:var(--ink-faint);margin-top:12px;">Le capture d'écran et l'enregistrement vidéo ne peuvent techniquement être bloqués sur aucune plateforme web — mais toute copie diffusée reste identifiable grâce au filigrane appliqué ci-dessus, propre à votre compte.</p>
+      <p style="font-size:11.5px;color:var(--ink-faint);margin-top:12px;">La capture d'écran ne peut techniquement être bloquée sur aucune plateforme web (comme pour Netflix ou une banque) — mais toute copie diffusée reste identifiable grâce au filigrane appliqué à votre nom sur chaque page.</p>
     </div>
   `);
   try{
-    const blob = await apiFetchBlob('/documents/'+id+'/view');
-    const url = URL.createObjectURL(blob);
+    const data = await apiGet('/documents/'+id+'/view-pages');
     const body = document.getElementById('secureViewerBody');
-    if(body){
-      body.outerHTML = `<iframe id="secureViewerBody" src="${url}" style="width:100%;height:60vh;border:1px solid var(--line);border-radius:12px;background:#fff;" oncontextmenu="return false;"></iframe>`;
+    if(body && data.pages && data.pages.length){
+      body.style.display='block';
+      body.innerHTML = data.pages.map((src,i)=>`
+        <img src="${src}" alt="Page ${i+1}" draggable="false"
+             style="width:100%;display:block;margin-bottom:${i<data.pages.length-1?'10px':'0'};border:1px solid var(--line);border-radius:10px;user-select:none;-webkit-user-drag:none;pointer-events:none;">
+      `).join('');
+    } else if(body){
+      body.innerHTML = `<p style="color:#C0392B;font-size:13px;text-align:center;">Document vide ou illisible.</p>`;
     }
   }catch(e){
     const body = document.getElementById('secureViewerBody');
@@ -2499,6 +2675,7 @@ function renderProfAccountPanel(){
   document.getElementById('profAccountName').textContent = currentUser.fullName || 'Professeur';
   document.getElementById('profAccountPhone').textContent = currentUser.phone || '';
   document.getElementById('profAccountInitial').textContent = (currentUser.fullName || 'P').trim().charAt(0).toUpperCase();
+  renderAvatarInto('profAccountInitial', 'profAccountPhotoImg', currentUser.photoUrl);
 }
 
 function onUpTypeChange(){
