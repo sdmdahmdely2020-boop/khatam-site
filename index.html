@@ -530,6 +530,7 @@
   .stat-value{font-family:var(--font-mono);font-size:23px;font-weight:600;letter-spacing:-.01em;}
   .stat-delta{font-size:12px;margin-top:6px;font-weight:600;}
   .stat-delta.up{color:var(--status-good);}
+  .stat-delta.down{color:var(--status-warn);}
   .stat-delta.flat{color:var(--ink-faint);}
 
   /* ============ Chart ============ */
@@ -988,7 +989,7 @@
           <div class="feature-card tilt">
             <div class="feature-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg></div>
             <h3>Qualité vérifiée</h3>
-            <p>Seuls les professeurs approuvés peuvent publier. Chaque document porte le sceau Khatam.</p>
+            <p>Chaque document est publié par un compte professeur identifié (nom, téléphone) — fini les photos anonymes et floues qui circulent sur les groupes.</p>
           </div>
           <div class="feature-card tilt">
             <div class="feature-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg></div>
@@ -1003,7 +1004,7 @@
           <div class="feature-card tilt">
             <div class="feature-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 8h20M6 16h.01M10 16h4"/><rect x="2" y="5" width="20" height="14" rx="2"/></svg></div>
             <h3>Paiement mobile local</h3>
-            <p>Bankily, Masrivi et Sedad — pas de carte bancaire nécessaire. Déblocage instantané.</p>
+            <p>Bankily, Masrivi et Sedad — pas de carte bancaire nécessaire. Déblocage après vérification du paiement (généralement quelques minutes).</p>
           </div>
           <div class="feature-card tilt">
             <div class="feature-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6l-8-4Z"/></svg></div>
@@ -1034,7 +1035,7 @@
             </div>
             <div class="step-row"><span class="step-num">1</span><div class="step-body"><h4>Parcourir</h4><p>Filtrez par matière, type de contenu et année pour trouver la bonne ressource.</p></div></div>
             <div class="step-row"><span class="step-num">2</span><div class="step-body"><h4>Prévisualiser gratuitement</h4><p>Consultez un aperçu avant de payer quoi que ce soit.</p></div></div>
-            <div class="step-row"><span class="step-num">3</span><div class="step-body"><h4>Débloquer par mobile</h4><p>Confirmez avec Bankily ou Masrivi et téléchargez immédiatement.</p></div></div>
+            <div class="step-row"><span class="step-num">3</span><div class="step-body"><h4>Débloquer par mobile</h4><p>Confirmez avec Bankily ou Masrivi, collez votre numéro de reçu, et accédez au document dès que le paiement est vérifié (généralement quelques minutes).</p></div></div>
             <div class="step-row"><span class="step-num">4</span><div class="step-body"><h4>Soumettre sa copie</h4><p>Sur un corrigé, envoyez votre réponse et recevez une note IA détaillée.</p></div></div>
           </div>
           <div>
@@ -1044,7 +1045,7 @@
             </div>
             <div class="step-row"><span class="step-num">1</span><div class="step-body"><h4>Publier</h4><p>Sujets, cours, exercices, vidéos ou examens blancs — vous choisissez le type de contenu et le prix.</p></div></div>
             <div class="step-row"><span class="step-num">2</span><div class="step-body"><h4>Activer la correction IA</h4><p>Sur un corrigé, autorisez les élèves à soumettre leur copie pour une note automatique.</p></div></div>
-            <div class="step-row"><span class="step-num">3</span><div class="step-body"><h4>Être vérifié</h4><p>Votre profil et vos documents reçoivent le sceau Khatam.</p></div></div>
+            <div class="step-row"><span class="step-num">3</span><div class="step-body"><h4>Se faire remarquer</h4><p>Activez le Boost pour apparaître en tête du catalogue et gagnez des likes des élèves.</p></div></div>
             <div class="step-row"><span class="step-num">4</span><div class="step-body"><h4>Encaisser</h4><p>Suivez vos ventes et retirez votre solde chaque mois.</p></div></div>
           </div>
         </div>
@@ -1095,19 +1096,19 @@
         </div>
         <div class="revenue-grid">
           <div class="revenue-card tilt">
+            <div class="revenue-num">Boost</div>
+            <h3>Mise en avant pour les professeurs</h3>
+            <p>Les professeurs paient pour apparaître en tête des résultats de recherche sur leur matière — actif dès aujourd'hui.</p>
+          </div>
+          <div class="revenue-card tilt">
             <div class="revenue-num">15%</div>
-            <h3>Commission sur chaque vente</h3>
-            <p>Prélevée automatiquement lors du paiement Bankily/Masrivi. Pas de vente, pas de commission — le reste est versé au professeur.</p>
+            <h3>Commission sur chaque vente (à venir)</h3>
+            <p>Pas encore activée : chaque professeur reçoit actuellement 100% du prix de vente. Une commission pourra être introduite plus tard, sans jamais toucher les sujets officiels gratuits.</p>
           </div>
           <div class="revenue-card tilt">
             <div class="revenue-num">Abonnement</div>
-            <h3>Élève Premium</h3>
-            <p>Accès illimité à toute la Série C et corrections IA illimitées, pour un forfait mensuel ou « spécial session Bac ». Revenu récurrent et prévisible.</p>
-          </div>
-          <div class="revenue-card tilt">
-            <div class="revenue-num">Boost</div>
-            <h3>Mise en avant pour les professeurs</h3>
-            <p>Les professeurs peuvent payer pour apparaître en tête des résultats de recherche sur leur matière pendant 7 jours.</p>
+            <h3>Élève Premium (bientôt disponible)</h3>
+            <p>Accès illimité à toute la Série C et corrections IA illimitées, pour un forfait mensuel ou « spécial session Bac ». En préparation.</p>
           </div>
         </div>
       </div>
@@ -1130,7 +1131,7 @@
               <li><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg><span>Parcourir par matière, année et type de contenu</span></li>
               <li><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg><span>Aperçu gratuit avant tout paiement</span></li>
               <li><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg><span>Copie soumise et notée par l'IA sur 20</span></li>
-              <li><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg><span>Déblocage instantané par Bankily / Masrivi</span></li>
+              <li><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg><span>Déblocage rapide par Bankily / Masrivi / Sedad, dès vérification du paiement</span></li>
             </ul>
             <button class="btn btn-primary btn-block" style="margin-top:20px;" onclick="openAuthModal('student')">Créer un compte élève</button>
           </div>
@@ -1417,12 +1418,12 @@
               <div class="stat-tile">
                 <div class="stat-label">Solde disponible</div>
                 <div class="stat-value num" id="statBalance">—</div>
-                <div class="stat-delta flat">Après commission Khatam (15%)</div>
+                <div class="stat-delta flat">100% reversé — aucune commission pour l'instant</div>
               </div>
               <div class="stat-tile">
                 <div class="stat-label">Revenus ce mois</div>
                 <div class="stat-value num" id="statMonth">—</div>
-                <div class="stat-delta up">↑ 18% vs mois dernier</div>
+                <div class="stat-delta flat" id="statMonthDelta">—</div>
               </div>
               <div class="stat-tile">
                 <div class="stat-label">Documents en ligne</div>
@@ -1432,7 +1433,7 @@
               <div class="stat-tile">
                 <div class="stat-label">Copies corrigées par l'IA</div>
                 <div class="stat-value num" id="statAiCount">—</div>
-                <div class="stat-delta up">↑ 5 cette semaine</div>
+                <div class="stat-delta flat" id="statAiDelta">—</div>
               </div>
             </div>
 
@@ -1483,7 +1484,7 @@
           <div id="prof-upload-panel" class="hidden">
             <div class="card" style="max-width:640px;">
               <h2 style="font-size:18px;margin-bottom:4px;">Publier un nouveau document</h2>
-              <p style="font-size:13px;color:var(--ink-muted);margin-bottom:20px;">Il sera visible par les élèves après vérification du sceau Khatam (instantanée dans cette démo).</p>
+              <p style="font-size:13px;color:var(--ink-muted);margin-bottom:20px;">Il sera visible par tous les élèves dès l'envoi — vérifiez son contenu avant de publier.</p>
               <div class="form-grid">
                 <div class="field span2">
                   <label>Titre du document</label>
@@ -1674,19 +1675,26 @@ let CATALOG = [];
 let MY_DOCS = [];
 let walletData = {balance:0, withdrawn:0, sales:[], withdrawals:[]};
 
-/* Note : ce tableau reste une donnée d'illustration — le backend actuel n'expose pas
-   encore d'endpoint listant les copies soumises par les élèves à un professeur donné. */
-const PROF_AI_SUBMISSIONS = [
-  {student:'A. Mint S.', doc:'Corrigé détaillé — Mathématiques', note:16, date:'21/08/2026'},
-  {student:'M. Ould A.', doc:'Corrigé détaillé — Physique-Chimie', note:11, date:'20/08/2026'},
-  {student:'F. Mint L.', doc:'Corrigé détaillé — Mathématiques', note:18, date:'19/08/2026'},
-  {student:'S. Ould M.', doc:'Corrigé détaillé — Physique-Chimie', note:9, date:'18/08/2026'},
-  {student:'K. Mint H.', doc:'Corrigé détaillé — Mathématiques', note:14, date:'17/08/2026'},
-];
+// Vraies corrections IA reçues sur les documents du professeur connecté —
+// chargées depuis GET /api/professors/me/ai-submissions (voir loadProfAiSubmissions()).
+let PROF_AI_SUBMISSIONS = [];
+async function loadProfAiSubmissions(){
+  try{
+    const data = await apiGet('/professors/me/ai-submissions');
+    PROF_AI_SUBMISSIONS = data.submissions || [];
+  }catch(e){ PROF_AI_SUBMISSIONS = []; }
+}
 
 async function loadCatalog(){
+  // Le serveur n'accepte plus X-Viewer-Id (identifiant fourni "en clair" par
+  // le client, jamais vérifié — n'importe qui pouvait ainsi sonder l'accès
+  // de n'importe quel compte deviné). Il faut envoyer le vrai jeton JWT
+  // (comme apiFetch() le fait déjà pour toutes les autres routes) : sans ça,
+  // le serveur traite tout appelant comme anonyme — tous les documents
+  // apparaissent verrouillés, et un professeur ne voit plus ses propres
+  // brouillons dans "Mes documents".
   const headers = { 'X-Device-Id': getDeviceId() };
-  if(currentUser) headers['X-Viewer-Id'] = currentUser.id;
+  if(authToken) headers['Authorization'] = 'Bearer ' + authToken;
   const res = await fetch(API_BASE + '/documents?serie=C', { headers });
   const data = await res.json();
   CATALOG = (data.documents||[]).map(d=>({
@@ -1735,7 +1743,12 @@ async function loadSponsorBanner(){
   if(!ad || !ad.imageUrl){ el.classList.add('hidden'); return; }
   el.href = ad.targetUrl || '#';
   el.dataset.adId = ad.id;
-  document.getElementById('sponsorBannerImg').src = adImgSrc(ad);
+  const img = document.getElementById('sponsorBannerImg');
+  // Si le fichier image de la bannière est manquant/cassé, on masque toute
+  // la bannière plutôt que de laisser une icône d'image cassée visible sur
+  // le catalogue de tous les élèves.
+  img.onerror = () => el.classList.add('hidden');
+  img.src = adImgSrc(ad);
   document.getElementById('sponsorBannerName').textContent = ad.advertiserName;
   el.classList.remove('hidden');
   fetch(API_BASE + '/ads/' + ad.id + '/impression', {method:'POST'}).catch(()=>{});
@@ -1767,6 +1780,23 @@ function computeMonthlyEarnings(){
 function logout(){
   authToken = null; currentUser = null;
   localStorage.removeItem('khatam_token'); localStorage.removeItem('khatam_user');
+  // Ces clés (favoris, documents débloqués, historique IA, Premium, profs
+  // aimés) ne sont PAS liées au compte dans localStorage — sans ce
+  // nettoyage, un deuxième utilisateur qui se connecte sur le même
+  // navigateur/téléphone après une déconnexion hérite à tort de l'état
+  // affiché (ex. badge "Débloqué" ou "Premium actif") du compte précédent,
+  // même si le serveur, lui, refuse correctement l'accès réel derrière ce
+  // badge. Voir aussi enterDashboard() qui recharge ces clés au login.
+  localStorage.removeItem('khatam_favorites');
+  localStorage.removeItem('khatam_unlocked');
+  localStorage.removeItem('khatam_ai_history');
+  localStorage.removeItem('khatam_premium');
+  localStorage.removeItem('khatam_liked_profs');
+  favorites = new Set();
+  unlocked = new Set();
+  aiHistory = [];
+  premiumActive = false;
+  likedProfs = new Set();
   goLanding();
 }
 
@@ -1779,7 +1809,13 @@ function saveArr(key, arr){ try{ localStorage.setItem(key, JSON.stringify(arr));
 let favorites = loadSet('khatam_favorites');
 let unlocked  = loadSet('khatam_unlocked');
 let aiHistory = loadArr('khatam_ai_history');
-let premiumActive = localStorage.getItem('khatam_premium') === '1'; // fonctionnalité d'abonnement — reste simulée, non couverte par le backend actuel
+// Premium n'est pas encore une vraie fonctionnalité (voir renderPremiumBanner
+// ci-dessous) — toujours false, et on purge une éventuelle valeur laissée par
+// une session précédente d'avant cette correction (localStorage), pour
+// qu'un navigateur qui l'avait activé via l'ancien flux simulé ne continue
+// pas d'afficher à tort des documents payants comme "débloqués".
+localStorage.removeItem('khatam_premium');
+let premiumActive = false;
 let likedProfs = loadSet('khatam_liked_profs'); // suivi local (par navigateur) des professeurs déjà aimés, en plus du compteur réel côté serveur
 function isBoostActive(){ return !!(currentUser && currentUser.boostActiveUntil && new Date(currentUser.boostActiveUntil) > new Date()); }
 let pendingDoc = null;
@@ -1788,7 +1824,6 @@ let pendingPurchaseId = null;
 let pendingAiDoc = null;
 let pendingAiFile = null; // Blob/File JPEG (ou PDF tel quel) prêt à être envoyé pour la correction IA — voir handleSubmissionFileChange()
 let pendingAdDoc = null;
-let pendingPremiumPlan = {label:'Mensuel', price:500};
 
 /* ---- Appareil unique (démo) : un identifiant est généré une fois et associé au compte ---- */
 function getDeviceId(){
@@ -1854,7 +1889,6 @@ function renderAuthModal(){
       <div class="field" style="margin-bottom:8px;"><label>Mot de passe</label><input id="authPassword" type="password" placeholder="••••••••"></div>
       <p id="authError" class="hidden" style="color:#C0392B;font-size:12.5px;margin-bottom:10px;"></p>
       <button class="btn btn-primary btn-block" id="authSubmitBtn" onclick="submitAuth()">${authMode==='login' ? 'Se connecter' : 'Créer mon compte'}</button>
-      <p style="font-size:11.5px;color:var(--ink-faint);margin-top:14px;">Comptes de démonstration (mot de passe demo1234) — professeur : 22200000001 · élève : 22211111111</p>
     </div>
   `);
 }
@@ -1914,6 +1948,7 @@ async function enterDashboard(role){
     enableTilts();
   } else {
     await loadWallet();
+    await loadProfAiSubmissions();
     renderProfDashboard();
     showView('view-professor');
     enableTilts();
@@ -2063,7 +2098,11 @@ function renderFavorites(){
 function renderMine(){
   const data = sortCatalogForDisplay(CATALOG.filter(d=>d.free || d.unlocked || unlocked.has(d.id)));
   document.getElementById('mineGrid').innerHTML = data.length ? data.map(docCardHTML).join('') : emptyStateHTML('Aucun document débloqué', 'Les documents gratuits et achetés apparaîtront ici.');
-  document.getElementById('mineCount').textContent = CATALOG.filter(d=>(d.unlocked || unlocked.has(d.id)) && !d.free).length;
+  // Le badge doit compter exactement ce qui est affiché dans la grille
+  // ci-dessus (data.length) — il excluait auparavant les documents gratuits
+  // (`&& !d.free`), donnant un badge "Mes documents" plus petit que le
+  // nombre de cartes réellement visibles sous cet onglet.
+  document.getElementById('mineCount').textContent = data.length;
   enableTilts();
 }
 function emptyStateHTML(title, sub){
@@ -2220,35 +2259,16 @@ function selectMethod(key){
 // reçu que son application lui donne. Le document ne se débloque qu'une fois
 // qu'un administrateur a vérifié et confirmé la réception de l'argent
 // (panneau d'administration) — jamais automatiquement depuis ce navigateur.
+const PAYMENT_METHOD_NAMES = {bankily:'Bankily', masrivi:'Masrivi', sedad:'Sedad'};
+let pendingPaymentInit = null; // {amount, payTo} du dernier /payments/initiate réussi — permet de reconstruire l'écran de reçu si l'envoi du reçu échoue et doit être réessayé.
 async function startPayment(){
   const doc = pendingDoc;
-  const methodNames = {bankily:'Bankily', masrivi:'Masrivi', sedad:'Sedad'};
   openModal(`<div class="modal-pad"><div class="pay-status"><div class="spin"></div><h4>Un instant…</h4></div></div>`);
   try{
     const init = await apiPost('/payments/initiate', {documentId: doc.id, method: pendingMethod});
     pendingPurchaseId = init.purchaseId;
-    openModal(`
-      <div class="modal-pad">
-        <div class="modal-head">
-          <div><h3>Envoyez l'argent</h3><p class="modal-sub">Paiement ${methodNames[pendingMethod]}</p></div>
-          <button class="modal-close" onclick="closeModal()"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
-        </div>
-        <div class="doc-summary">
-          <div>
-            <p style="font-size:13px;margin:0 0 6px;">1. Ouvrez votre application <b>${methodNames[pendingMethod]}</b> et envoyez :</p>
-            <div class="price">${fmtMRU(init.amount)}</div>
-            <p style="font-size:12px;color:var(--ink-muted);margin:6px 0 0;">Au numéro</p>
-            <div class="proof-num" style="color:var(--accent-strong);font-size:20px;">${init.payTo}</div>
-          </div>
-        </div>
-        <p style="font-size:13px;margin:14px 0 8px;">2. Collez ici le <b>numéro de reçu</b> donné par votre application après l'envoi :</p>
-        <div class="field" style="margin-bottom:16px;">
-          <label>Numéro de reçu / référence</label>
-          <input type="text" id="payRef" placeholder="Ex. TXN123456">
-        </div>
-        <button class="btn btn-primary btn-block" onclick="submitPaymentReference()">J'ai payé — envoyer le reçu</button>
-      </div>
-    `);
+    pendingPaymentInit = init;
+    renderPaymentReferenceForm();
   }catch(e){
     openModal(`
       <div class="modal-pad">
@@ -2257,6 +2277,34 @@ async function startPayment(){
       </div>
     `);
   }
+}
+// Écran "collez le numéro de reçu" — extrait de startPayment() pour pouvoir
+// être ré-affiché depuis submitPaymentReference() si l'envoi du reçu échoue
+// (bouton "Réessayer"), en conservant ce que l'élève avait déjà tapé.
+function renderPaymentReferenceForm(prefillRef){
+  const init = pendingPaymentInit;
+  openModal(`
+    <div class="modal-pad">
+      <div class="modal-head">
+        <div><h3>Envoyez l'argent</h3><p class="modal-sub">Paiement ${PAYMENT_METHOD_NAMES[pendingMethod]}</p></div>
+        <button class="modal-close" onclick="closeModal()"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="doc-summary">
+        <div>
+          <p style="font-size:13px;margin:0 0 6px;">1. Ouvrez votre application <b>${PAYMENT_METHOD_NAMES[pendingMethod]}</b> et envoyez :</p>
+          <div class="price">${fmtMRU(init.amount)}</div>
+          <p style="font-size:12px;color:var(--ink-muted);margin:6px 0 0;">Au numéro</p>
+          <div class="proof-num" style="color:var(--accent-strong);font-size:20px;">${init.payTo}</div>
+        </div>
+      </div>
+      <p style="font-size:13px;margin:14px 0 8px;">2. Collez ici le <b>numéro de reçu</b> donné par votre application après l'envoi :</p>
+      <div class="field" style="margin-bottom:16px;">
+        <label>Numéro de reçu / référence</label>
+        <input type="text" id="payRef" placeholder="Ex. TXN123456" value="${prefillRef ? prefillRef.replace(/"/g,'&quot;') : ''}">
+      </div>
+      <button class="btn btn-primary btn-block" onclick="submitPaymentReference()">J'ai payé — envoyer le reçu</button>
+    </div>
+  `);
 }
 async function submitPaymentReference(){
   const ref = (document.getElementById('payRef').value || '').trim();
@@ -2277,7 +2325,18 @@ async function submitPaymentReference(){
     `);
     pollPaymentStatus(pendingPurchaseId, doc.id);
   }catch(e){
-    showToast('Erreur : ' + e.message);
+    // Auparavant, une erreur ici laissait la modale bloquée sur le spinner
+    // "Envoi…" (ouvert juste avant le try) — seul un toast apparaissait,
+    // sans aucun moyen de fermer ou réessayer depuis la modale elle-même.
+    openModal(`
+      <div class="modal-pad">
+        <div class="pay-status"><h4>Échec de l'envoi du reçu</h4><p>${e.message}</p></div>
+        <div style="display:flex;gap:10px;margin-top:14px;">
+          <button class="btn btn-block" onclick="closeModal()">Fermer</button>
+          <button class="btn btn-primary btn-block" onclick="renderPaymentReferenceForm('${ref.replace(/'/g,"\\'")}')">Réessayer</button>
+        </div>
+      </div>
+    `);
   }
 }
 async function pollPaymentStatus(purchaseId, docId){
@@ -2301,6 +2360,12 @@ async function pollPaymentStatus(purchaseId, docId){
         return;
       }
     }catch(e){ /* on continue d'essayer silencieusement */ }
+  }
+  // La boucle s'arrête après 45 essais (~3 minutes) sans confirmation ni
+  // refus : auparavant, rien ne le signalait à l'élève, qui pouvait croire
+  // que la vérification était toujours en cours indéfiniment.
+  if(paymentPollActive){
+    showToast(`Vérification toujours en attente pour "${doc ? doc.title : 'ce document'}" — le déblocage arrivera automatiquement dès que l'administrateur confirmera le paiement, même après la fermeture de cette page.`);
   }
 }
 
@@ -2361,7 +2426,7 @@ async function openAdGateModal(id){
   const ad = await fetchActiveAd('ad-gate');
   const adBlock = ad && ad.imageUrl
     ? `<a href="${ad.targetUrl||'#'}" target="_blank" rel="noopener" data-ad-id="${ad.id}" onclick="trackAdClick(this)" style="display:block;">
-         <img src="${adImgSrc(ad)}" alt="${ad.advertiserName}" style="width:100%;max-height:180px;object-fit:cover;border-radius:var(--radius-m);">
+         <img src="${adImgSrc(ad)}" alt="${ad.advertiserName}" style="width:100%;max-height:180px;object-fit:cover;border-radius:var(--radius-m);" onerror="this.closest('a').style.display='none'">
          <div style="text-align:center;font-size:11px;color:var(--ink-faint);margin-top:6px;">Annonce · ${ad.advertiserName}</div>
        </a>`
     : `<div class="ad-frame"><div class="ad-fake">
@@ -2473,8 +2538,12 @@ function renderAiHistory(){
   const el = document.getElementById('aiHistoryList');
   if(!aiHistory.length){ el.innerHTML = "<p style=\"font-size:13px;color:var(--ink-muted);\">Vous n'avez pas encore soumis de copie.</p>"; return; }
   el.innerHTML = aiHistory.map(h=>{
-    const cls = h.score>=14?'':(h.score>=10?'mid':'low');
-    return `<div class="ai-history-item"><span>${h.doc}</span><span class="num" style="font-weight:700;">${h.score}/20 · ${h.date}</span></div>`;
+    // Même seuils que le rond de note affiché juste après une correction
+    // (voir ringCls plus bas) — `cls` était calculé mais jamais appliqué au
+    // score dans la liste d'historique, qui restait donc toujours dans la
+    // couleur de texte par défaut quelle que soit la note.
+    const cls = h.score>=14 ? 'var(--status-good)' : (h.score>=10 ? 'var(--gold-strong)' : 'var(--status-critical)');
+    return `<div class="ai-history-item"><span>${h.doc}</span><span class="num" style="font-weight:700;color:${cls};">${h.score}/20 · ${h.date}</span></div>`;
   }).join('');
 }
 function openAiModal(id){
@@ -2646,13 +2715,26 @@ async function submitToAi(){
 }
 
 /* ============================================================ PREMIUM (student subscription) ============================================================ */
+// Premium était auparavant un flux entièrement simulé côté client : le
+// bouton "S'abonner" affichait un faux spinner "En attente de confirmation"
+// puis, après un simple setTimeout (aucun appel serveur, aucun paiement
+// réel), mettait `premiumActive = true` dans localStorage — un élève
+// pouvait donc voir tous les documents payants affichés comme "débloqués"
+// sans avoir rien payé. Le vrai contrôle d'accès côté serveur (hasAccess())
+// n'a jamais tenu compte de cet état, donc ouvrir réellement un document
+// aurait échoué avec une 403 — une expérience trompeuse et cassée pour un
+// vrai élève. En attendant une vraie intégration d'abonnement récurrent
+// (hors scope actuel — nécessite un prélèvement périodique via Bankily/
+// Masrivi/Sedad, pas seulement un paiement ponctuel), Premium est
+// honnêtement annoncé comme "Bientôt disponible" plutôt que de faire
+// semblant de fonctionner.
 function renderPremiumBanner(){
   const banner = document.getElementById('premiumBanner');
   if(!banner) return;
-  banner.classList.toggle('active', premiumActive);
-  document.getElementById('pbTitle').textContent = premiumActive ? 'Premium actif' : 'Passez Premium';
-  document.getElementById('pbSub').textContent = premiumActive ? 'Accès illimité à toute la Série C + corrections IA illimitées' : 'Accès illimité à toute la Série C + corrections IA illimitées';
-  document.getElementById('pbBtn').textContent = premiumActive ? 'Gérer mon abonnement' : 'Découvrir — dès 500 MRU/mois';
+  banner.classList.remove('active');
+  document.getElementById('pbTitle').textContent = 'Khatam Premium';
+  document.getElementById('pbSub').textContent = 'Accès illimité à toute la Série C + corrections IA illimitées — bientôt disponible';
+  document.getElementById('pbBtn').textContent = 'Bientôt disponible';
 }
 function openPremiumModal(){
   openModal(`
@@ -2661,44 +2743,24 @@ function openPremiumModal(){
         <div><h3>Khatam Premium</h3><p class="modal-sub">Accès illimité + corrections IA illimitées</p></div>
         <button class="modal-close" onclick="closeModal()"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
       </div>
-      <div class="pay-methods" id="premiumPlans">
-        ${premiumPlanRow('Mensuel', 500, 'Renouvelé chaque mois')}
-        ${premiumPlanRow('Spécial Bac', 2500, "Valable jusqu'à la session du Bac")}
+      <div class="empty-state" style="padding:28px 10px;">
+        <p>L'abonnement Premium (accès illimité + corrections IA illimitées) n'est pas encore disponible — il arrive bientôt. En attendant, chaque document reste accessible à l'unité (achat, ou gratuitement via publicité quand proposé).</p>
       </div>
-      <div class="field" style="margin-bottom:16px;">
-        <label>Numéro de téléphone</label>
-        <input type="tel" id="premiumPhone" placeholder="22 XX XX XX" value="22 45 67 89">
-      </div>
-      <button class="btn btn-gold btn-block" onclick="startPremium()">S'abonner — ${fmtAmount(pendingPremiumPlan.price)}</button>
+      <button class="btn btn-primary btn-block" onclick="closeModal()">Fermer</button>
     </div>
   `);
-}
-function premiumPlanRow(label, price, sub){
-  const sel = label===pendingPremiumPlan.label ? 'selected' : '';
-  return `<div class="pay-method ${sel}" onclick="selectPremiumPlan('${label}', ${price})">
-    <span class="gb" style="background:var(--gold);">${fmtAmount(price)}</span>
-    <div><h5>${label}</h5><p>${sub}</p></div>
-  </div>`;
-}
-function selectPremiumPlan(label, price){
-  pendingPremiumPlan = {label, price};
-  openPremiumModal();
-}
-function startPremium(){
-  const phone = document.getElementById('premiumPhone').value || '22 XX XX XX';
-  openModal(`<div class="modal-pad"><div class="pay-status"><div class="spin"></div><h4>En attente de confirmation</h4><p>Notification envoyée pour l'abonnement ${pendingPremiumPlan.label} (${fmtAmount(pendingPremiumPlan.price)}) au ${phone}…</p></div></div>`);
-  setTimeout(()=>{
-    premiumActive = true;
-    localStorage.setItem('khatam_premium', '1');
-    openModal(`<div class="modal-pad"><div class="pay-status"><div class="check"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg></div><h4>Premium activé</h4><p>Vous avez maintenant accès à tous les documents Série C et aux corrections IA illimitées.</p></div><button class="btn btn-primary btn-block" style="margin-top:14px;" onclick="closeModal()">Fermer</button></div>`);
-    renderPremiumBanner();
-    applyFilters(); renderFavorites(); renderMine(); renderAiPanel();
-    showToast('Abonnement Premium activé');
-  }, 1700);
 }
 
 /* ============================================================ PROFESSOR DASHBOARD ============================================================ */
 function renderProfDashboard(){
+  // Le titre/sous-titre du tableau de bord ("Pr. Sidi Mohamed · ...") est du
+  // texte de remplissage figé dans le HTML de départ — sans cet appel, il
+  // reste affiché tel quel jusqu'à ce que le professeur clique lui-même sur
+  // un onglet de la barre latérale (seul setProfTab() le remplace par ses
+  // vraies infos). Un vrai professeur qui vient de s'inscrire verrait donc
+  // le nom d'un autre compte affiché au-dessus de son propre tableau de
+  // bord dès la première connexion.
+  setProfTab('overview');
   const stats = docSalesStats();
   const balance = walletData.balance || 0;
   const withdrawn = walletData.withdrawn || 0;
@@ -2712,6 +2774,24 @@ function renderProfDashboard(){
   document.getElementById('profDocCount').textContent = MY_DOCS.length;
   document.getElementById('walletBalance').textContent = fmtAmount(balance);
   document.getElementById('walletWithdrawn').textContent = fmtAmount(withdrawn);
+
+  // Deltas calculés sur les vraies données (remplacent les "↑18%"/"↑5 cette
+  // semaine" auparavant codés en dur, identiques pour tout le monde).
+  const thisMonth = buckets[buckets.length-1].total;
+  const prevMonth = buckets[buckets.length-2] ? buckets[buckets.length-2].total : 0;
+  const monthDeltaEl = document.getElementById('statMonthDelta');
+  if(prevMonth > 0){
+    const pct = Math.round(((thisMonth - prevMonth) / prevMonth) * 100);
+    monthDeltaEl.textContent = (pct >= 0 ? '↑ ' : '↓ ') + Math.abs(pct) + '% vs mois dernier';
+    monthDeltaEl.className = 'stat-delta ' + (pct >= 0 ? 'up' : 'down');
+  } else {
+    monthDeltaEl.textContent = 'Pas de données le mois dernier';
+    monthDeltaEl.className = 'stat-delta flat';
+  }
+  const weekAgo = new Date(Date.now() - 7*24*60*60*1000);
+  const aiThisWeek = PROF_AI_SUBMISSIONS.filter(s=>new Date(s.createdAt.replace(' ','T')+'Z') > weekAgo).length;
+  document.getElementById('statAiDelta').textContent = aiThisWeek > 0 ? `↑ ${aiThisWeek} cette semaine` : 'Aucune cette semaine';
+  document.getElementById('statAiDelta').className = 'stat-delta ' + (aiThisWeek > 0 ? 'up' : 'flat');
 
   const total6mo = buckets.reduce((a,b)=>a+b.total,0);
   document.getElementById('chartTotal').textContent = fmtAmount(total6mo) + ' sur 6 mois';
@@ -2748,14 +2828,14 @@ function renderProfDashboard(){
     </tr>
   `).join('') : '<tr><td colspan="7"><div class="empty-state" style="padding:34px 10px;"><p>Aucun document publié pour le moment.</p></div></td></tr>';
 
-  document.getElementById('aiSubmissionsBody').innerHTML = PROF_AI_SUBMISSIONS.map(s=>`
+  document.getElementById('aiSubmissionsBody').innerHTML = PROF_AI_SUBMISSIONS.length ? PROF_AI_SUBMISSIONS.map(s=>`
     <tr>
-      <td>${s.student}</td>
-      <td>${s.doc}</td>
+      <td>${s.studentName}</td>
+      <td>${s.documentTitle}</td>
       <td class="num" style="font-weight:700;">${s.note}/20</td>
-      <td>${s.date}</td>
+      <td>${new Date(s.createdAt.replace(' ','T')+'Z').toLocaleDateString('fr-FR')}</td>
     </tr>
-  `).join('');
+  `).join('') : '<tr><td colspan="4"><div class="empty-state" style="padding:34px 10px;"><p>Aucune copie corrigée par l\'IA pour le moment.</p></div></td></tr>';
 
   const boosted = isBoostActive();
   document.getElementById('boostBtn').disabled = boosted;
@@ -2855,8 +2935,8 @@ function openWithdrawModal(){
         ${payMethodRow('masrivi','Masrivi','BCM Mauritanie','#B4842A','MV')}
       </div>
       <div class="field" style="margin-bottom:12px;">
-        <label>Numéro de téléphone</label>
-        <input type="tel" id="wdPhone" placeholder="22 XX XX XX" value="22 45 67 89">
+        <label>Numéro de téléphone (compte Bankily/Masrivi qui recevra l'argent)</label>
+        <input type="tel" id="wdPhone" placeholder="22 XX XX XX" value="${currentUser && currentUser.phone ? currentUser.phone : ''}">
       </div>
       <div class="field" style="margin-bottom:18px;">
         <label>Montant à retirer (MRU)</label>
