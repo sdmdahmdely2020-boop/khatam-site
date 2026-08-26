@@ -1411,6 +1411,7 @@
           </div>
           <span class="role-pill professor">Compte professeur</span>
         </div>
+        <div id="profApprovalBanner"></div>
         <div class="content">
 
           <div id="prof-overview-panel">
@@ -1474,7 +1475,7 @@
             <div class="table-card">
               <div class="table-scroll">
                 <table class="data-table">
-                  <thead><tr><th>Document</th><th>Type</th><th class="num">Prix</th><th class="num">Vues</th><th class="num">Ventes</th><th class="num">Revenu</th><th>Statut</th></tr></thead>
+                  <thead><tr><th>Document</th><th>Type</th><th class="num">Prix</th><th class="num">Vues</th><th class="num">Ventes</th><th class="num">Revenu</th><th>Statut</th><th></th></tr></thead>
                   <tbody id="allDocsBody"></tbody>
                 </table>
               </div>
@@ -1638,7 +1639,17 @@ async function apiFetch(path, opts={}){
   headers['X-Device-Id'] = getDeviceId();
   let res;
   try{
-    res = await fetch(API_BASE + path, Object.assign({}, opts, {headers}));
+    // cache:'no-store' + cache-buster (_t=...) sur les GET : sans ça, le
+    // navigateur peut réutiliser/coalescer une réponse GET très récente vers
+    // la même URL, même juste après une action qui vient de changer les
+    // données côté serveur (ex. upload d'un document, approbation admin
+    // suivie d'un GET /auth/me) — montrant alors des données périmées
+    // jusqu'au prochain rechargement complet de la page. cache:'no-store'
+    // seul s'est révélé insuffisant dans les tests ; le paramètre _t force
+    // une URL réellement différente à chaque appel.
+    const method = (opts.method || 'GET').toUpperCase();
+    const finalPath = method === 'GET' ? path + (path.includes('?') ? '&' : '?') + '_t=' + Date.now() : path;
+    res = await fetch(API_BASE + finalPath, Object.assign({}, opts, {headers, cache:'no-store'}));
   }catch(networkErr){
     throw Object.assign(new Error("Impossible de contacter le serveur Khatam. Vérifiez votre connexion."), {status:0});
   }
@@ -1653,9 +1664,12 @@ async function apiFetch(path, opts={}){
 }
 function apiGet(path){ return apiFetch(path, {method:'GET'}); }
 function apiPost(path, body){ return apiFetch(path, {method:'POST', body: body instanceof FormData ? body : JSON.stringify(body||{})}); }
+function apiPatch(path, body){ return apiFetch(path, {method:'PATCH', body: body instanceof FormData ? body : JSON.stringify(body||{})}); }
+function apiDelete(path){ return apiFetch(path, {method:'DELETE'}); }
 async function apiFetchBlob(path){
   const res = await fetch(API_BASE + path, {
-    headers:{ 'Authorization':'Bearer '+authToken, 'X-Device-Id': getDeviceId() }
+    headers:{ 'Authorization':'Bearer '+authToken, 'X-Device-Id': getDeviceId() },
+    cache:'no-store'
   });
   if(!res.ok){
     let data = {}; try{ data = await res.json(); }catch(e){}
@@ -1695,7 +1709,12 @@ async function loadCatalog(){
   // brouillons dans "Mes documents".
   const headers = { 'X-Device-Id': getDeviceId() };
   if(authToken) headers['Authorization'] = 'Bearer ' + authToken;
-  const res = await fetch(API_BASE + '/documents?serie=C', { headers });
+  // cache-buster (_t=...) en plus de cache:'no-store' : sans lui, certains
+  // navigateurs peuvent réutiliser/coalescer une requête GET très récente
+  // vers la même URL (juste après une action qui vient de modifier les
+  // données côté serveur, ex. upload d'un document), montrant alors des
+  // données périmées jusqu'au prochain rechargement complet de la page.
+  const res = await fetch(API_BASE + '/documents?serie=C&_t=' + Date.now(), { headers, cache:'no-store' });
   const data = await res.json();
   CATALOG = (data.documents||[]).map(d=>({
     id: d.id, title: d.title, matiere: d.matiere, annee: d.annee, type: d.type,
@@ -1854,12 +1873,20 @@ function goAbout(){ showView('view-about'); }
 
 let authMode = 'login';
 let authRole = 'STUDENT';
+// Rempli quand on passe à l'écran "code de vérification" (après une
+// inscription, ou après un login refusé pour cause d'email non vérifié) —
+// c'est cette adresse-là que /auth/verify-email et /auth/resend-code
+// utilisent. Le formulaire de connexion ne demande que le téléphone, donc
+// dans le cas d'un login refusé cette valeur vient de la réponse du serveur
+// (voir submitAuth()), pas d'un champ du formulaire.
+let pendingVerifyEmail = null;
 
 function openAuthModal(){
-  authMode = 'login'; authRole = 'STUDENT';
+  authMode = 'login'; authRole = 'STUDENT'; pendingVerifyEmail = null;
   renderAuthModal();
 }
 function renderAuthModal(){
+  if(authMode==='verify'){ renderVerifyModal(); return; }
   openModal(`
     <div class="modal-pad">
       <div class="modal-head">
@@ -1886,6 +1913,15 @@ function renderAuthModal(){
       <div class="field" style="margin-bottom:14px;"><label>Nom complet</label><input id="authName" placeholder="Votre nom"></div>
       ` : ''}
       <div class="field" style="margin-bottom:14px;"><label>Téléphone</label><input id="authPhone" type="tel" placeholder="22XXXXXXXX"></div>
+      ${authMode==='signup' ? `
+      <div class="field" style="margin-bottom:14px;"><label>Adresse email</label><input id="authEmail" type="email" placeholder="vous@exemple.com"></div>
+      ` : ''}
+      ${authMode==='signup' && authRole==='PROFESSOR' ? `
+      <p style="font-size:12px;color:var(--ink-muted);margin:-6px 0 14px;">Ces informations sont examinées par un administrateur avant que votre compte puisse publier des documents — voir la charte "vraies personnes uniquement".</p>
+      <div class="field" style="margin-bottom:14px;"><label>Établissement où vous enseignez</label><input id="authEtablissement" placeholder="Ex. Lycée National de Nouakchott"></div>
+      <div class="field" style="margin-bottom:14px;"><label>Matière enseignée</label><input id="authMatieres" placeholder="Ex. Mathématiques"></div>
+      <div class="field" style="margin-bottom:14px;"><label>Années d'expérience</label><input id="authExperience" type="number" min="0" max="60" placeholder="Ex. 5"></div>
+      ` : ''}
       <div class="field" style="margin-bottom:8px;"><label>Mot de passe</label><input id="authPassword" type="password" placeholder="••••••••"></div>
       <p id="authError" class="hidden" style="color:#C0392B;font-size:12.5px;margin-bottom:10px;"></p>
       <button class="btn btn-primary btn-block" id="authSubmitBtn" onclick="submitAuth()">${authMode==='login' ? 'Se connecter' : 'Créer mon compte'}</button>
@@ -1906,34 +1942,134 @@ async function submitAuth(){
   if(!phone || !password){ errEl.textContent = 'Téléphone et mot de passe requis.'; errEl.classList.remove('hidden'); return; }
   btn.disabled = true; btn.textContent = 'Un instant…';
   try{
-    let data;
     if(authMode==='login'){
-      data = await apiPost('/auth/login', {phone, password, deviceId:getDeviceId(), deviceLabel:navigator.userAgent});
-    } else {
-      const fullName = document.getElementById('authName').value.trim();
-      if(!fullName) throw Object.assign(new Error('Le nom complet est requis.'), {status:400});
-      await apiPost('/auth/signup', {role:authRole, fullName, phone, password, serie:'C'});
-      data = await apiPost('/auth/login', {phone, password, deviceId:getDeviceId(), deviceLabel:navigator.userAgent});
+      const data = await apiPost('/auth/login', {phone, password, deviceId:getDeviceId(), deviceLabel:navigator.userAgent});
+      authToken = data.token;
+      currentUser = data.user;
+      localStorage.setItem('khatam_token', authToken);
+      localStorage.setItem('khatam_user', JSON.stringify(currentUser));
+      closeModal();
+      await enterDashboard(currentUser.role==='STUDENT' ? 'student' : 'professor');
+      return;
     }
-    authToken = data.token;
-    currentUser = data.user;
-    localStorage.setItem('khatam_token', authToken);
-    localStorage.setItem('khatam_user', JSON.stringify(currentUser));
-    closeModal();
-    await enterDashboard(currentUser.role==='STUDENT' ? 'student' : 'professor');
+    // Inscription : le compte est créé mais reste inactif tant que l'email
+    // n'est pas vérifié — voir /auth/verify-email plus bas.
+    const fullName = document.getElementById('authName').value.trim();
+    const email = document.getElementById('authEmail').value.trim();
+    if(!fullName) throw Object.assign(new Error('Le nom complet est requis.'), {status:400});
+    if(!email) throw Object.assign(new Error("L'adresse email est requise."), {status:400});
+    const body = {role:authRole, fullName, phone, email, password, serie:'C'};
+    if(authRole==='PROFESSOR'){
+      body.etablissement = document.getElementById('authEtablissement').value.trim();
+      body.matieres = document.getElementById('authMatieres').value.trim();
+      body.experienceYears = parseInt(document.getElementById('authExperience').value || '', 10);
+      if(!body.etablissement || !body.matieres) throw Object.assign(new Error("Établissement et matière enseignée requis pour un compte professeur."), {status:400});
+      if(!Number.isInteger(body.experienceYears) || body.experienceYears < 0) throw Object.assign(new Error("Années d'expérience invalides."), {status:400});
+    }
+    await apiPost('/auth/signup', body);
+    pendingVerifyEmail = email;
+    authMode = 'verify';
+    renderVerifyModal({justSignedUp:true});
   }catch(e){
     btn.disabled = false; btn.textContent = authMode==='login' ? 'Se connecter' : 'Créer mon compte';
     let msg = e.message;
     if(e.status===409 && e.data && e.data.error==='DEVICE_MISMATCH') msg = 'Ce compte est déjà utilisé sur un autre téléphone. Un seul appareil est autorisé par compte.';
     if(e.status===409 && e.data && e.data.error==='PHONE_TAKEN') msg = 'Ce numéro est déjà utilisé — connectez-vous plutôt.';
+    if(e.status===409 && e.data && e.data.error==='EMAIL_TAKEN') msg = 'Cette adresse email est déjà utilisée.';
     if(e.status===401) msg = 'Numéro ou mot de passe incorrect.';
+    if(e.status===403 && e.data && e.data.error==='EMAIL_NOT_VERIFIED'){
+      // Le compte existe et le mot de passe est correct, mais l'email n'a
+      // jamais été vérifié — plutôt que de bloquer, on enchaîne directement
+      // sur l'écran de vérification (avec renvoi immédiat d'un nouveau code).
+      // Le formulaire de connexion ne demande pas l'email : on utilise celui
+      // renvoyé par le serveur dans la réponse d'erreur.
+      pendingVerifyEmail = e.data.email;
+      authMode = 'verify';
+      renderVerifyModal({justSignedUp:false});
+      resendVerifyCode(true);
+      return;
+    }
     errEl.textContent = msg;
     errEl.classList.remove('hidden');
   }
 }
 
+function renderVerifyModal(opts){
+  opts = opts || {};
+  openModal(`
+    <div class="modal-pad">
+      <div class="modal-head">
+        <div><h3>Vérification de l'email</h3><p class="modal-sub">${opts.justSignedUp ? 'Un code à 6 chiffres a été envoyé par email à ' : 'Un nouveau code a été envoyé par email à '}${pendingVerifyEmail}</p></div>
+        <button class="modal-close" onclick="closeModal()"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="field" style="margin-bottom:8px;">
+        <label>Code de vérification</label>
+        <input id="verifyCode" type="text" inputmode="numeric" maxlength="6" placeholder="123456" style="letter-spacing:4px;font-size:18px;text-align:center;">
+      </div>
+      <p id="verifyError" class="hidden" style="color:#C0392B;font-size:12.5px;margin-bottom:10px;"></p>
+      <p id="verifyInfo" class="hidden" style="color:var(--ink-muted);font-size:12.5px;margin-bottom:10px;"></p>
+      <button class="btn btn-primary btn-block" id="verifySubmitBtn" onclick="submitVerifyCode()">Vérifier et continuer</button>
+      <button class="btn btn-ghost btn-block" id="verifyResendBtn" style="margin-top:8px;" onclick="resendVerifyCode(false)">Renvoyer le code</button>
+      <button class="btn btn-ghost btn-block" style="margin-top:4px;" onclick="authMode='login'; renderAuthModal();">← Retour</button>
+    </div>
+  `);
+}
+
+async function submitVerifyCode(){
+  const codeEl = document.getElementById('verifyCode');
+  const code = codeEl.value.trim();
+  const errEl = document.getElementById('verifyError');
+  errEl.classList.add('hidden');
+  const btn = document.getElementById('verifySubmitBtn');
+  if(!code){ errEl.textContent = 'Entrez le code reçu par email.'; errEl.classList.remove('hidden'); return; }
+  btn.disabled = true; btn.textContent = 'Vérification…';
+  try{
+    const data = await apiPost('/auth/verify-email', {email: pendingVerifyEmail, code, deviceId:getDeviceId(), deviceLabel:navigator.userAgent});
+    authToken = data.token;
+    currentUser = data.user;
+    localStorage.setItem('khatam_token', authToken);
+    localStorage.setItem('khatam_user', JSON.stringify(currentUser));
+    pendingVerifyEmail = null;
+    closeModal();
+    await enterDashboard(currentUser.role==='STUDENT' ? 'student' : 'professor');
+    if(currentUser.role==='PROFESSOR' && currentUser.professorStatus!=='approved'){
+      showToast("Compte créé ! En attente d'approbation par un administrateur avant de pouvoir publier.");
+    }
+  }catch(e){
+    btn.disabled = false; btn.textContent = 'Vérifier et continuer';
+    let msg = e.message;
+    if(e.status===409 && e.data && e.data.error==='DEVICE_MISMATCH') msg = 'Ce compte est déjà utilisé sur un autre téléphone.';
+    errEl.textContent = msg;
+    errEl.classList.remove('hidden');
+  }
+}
+
+async function resendVerifyCode(silent){
+  const infoEl = document.getElementById('verifyInfo');
+  const btn = document.getElementById('verifyResendBtn');
+  if(btn){ btn.disabled = true; }
+  try{
+    await apiPost('/auth/resend-code', {email: pendingVerifyEmail});
+    if(infoEl){ infoEl.textContent = 'Nouveau code envoyé.'; infoEl.classList.remove('hidden'); }
+  }catch(e){
+    if(!silent && infoEl){ infoEl.textContent = 'Erreur : '+e.message; infoEl.classList.remove('hidden'); }
+  }finally{
+    if(btn) setTimeout(()=>{ btn.disabled = false; }, 15000);
+  }
+}
+
 async function enterDashboard(role){
   closeModal();
+  // Rafraîchit currentUser depuis le serveur avant tout — essentiel pour un
+  // professeur : une session restaurée depuis le stockage local (rechargement
+  // de page) garderait sinon un professorStatus figé au moment du dernier
+  // login, et ne refléterait jamais une approbation admin survenue entretemps
+  // sans se déconnecter/reconnecter.
+  try{
+    const me = await apiGet('/auth/me');
+    currentUser = me.user;
+    localStorage.setItem('khatam_user', JSON.stringify(currentUser));
+  }catch(e){ /* pas bloquant : on continue avec les données déjà en mémoire */ }
   try{
     await loadCatalog();
   }catch(e){ showToast('Impossible de contacter le serveur Khatam : '+e.message); }
@@ -2752,6 +2888,14 @@ function openPremiumModal(){
 }
 
 /* ============================================================ PROFESSOR DASHBOARD ============================================================ */
+// Onglet actif du tableau de bord professeur. renderProfDashboard() est
+// appelée après chaque action (publier/modifier/supprimer un document,
+// activer le Boost, etc.) pour rafraîchir les chiffres affichés — elle doit
+// donc rester sur l'onglet où se trouvait le professeur plutôt que de le
+// ramener systématiquement à "Revenus", sinon publier ou modifier un
+// document depuis "Mes documents" le renvoie sans prévenir vers un autre
+// onglet à chaque clic.
+let currentProfTab = 'overview';
 function renderProfDashboard(){
   // Le titre/sous-titre du tableau de bord ("Pr. Sidi Mohamed · ...") est du
   // texte de remplissage figé dans le HTML de départ — sans cet appel, il
@@ -2759,8 +2903,9 @@ function renderProfDashboard(){
   // un onglet de la barre latérale (seul setProfTab() le remplace par ses
   // vraies infos). Un vrai professeur qui vient de s'inscrire verrait donc
   // le nom d'un autre compte affiché au-dessus de son propre tableau de
-  // bord dès la première connexion.
-  setProfTab('overview');
+  // bord dès la première connexion. On reste toutefois sur l'onglet courant
+  // (voir currentProfTab ci-dessus) plutôt que de forcer "overview".
+  setProfTab(currentProfTab);
   const stats = docSalesStats();
   const balance = walletData.balance || 0;
   const withdrawn = walletData.withdrawn || 0;
@@ -2818,15 +2963,22 @@ function renderProfDashboard(){
 
   document.getElementById('allDocsBody').innerHTML = withStats.length ? withStats.map(d=>`
     <tr>
-      <td><div class="row-title">${d.title}</div><div class="row-sub">${d.aiGrading ? 'Correction IA activée' : 'Publié par vous'}</div></td>
+      <td><div class="row-title">${d.title}</div><div class="row-sub">${d.aiGrading ? 'Correction IA activée' : (d.statut==='publie' ? 'Publié par vous' : 'Brouillon — non visible des élèves')}</div></td>
       <td>${TYPE_META[d.type].label}</td>
       <td class="num">${fmtMRU(d.prix)}</td>
       <td class="num">${fmtNum(d.views)}</td>
       <td class="num">${fmtNum(d.ventes)}</td>
       <td class="num">${fmtAmount(d.revenue)}</td>
-      <td><span class="status-chip ${d.statut==='publie'?'good':'warn'}">${d.statut==='publie'?'Publié':d.statut}</span></td>
+      <td><span class="status-chip ${d.statut==='publie'?'good':'warn'}">${d.statut==='publie'?'Publié':'Brouillon'}</span></td>
+      <td>
+        <div style="display:flex;gap:6px;justify-content:flex-end;">
+          ${d.statut!=='publie' ? `<button class="btn btn-ghost btn-sm" title="${currentUser.professorStatus==='approved' ? 'Publier' : 'Compte non encore approuvé'}" ${currentUser.professorStatus==='approved' ? '' : 'disabled'} onclick="publishDoc('${d.id}')">Publier</button>` : `<button class="btn btn-ghost btn-sm" onclick="unpublishDoc('${d.id}')">Dépublier</button>`}
+          <button class="btn btn-ghost btn-sm" onclick="openEditDocModal('${d.id}')">Modifier</button>
+          <button class="btn btn-ghost btn-sm" style="color:#C0392B;" onclick="confirmDeleteDoc('${d.id}')">Supprimer</button>
+        </div>
+      </td>
     </tr>
-  `).join('') : '<tr><td colspan="7"><div class="empty-state" style="padding:34px 10px;"><p>Aucun document publié pour le moment.</p></div></td></tr>';
+  `).join('') : '<tr><td colspan="8"><div class="empty-state" style="padding:34px 10px;"><p>Aucun document publié pour le moment.</p></div></td></tr>';
 
   document.getElementById('aiSubmissionsBody').innerHTML = PROF_AI_SUBMISSIONS.length ? PROF_AI_SUBMISSIONS.map(s=>`
     <tr>
@@ -2844,7 +2996,29 @@ function renderProfDashboard(){
   renderWithdrawTable();
 }
 
+// Bandeau de statut d'approbation, affiché sur tous les onglets du tableau
+// de bord professeur tant que le compte n'est pas approuvé (ou a été
+// rejeté) par un administrateur — voir POST /api/admin/professors/:id/approve.
+function renderApprovalBanner(){
+  const el = document.getElementById('profApprovalBanner');
+  if(!el || !currentUser || currentUser.role!=='PROFESSOR') return;
+  if(currentUser.professorStatus==='approved'){ el.innerHTML = ''; return; }
+  if(currentUser.professorStatus==='rejected'){
+    el.innerHTML = `
+      <div class="banner" style="background:#FDECEA;border:1px solid #F5C6C2;color:#7A2E27;padding:14px 18px;border-radius:12px;margin:0 0 18px;font-size:13px;">
+        <strong>Compte non approuvé.</strong> Un administrateur a examiné votre inscription et n'a pas pu la valider. Vérifiez vos informations (établissement, matière) dans "Mon compte" ou contactez l'équipe Khatam.
+      </div>`;
+    return;
+  }
+  el.innerHTML = `
+    <div class="banner" style="background:#FFF6E0;border:1px solid #F0DBA0;color:#7A5B10;padding:14px 18px;border-radius:12px;margin:0 0 18px;font-size:13px;">
+      <strong>Compte en attente d'approbation.</strong> Vous pouvez préparer vos documents (ils resteront en brouillon), mais ils ne seront visibles des élèves qu'après validation de votre profil par un administrateur.
+    </div>`;
+}
+
 function setProfTab(tab){
+  currentProfTab = tab;
+  renderApprovalBanner();
   document.querySelectorAll('[data-ptab]').forEach(b=>b.classList.toggle('active', b.dataset.ptab===tab));
   ['overview','documents','upload','wallet','account'].forEach(t=>{
     document.getElementById('prof-'+t+'-panel').classList.toggle('hidden', t!==tab);
@@ -2897,7 +3071,7 @@ async function submitUpload(){
   fd.append('aiGrading', aiGrading ? 'true' : 'false');
   fd.append('file', fileInput.files[0]);
   try{
-    await apiPost('/documents', fd);
+    const res = await apiPost('/documents', fd);
     document.getElementById('upTitle').value=''; document.getElementById('upMatiere').value='';
     document.getElementById('upAiGrading').checked=false;
     document.getElementById('fileDropLabel').textContent='Cliquez pour choisir un fichier PDF';
@@ -2905,7 +3079,102 @@ async function submitUpload(){
     await loadCatalog(); await loadWallet();
     renderProfDashboard();
     setProfTab('documents');
-    showToast('Document publié avec succès');
+    showToast(res.professorPending ? "Document enregistré en brouillon — il sera publiable une fois votre compte approuvé par un administrateur." : 'Document publié avec succès');
+  }catch(e){ showToast('Erreur : '+e.message); }
+}
+
+// --- Gestion d'un document existant : publier/dépublier, modifier, supprimer ---
+// (le professeur reste propriétaire de tout ce qu'il a envoyé — le backend
+// vérifie systématiquement cette propriété avant d'accepter PATCH/DELETE).
+
+async function publishDoc(id){
+  try{
+    await apiPatch('/documents/'+id, {statut:'publie'});
+    await loadCatalog();
+    renderProfDashboard();
+    showToast('Document publié.');
+  }catch(e){
+    if(e.status===403 && e.data && e.data.error==='PROFESSOR_NOT_APPROVED'){
+      showToast("Votre compte doit d'abord être approuvé par un administrateur avant de publier.");
+    } else {
+      showToast('Erreur : '+e.message);
+    }
+  }
+}
+async function unpublishDoc(id){
+  try{
+    await apiPatch('/documents/'+id, {statut:'brouillon'});
+    await loadCatalog();
+    renderProfDashboard();
+    showToast('Document dépublié — il n\'est plus visible des élèves.');
+  }catch(e){ showToast('Erreur : '+e.message); }
+}
+
+function openEditDocModal(id){
+  const doc = MY_DOCS.find(d=>d.id===id);
+  if(!doc) return;
+  openModal(`
+    <div class="modal-pad">
+      <div class="modal-head">
+        <div><h3>Modifier le document</h3><p class="modal-sub">${doc.title}</p></div>
+        <button class="modal-close" onclick="closeModal()"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="field" style="margin-bottom:14px;"><label>Titre</label><input id="editDocTitle" value="${(doc.title||'').replace(/"/g,'&quot;')}"></div>
+      <div class="field" style="margin-bottom:14px;"><label>Matière</label><input id="editDocMatiere" value="${(doc.matiere||'').replace(/"/g,'&quot;')}"></div>
+      <div class="field" style="margin-bottom:14px;"><label>Session (année)</label>
+        <select id="editDocAnnee">
+          ${[2026,2025,2024,2023,2022,2021].map(y=>`<option value="${y}" ${doc.annee==y?'selected':''}>${y}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field" style="margin-bottom:14px;"><label>Prix (MRU)</label><input id="editDocPrix" type="number" min="0" step="10" value="${doc.prix||0}" ${doc.free?'disabled':''}></div>
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:18px;"><input type="checkbox" id="editDocFree" ${doc.free?'checked':''} onchange="document.getElementById('editDocPrix').disabled=this.checked"> Document gratuit</label>
+      <p id="editDocError" class="hidden" style="color:#C0392B;font-size:12.5px;margin-bottom:10px;"></p>
+      <button class="btn btn-primary btn-block" onclick="saveEditDoc('${id}')">Enregistrer les modifications</button>
+    </div>
+  `);
+}
+async function saveEditDoc(id){
+  const title = document.getElementById('editDocTitle').value.trim();
+  const matiere = document.getElementById('editDocMatiere').value.trim();
+  const annee = document.getElementById('editDocAnnee').value;
+  const free = document.getElementById('editDocFree').checked;
+  const prix = free ? 0 : parseInt(document.getElementById('editDocPrix').value || '0', 10);
+  const errEl = document.getElementById('editDocError');
+  if(!title || !matiere){ errEl.textContent = 'Titre et matière requis.'; errEl.classList.remove('hidden'); return; }
+  try{
+    await apiPatch('/documents/'+id, {title, matiere, annee, free, prix});
+    closeModal();
+    await loadCatalog();
+    renderProfDashboard();
+    showToast('Document modifié.');
+  }catch(e){
+    errEl.textContent = 'Erreur : '+e.message;
+    errEl.classList.remove('hidden');
+  }
+}
+
+function confirmDeleteDoc(id){
+  const doc = MY_DOCS.find(d=>d.id===id);
+  if(!doc) return;
+  openModal(`
+    <div class="modal-pad">
+      <div class="modal-head">
+        <div><h3>Supprimer ce document ?</h3><p class="modal-sub">${doc.title}</p></div>
+        <button class="modal-close" onclick="closeModal()"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <p style="font-size:13px;color:var(--ink-muted);margin-bottom:18px;">Cette action est définitive : le fichier, les achats et statistiques liés seront supprimés.</p>
+      <button class="btn btn-block" style="background:#C0392B;color:#fff;" onclick="deleteDoc('${id}')">Supprimer définitivement</button>
+      <button class="btn btn-ghost btn-block" style="margin-top:8px;" onclick="closeModal()">Annuler</button>
+    </div>
+  `);
+}
+async function deleteDoc(id){
+  try{
+    await apiDelete('/documents/'+id);
+    closeModal();
+    await loadCatalog();
+    renderProfDashboard();
+    showToast('Document supprimé.');
   }catch(e){ showToast('Erreur : '+e.message); }
 }
 
