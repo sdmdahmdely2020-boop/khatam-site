@@ -112,6 +112,12 @@
   </div>
 
   <div class="card">
+    <h2>Professeurs en attente d'approbation</h2>
+    <p class="sub">Un professeur qui s'inscrit peut se connecter et préparer ses documents, mais rien n'est visible des élèves tant que vous n'avez pas examiné et approuvé son profil ici — vérifiez l'établissement et la matière indiqués avant d'approuver.</p>
+    <div id="professorsPendingList"></div>
+  </div>
+
+  <div class="card">
     <h2>Paiements en attente de vérification</h2>
     <p class="sub">Vérifiez dans votre application Bankily/Masrivi/Sedad que le montant est bien arrivé, en comparant avec le numéro de reçu indiqué, puis confirmez ou refusez.</p>
     <div id="purchasesList"></div>
@@ -219,7 +225,48 @@ async function enter(){
 }
 
 async function refreshAll(){
-  await Promise.all([loadSettings(), loadPurchases(), loadWithdrawals(), loadAds()]);
+  await Promise.all([loadSettings(), loadProfessorsPending(), loadPurchases(), loadWithdrawals(), loadAds()]);
+}
+
+async function loadProfessorsPending(){
+  const el = document.getElementById('professorsPendingList');
+  try{
+    const data = await adminFetch('/admin/professors/pending');
+    if(!data.professors.length){ el.innerHTML = '<div class="empty">Aucun professeur en attente.</div>'; return; }
+    el.innerHTML = data.professors.map(p => `
+      <div class="item">
+        <div class="top">
+          <div class="title">${escapeHtml(p.fullName)}</div>
+          <span class="badge">${p.documentsCount} document(s) en brouillon</span>
+        </div>
+        <div class="meta">Téléphone : ${escapeHtml(p.phone)} · Email : ${escapeHtml(p.email || 'non renseigné')}</div>
+        <div class="meta">Établissement : <strong>${escapeHtml(p.etablissement || 'non renseigné')}</strong></div>
+        <div class="meta">Matière enseignée : ${escapeHtml(p.matieres || 'non renseignée')} · Expérience : ${p.experienceYears != null ? p.experienceYears + ' an(s)' : 'non renseignée'}</div>
+        <div class="meta">Inscrit le ${formatDate(p.createdAt)}</div>
+        <div class="actions">
+          <button class="btn btn-primary" onclick="approveProfessor('${p.id}')">Approuver</button>
+          <button class="btn btn-danger" onclick="rejectProfessor('${p.id}')">Refuser</button>
+        </div>
+      </div>
+    `).join('');
+  }catch(e){ el.innerHTML = `<div class="empty">Erreur : ${escapeHtml(e.message)}</div>`; }
+}
+
+async function approveProfessor(id){
+  if(!confirm("Approuver ce professeur ? Il pourra alors publier lui-même les documents qu'il a préparés (ils ne sont pas publiés automatiquement).")) return;
+  try{
+    await adminFetch(`/admin/professors/${id}/approve`, { method:'POST' });
+    showToast('Professeur approuvé.');
+    loadProfessorsPending();
+  }catch(e){ showToast('Erreur : ' + e.message); }
+}
+async function rejectProfessor(id){
+  if(!confirm('Refuser ce professeur ? Son compte reste créé mais ne pourra jamais publier tant que vous ne l\'approuvez pas ensuite.')) return;
+  try{
+    await adminFetch(`/admin/professors/${id}/reject`, { method:'POST' });
+    showToast('Professeur refusé.');
+    loadProfessorsPending();
+  }catch(e){ showToast('Erreur : ' + e.message); }
 }
 
 async function loadSettings(){
@@ -417,7 +464,8 @@ async function loadOverview(){
           <span class="badge">${roleLabel(u.role)}</span>
         </div>
         <div class="meta">Téléphone : ${escapeHtml(u.phone)}</div>
-        ${u.role === 'PROFESSOR' ? `<div class="meta">${u.documentsCount} document(s) publié(s) · Solde : ${u.walletBalance} MRU</div>` : ''}
+        ${u.email ? `<div class="meta">Email : ${escapeHtml(u.email)} ${u.emailVerified ? '<span class="badge">Vérifié</span>' : '<span class="badge" style="background:var(--danger-soft);color:var(--danger);">Non vérifié</span>'}</div>` : ''}
+        ${u.role === 'PROFESSOR' ? `<div class="meta">${u.documentsCount} document(s) · Solde : ${u.walletBalance} MRU · Statut : <strong>${escapeHtml(u.professorStatus || '—')}</strong></div>` : ''}
         <div class="meta">Créé le ${formatDate(u.createdAt)}</div>
         <div class="actions">
           <button class="btn btn-danger" onclick="deleteUser('${u.id}', ${JSON.stringify(u.fullName)})">Supprimer ce compte</button>
