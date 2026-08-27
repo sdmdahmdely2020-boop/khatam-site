@@ -663,6 +663,22 @@
     position:absolute;bottom:8px;left:8px;background:rgba(30,42,38,.72);color:#F7F3E7;
     font-size:10.5px;padding:3px 8px;border-radius:20px;letter-spacing:.02em;
   }
+  .sponsor-banner-dots{
+    position:absolute;bottom:8px;right:10px;display:flex;gap:5px;
+  }
+  .sponsor-banner-dots span{
+    width:6px;height:6px;border-radius:50%;background:rgba(247,243,237,.5);
+  }
+  .sponsor-banner-dots span.active{background:#F7F3E7;}
+
+  /* Note de l'application (étoiles) */
+  .rating-stars{display:flex;gap:4px;}
+  .rating-stars button{
+    background:none;border:none;cursor:pointer;padding:2px;line-height:1;
+    font-size:26px;color:var(--line-strong);transition:color .12s ease,transform .1s ease;
+  }
+  .rating-stars button:hover{transform:scale(1.1);}
+  .rating-stars button.filled{color:var(--gold);}
 
   /* AI grading */
   .ai-doc-row{
@@ -876,6 +892,7 @@
           <a href="#paiement">Paiement</a>
           <a href="#economie">Modèle économique</a>
           <a href="#profs-eleves">Professeurs &amp; élèves</a>
+          <a href="javascript:void(0)" onclick="goFaq()">FAQ</a>
           <a href="javascript:void(0)" onclick="goAbout()">À propos</a>
         </nav>
         <div class="nav-cta">
@@ -1171,7 +1188,11 @@
       <div class="container footer-inner">
         <div class="brand"><span class="brand-mark" style="width:26px;height:26px;font-size:12px;">Kh</span><span class="brand-word" style="font-size:15px;">Khatam</span></div>
         <p>Paiement par Bankily, Masrivi ou Sedad — déblocage vérifié manuellement sous peu de temps.</p>
-        <p style="margin-top:6px;"><a href="javascript:void(0)" onclick="goAbout()" style="color:var(--ink-muted);text-decoration:underline;">À propos du fondateur</a></p>
+        <p style="margin-top:6px;display:flex;gap:14px;flex-wrap:wrap;">
+          <a href="javascript:void(0)" onclick="goFaq()" style="color:var(--ink-muted);text-decoration:underline;">FAQ</a>
+          <a href="javascript:void(0)" onclick="goAbout()" style="color:var(--ink-muted);text-decoration:underline;">À propos du fondateur</a>
+          <a href="javascript:void(0)" onclick="openFeedbackModal()" style="color:var(--ink-muted);text-decoration:underline;">Donner un avis / signaler un problème</a>
+        </p>
       </div>
     </footer>
     </div><!-- /.marketing-extra -->
@@ -1199,6 +1220,10 @@
         <div class="section-head" style="text-align:center;">
           <div class="section-kicker">À propos</div>
           <h2>Le fondateur de Khatam</h2>
+        </div>
+
+        <div class="card hidden" id="aboutDynamicCard" style="padding:28px;margin-bottom:28px;">
+          <p id="aboutDynamicText" style="font-size:14.5px;line-height:1.7;color:var(--ink);white-space:pre-wrap;"></p>
         </div>
 
         <div class="card" style="padding:32px;display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap;margin-bottom:28px;">
@@ -1232,6 +1257,44 @@
 
         <p style="text-align:center;font-size:12.5px;color:var(--ink-faint);margin-top:24px;">
           Une question, une suggestion, ou envie de rejoindre Khatam comme professeur ? Écrivez depuis la page d'accueil.
+        </p>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <div class="brand"><span class="brand-mark" style="width:26px;height:26px;font-size:12px;">Kh</span><span class="brand-word" style="font-size:15px;">Khatam</span></div>
+        <p>Paiement par Bankily, Masrivi ou Sedad — déblocage vérifié manuellement sous peu de temps.</p>
+      </div>
+    </footer>
+  </section>
+
+  <!-- ============================================================ FAQ (page publique, indépendante des comptes) ============================================================ -->
+  <section id="view-faq" class="view">
+    <header class="letterhead">
+      <div class="container letterhead-inner">
+        <button class="brand" onclick="goLanding()">
+          <span class="brand-mark">Kh</span>
+          <span>
+            <span class="brand-word">Khatam</span><br>
+            <span class="brand-tag">Bac Mauritanien · Série C</span>
+          </span>
+        </button>
+        <div class="nav-cta">
+          <button class="btn btn-ghost btn-sm" onclick="goLanding()">← Retour à l'accueil</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="page-section" style="padding-top:48px;">
+      <div class="container" style="max-width:760px;">
+        <div class="section-head" style="text-align:center;">
+          <div class="section-kicker">Questions fréquentes</div>
+          <h2>FAQ</h2>
+        </div>
+        <div id="faqList"></div>
+        <p style="text-align:center;font-size:12.5px;color:var(--ink-faint);margin-top:24px;">
+          Une autre question ? <a href="javascript:void(0)" onclick="openFeedbackModal()" style="color:var(--accent);text-decoration:underline;">Écrivez-nous</a>.
         </p>
       </div>
     </section>
@@ -1370,6 +1433,20 @@
                 </button>
               </div>
             </div>
+
+            <div class="card" style="padding:22px;max-width:440px;margin-top:16px;">
+              <h3 style="font-size:15px;margin-bottom:4px;">Noter Khatam</h3>
+              <p style="font-size:12.5px;color:var(--ink-muted);margin-bottom:12px;">Votre avis nous aide à améliorer l'application — visible uniquement par l'équipe Khatam.</p>
+              <div id="studentRatingStars" class="rating-stars"></div>
+            </div>
+
+            <div class="card" style="padding:22px;max-width:440px;margin-top:16px;">
+              <h3 style="font-size:15px;margin-bottom:12px;">Aide</h3>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <button class="btn btn-ghost btn-block" onclick="goFaq()">FAQ</button>
+                <button class="btn btn-ghost btn-block" onclick="openFeedbackModal()">Donner un avis / signaler un problème</button>
+              </div>
+            </div>
           </div>
 
         </div>
@@ -1401,6 +1478,10 @@
           <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M22 10H2M17 15h.01"/></svg>
           Portefeuille
         </button>
+        <button class="side-link" data-ptab="messages" onclick="setProfTab('messages')">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Messages admin <span class="side-badge" id="profMsgUnreadCount">0</span>
+        </button>
         <button class="side-link" data-ptab="account" onclick="setProfTab('account')">
           <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>
           Compte
@@ -1419,6 +1500,10 @@
         <div class="content">
 
           <div id="prof-overview-panel">
+            <a id="dashboardAdBanner" class="sponsor-banner hidden" href="#" target="_blank" rel="noopener" onclick="trackAdClick(this)" style="margin-bottom:18px;">
+              <img id="dashboardAdBannerImg" src="" alt="">
+              <span class="sponsor-banner-tag">Annonce · <span id="dashboardAdBannerName"></span></span>
+            </a>
             <div class="stat-row">
               <div class="stat-tile">
                 <div class="stat-label">Solde disponible</div>
@@ -1604,6 +1689,31 @@
                 </button>
               </div>
             </div>
+
+            <div class="card" style="padding:22px;max-width:440px;margin-top:16px;">
+              <h3 style="font-size:15px;margin-bottom:4px;">Noter Khatam</h3>
+              <p style="font-size:12.5px;color:var(--ink-muted);margin-bottom:12px;">Votre avis nous aide à améliorer l'application — visible uniquement par l'équipe Khatam.</p>
+              <div id="profRatingStars" class="rating-stars"></div>
+            </div>
+
+            <div class="card" style="padding:22px;max-width:440px;margin-top:16px;">
+              <h3 style="font-size:15px;margin-bottom:12px;">Aide</h3>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <button class="btn btn-ghost btn-block" onclick="goFaq()">FAQ</button>
+                <button class="btn btn-ghost btn-block" onclick="openFeedbackModal()">Donner un avis / signaler un problème</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="prof-messages-panel" class="hidden">
+            <p style="font-size:13.5px;color:var(--ink-muted);margin-bottom:18px;max-width:64ch;">Un fil de discussion unique avec l'administrateur Khatam — pour une question sur un document, un paiement, ou votre compte.</p>
+            <div class="card" style="max-width:640px;">
+              <div id="profMsgThread" style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;max-height:420px;overflow-y:auto;"></div>
+              <div style="display:flex;gap:8px;">
+                <input type="text" id="profMsgInput" placeholder="Écrire un message à l'administrateur…" style="flex:1;padding:11px 13px;border:1px solid var(--line-strong);border-radius:var(--radius-s);font-family:inherit;font-size:14.5px;background:var(--paper-raised);color:var(--ink);">
+                <button class="btn btn-primary" onclick="sendProfMessageToAdmin()">Envoyer</button>
+              </div>
+            </div>
           </div>
 
         </div>
@@ -1764,21 +1874,67 @@ function trackAdClick(el){
   const id = el.dataset.adId;
   if(id) fetch(API_BASE + '/ads/' + id + '/click', {method:'POST'}).catch(()=>{});
 }
-async function loadSponsorBanner(){
-  const el = document.getElementById('sponsorBanner');
-  const ad = await fetchActiveAd('banner');
-  if(!ad || !ad.imageUrl){ el.classList.add('hidden'); return; }
+// ---- Carrousel de bannières publicitaires (demande de sidi, 27/08 : "des
+// ads qui sont déplacé change au cours du temps") ----
+// Récupère TOUTES les annonces actives pour une zone donnée (GET /ads/list)
+// et les fait défiler automatiquement toutes les 6 secondes. Une même
+// fonction sert les deux emplacements choisis (zone='catalog' sur la page
+// de parcours élève, zone='dashboard' sur le tableau de bord professeur) —
+// seuls les ids des éléments DOM diffèrent entre les deux appels.
+const adCarousels = {}; // { zone: {ads, index, timer} } — un minuteur par bannière active
+async function loadAdCarousel(zone, elId, imgId, tagId, nameId){
+  const el = document.getElementById(elId);
+  if(!el) return;
+  let ads = [];
+  try{
+    const res = await fetch(API_BASE + '/ads/list?placement=banner&zone=' + zone);
+    const data = await res.json();
+    ads = (data.ads || []).filter(a => a.imageUrl);
+  }catch(e){ ads = []; }
+  if(adCarousels[zone] && adCarousels[zone].timer) clearInterval(adCarousels[zone].timer);
+  if(!ads.length){ el.classList.add('hidden'); return; }
+  adCarousels[zone] = { ads, index: 0, timer: null };
+  showAdCarouselFrame(zone, elId, imgId, tagId, nameId);
+  if(ads.length > 1){
+    adCarousels[zone].timer = setInterval(() => {
+      adCarousels[zone].index = (adCarousels[zone].index + 1) % adCarousels[zone].ads.length;
+      showAdCarouselFrame(zone, elId, imgId, tagId, nameId);
+    }, 6000);
+  }
+}
+function showAdCarouselFrame(zone, elId, imgId, tagId, nameId){
+  const state = adCarousels[zone];
+  if(!state) return;
+  const ad = state.ads[state.index];
+  const el = document.getElementById(elId);
+  const img = document.getElementById(imgId);
   el.href = ad.targetUrl || '#';
   el.dataset.adId = ad.id;
-  const img = document.getElementById('sponsorBannerImg');
   // Si le fichier image de la bannière est manquant/cassé, on masque toute
-  // la bannière plutôt que de laisser une icône d'image cassée visible sur
-  // le catalogue de tous les élèves.
+  // la bannière plutôt que de laisser une icône d'image cassée visible.
   img.onerror = () => el.classList.add('hidden');
   img.src = adImgSrc(ad);
-  document.getElementById('sponsorBannerName').textContent = ad.advertiserName;
+  document.getElementById(nameId).textContent = ad.advertiserName;
   el.classList.remove('hidden');
+  let dotsEl = document.getElementById(tagId + 'Dots');
+  if(!dotsEl && state.ads.length > 1){
+    dotsEl = document.createElement('span');
+    dotsEl.id = tagId + 'Dots';
+    dotsEl.className = 'sponsor-banner-dots';
+    el.appendChild(dotsEl);
+  }
+  if(dotsEl){
+    dotsEl.innerHTML = state.ads.length > 1
+      ? state.ads.map((_, i) => `<span class="${i===state.index?'active':''}"></span>`).join('')
+      : '';
+  }
   fetch(API_BASE + '/ads/' + ad.id + '/impression', {method:'POST'}).catch(()=>{});
+}
+function loadSponsorBanner(){
+  return loadAdCarousel('catalog', 'sponsorBanner', 'sponsorBannerImg', 'sponsorBannerTag', 'sponsorBannerName');
+}
+function loadDashboardAdBanner(){
+  return loadAdCarousel('dashboard', 'dashboardAdBanner', 'dashboardAdBannerImg', 'dashboardAdBannerTag', 'dashboardAdBannerName');
 }
 function docSalesStats(){
   const byTitle = {};
@@ -1877,7 +2033,48 @@ function showView(id){
   window.scrollTo({top:0, behavior:'instant' in window ? 'instant' : 'auto'});
 }
 function goLanding(){ showView('view-landing'); }
-function goAbout(){ showView('view-about'); }
+function goAbout(){ showView('view-about'); loadPublicContent(); }
+function goFaq(){ showView('view-faq'); loadPublicContent(); }
+
+/* ============================================================ CONTENU PUBLIC (FAQ + À propos) ============================================================
+   Chargé depuis GET /api/content (public, pas besoin d'être connecté) —
+   géré depuis le panneau admin (admin_check.html, carte "FAQ et À propos").
+   Un seul appel réseau alimente à la fois la page FAQ et le bloc "À propos"
+   dynamique — mis en cache le temps de la session pour éviter un appel à
+   chaque clic sur ces liens. */
+let publicContentCache = null;
+async function loadPublicContent(){
+  if(!publicContentCache){
+    try{ publicContentCache = await apiGet('/content'); }
+    catch(e){ publicContentCache = {faq:[], about:''}; }
+  }
+  renderFaqList();
+  renderAboutDynamic();
+}
+function renderFaqList(){
+  const el = document.getElementById('faqList');
+  if(!el) return;
+  const faq = (publicContentCache && publicContentCache.faq) || [];
+  if(!faq.length){ el.innerHTML = '<p style="text-align:center;color:var(--ink-faint);font-size:13.5px;">Aucune question pour le moment.</p>'; return; }
+  el.innerHTML = faq.map(f => `
+    <div class="card" style="padding:18px 22px;margin-bottom:12px;">
+      <h4 style="font-size:15px;margin-bottom:6px;">${escapeHtml(f.question)}</h4>
+      <p style="font-size:13.5px;color:var(--ink-muted);line-height:1.6;">${escapeHtml(f.reponse)}</p>
+    </div>
+  `).join('');
+}
+function renderAboutDynamic(){
+  const card = document.getElementById('aboutDynamicCard');
+  const textEl = document.getElementById('aboutDynamicText');
+  if(!card || !textEl) return;
+  const about = (publicContentCache && publicContentCache.about || '').trim();
+  if(!about){ card.classList.add('hidden'); return; }
+  textEl.textContent = about;
+  card.classList.remove('hidden');
+}
+function escapeHtml(s){
+  return String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
 
 let authMode = 'login';
 let authRole = 'STUDENT';
@@ -1931,6 +2128,7 @@ function renderAuthModal(){
       <div class="field" style="margin-bottom:14px;"><label>Années d'expérience</label><input id="authExperience" type="number" min="0" max="60" placeholder="Ex. 5"></div>
       ` : ''}
       <div class="field" style="margin-bottom:8px;"><label>Mot de passe</label><input id="authPassword" type="password" placeholder="••••••••"></div>
+      ${authMode==='login' ? `<p style="text-align:right;margin-bottom:10px;"><a href="javascript:void(0)" onclick="openForgotPasswordModal()" style="font-size:12.5px;color:var(--ink-muted);text-decoration:underline;">Mot de passe oublié ?</a></p>` : ''}
       <p id="authError" class="hidden" style="color:#C0392B;font-size:12.5px;margin-bottom:10px;"></p>
       <button class="btn btn-primary btn-block" id="authSubmitBtn" onclick="submitAuth()">${authMode==='login' ? 'Se connecter' : 'Créer mon compte'}</button>
     </div>
@@ -2066,6 +2264,198 @@ async function resendVerifyCode(silent){
   }
 }
 
+/* ============================================================ MOT DE PASSE OUBLIÉ ============================================================
+   Flux en 2 écrans : (1) l'utilisateur saisit son email, POST /auth/forgot-password
+   envoie un code par email s'il correspond à un compte (réponse identique dans
+   tous les cas, voir routes/auth.js — évite de révéler si un email est inscrit) ;
+   (2) code + nouveau mot de passe, POST /auth/reset-password. */
+let forgotPasswordEmail = '';
+function openForgotPasswordModal(){
+  forgotPasswordEmail = '';
+  renderForgotPasswordStep1();
+}
+function renderForgotPasswordStep1(){
+  openModal(`
+    <div class="modal-pad">
+      <div class="modal-head">
+        <div><h3>Mot de passe oublié</h3><p class="modal-sub">Recevez un code par email pour réinitialiser votre mot de passe</p></div>
+        <button class="modal-close" onclick="closeModal()"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="field" style="margin-bottom:14px;"><label>Adresse email</label><input id="fpEmail" type="email" placeholder="vous@exemple.com"></div>
+      <p id="fpError1" class="hidden" style="color:#C0392B;font-size:12.5px;margin-bottom:10px;"></p>
+      <button class="btn btn-primary btn-block" id="fpSubmitBtn1" onclick="submitForgotPasswordEmail()">Recevoir le code</button>
+      <button class="btn btn-ghost btn-block" style="margin-top:8px;" onclick="authMode='login'; renderAuthModal();">← Retour à la connexion</button>
+    </div>
+  `);
+}
+async function submitForgotPasswordEmail(){
+  const emailEl = document.getElementById('fpEmail');
+  const email = emailEl.value.trim();
+  const errEl = document.getElementById('fpError1');
+  errEl.classList.add('hidden');
+  if(!email){ errEl.textContent = 'Adresse email requise.'; errEl.classList.remove('hidden'); return; }
+  const btn = document.getElementById('fpSubmitBtn1');
+  btn.disabled = true; btn.textContent = 'Un instant…';
+  try{
+    await apiPost('/auth/forgot-password', {email});
+    forgotPasswordEmail = email;
+    renderForgotPasswordStep2();
+  }catch(e){
+    btn.disabled = false; btn.textContent = 'Recevoir le code';
+    errEl.textContent = e.message;
+    errEl.classList.remove('hidden');
+  }
+}
+function renderForgotPasswordStep2(){
+  openModal(`
+    <div class="modal-pad">
+      <div class="modal-head">
+        <div><h3>Réinitialiser le mot de passe</h3><p class="modal-sub">Si un compte existe pour ${forgotPasswordEmail}, un code vient de lui être envoyé</p></div>
+        <button class="modal-close" onclick="closeModal()"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="field" style="margin-bottom:14px;">
+        <label>Code reçu par email</label>
+        <input id="fpCode" type="text" inputmode="numeric" maxlength="6" placeholder="123456" style="letter-spacing:4px;font-size:18px;text-align:center;">
+      </div>
+      <div class="field" style="margin-bottom:8px;"><label>Nouveau mot de passe</label><input id="fpNewPassword" type="password" placeholder="••••••••"></div>
+      <p id="fpError2" class="hidden" style="color:#C0392B;font-size:12.5px;margin-bottom:10px;"></p>
+      <button class="btn btn-primary btn-block" id="fpSubmitBtn2" onclick="submitResetPassword()">Réinitialiser le mot de passe</button>
+      <button class="btn btn-ghost btn-block" style="margin-top:8px;" onclick="renderForgotPasswordStep1()">← Retour</button>
+    </div>
+  `);
+}
+async function submitResetPassword(){
+  const code = document.getElementById('fpCode').value.trim();
+  const newPassword = document.getElementById('fpNewPassword').value;
+  const errEl = document.getElementById('fpError2');
+  errEl.classList.add('hidden');
+  if(!code || !newPassword){ errEl.textContent = 'Code et nouveau mot de passe requis.'; errEl.classList.remove('hidden'); return; }
+  const btn = document.getElementById('fpSubmitBtn2');
+  btn.disabled = true; btn.textContent = 'Un instant…';
+  try{
+    await apiPost('/auth/reset-password', {email: forgotPasswordEmail, code, newPassword});
+    showToast('Mot de passe réinitialisé. Connectez-vous.');
+    authMode = 'login'; renderAuthModal();
+  }catch(e){
+    btn.disabled = false; btn.textContent = 'Réinitialiser le mot de passe';
+    errEl.textContent = e.message;
+    errEl.classList.remove('hidden');
+  }
+}
+
+/* ============================================================ FEEDBACK (envoyé automatiquement sur le WhatsApp de sidi) ============================================================ */
+function openFeedbackModal(){
+  openModal(`
+    <div class="modal-pad">
+      <div class="modal-head">
+        <div><h3>Donner un avis</h3><p class="modal-sub">Suggestion, bug, ou simple message — transmis directement à l'équipe Khatam</p></div>
+        <button class="modal-close" onclick="closeModal()"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      ${!currentUser ? `<div class="field" style="margin-bottom:14px;"><label>Votre nom (facultatif)</label><input id="fbName" placeholder="Votre nom"></div>` : ''}
+      <div class="field" style="margin-bottom:14px;"><label>Contact (facultatif)</label><input id="fbContact" placeholder="Téléphone ou email"></div>
+      <div class="field" style="margin-bottom:8px;"><label>Message</label><textarea id="fbMessage" rows="4" placeholder="Votre message…" style="width:100%;padding:11px 13px;border:1px solid var(--line-strong);border-radius:var(--radius-s);font-family:inherit;font-size:14.5px;background:var(--paper-raised);color:var(--ink);"></textarea></div>
+      <p id="fbError" class="hidden" style="color:#C0392B;font-size:12.5px;margin-bottom:10px;"></p>
+      <button class="btn btn-primary btn-block" id="fbSubmitBtn" onclick="submitFeedback()">Envoyer</button>
+    </div>
+  `);
+}
+async function submitFeedback(){
+  const nameEl = document.getElementById('fbName');
+  const message = document.getElementById('fbMessage').value.trim();
+  const contact = document.getElementById('fbContact').value.trim();
+  const errEl = document.getElementById('fbError');
+  errEl.classList.add('hidden');
+  if(!message){ errEl.textContent = 'Le message est requis.'; errEl.classList.remove('hidden'); return; }
+  const btn = document.getElementById('fbSubmitBtn');
+  btn.disabled = true; btn.textContent = 'Envoi…';
+  try{
+    await apiPost('/feedback', {name: nameEl ? nameEl.value.trim() : undefined, contact, message});
+    closeModal();
+    showToast('Merci pour votre retour !');
+  }catch(e){
+    btn.disabled = false; btn.textContent = 'Envoyer';
+    errEl.textContent = e.message;
+    errEl.classList.remove('hidden');
+  }
+}
+
+/* ============================================================ NOTE DE L'APPLICATION (étoiles, visible uniquement par l'admin) ============================================================ */
+async function renderRatingStars(containerId){
+  const el = document.getElementById(containerId);
+  if(!el) return;
+  let current = 0;
+  try{
+    const data = await apiGet('/ratings/me');
+    current = data.rating ? data.rating.stars : 0;
+  }catch(e){ /* pas bloquant */ }
+  drawRatingStars(el, current);
+}
+function drawRatingStars(el, current){
+  el.innerHTML = '';
+  for(let i=1;i<=5;i++){
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = '★';
+    btn.className = i<=current ? 'filled' : '';
+    btn.setAttribute('aria-label', i + ' étoile(s)');
+    btn.onclick = () => submitRating(el, i);
+    el.appendChild(btn);
+  }
+}
+async function submitRating(el, stars){
+  drawRatingStars(el, stars); // retour visuel immédiat
+  try{
+    await apiPost('/ratings', {stars});
+    showToast('Merci pour votre note !');
+  }catch(e){ showToast('Erreur : '+e.message); }
+}
+
+/* ============================================================ MESSAGERIE PROFESSEUR <-> ADMIN ============================================================ */
+async function loadProfMsgUnreadBadge(){
+  const el = document.getElementById('profMsgUnreadCount');
+  if(!el || !currentUser || currentUser.role!=='PROFESSOR') return;
+  try{
+    const data = await apiGet('/professors/me/messages/unread-count');
+    el.textContent = data.count;
+  }catch(e){ /* pas bloquant */ }
+}
+async function loadProfMessagesPanel(){
+  const el = document.getElementById('profMsgThread');
+  if(!el) return;
+  el.innerHTML = '<p style="color:var(--ink-faint);font-size:13px;">Chargement…</p>';
+  try{
+    const data = await apiGet('/professors/me/messages');
+    if(!data.messages.length){
+      el.innerHTML = '<p style="color:var(--ink-faint);font-size:13px;">Aucun message pour le moment — écrivez à l\'administrateur ci-dessous.</p>';
+    } else {
+      el.innerHTML = data.messages.map(m => `
+        <div style="align-self:${m.sender==='professor' ? 'flex-end' : 'flex-start'};max-width:80%;background:${m.sender==='professor' ? 'var(--accent-soft)' : 'var(--paper-sunken)'};border-radius:var(--radius-m);padding:10px 14px;">
+          <div style="font-size:11px;color:var(--ink-faint);margin-bottom:3px;">${m.sender==='professor' ? 'Vous' : 'Administrateur'} · ${formatMsgDate(m.createdAt)}</div>
+          <div style="font-size:13.5px;">${escapeHtml(m.body)}</div>
+        </div>
+      `).join('');
+      el.scrollTop = el.scrollHeight;
+    }
+    loadProfMsgUnreadBadge();
+  }catch(e){ el.innerHTML = `<p style="color:#C0392B;font-size:13px;">Erreur : ${escapeHtml(e.message)}</p>`; }
+}
+function formatMsgDate(s){
+  if(!s) return '';
+  return s.replace(' ', ' à ').slice(0, 16);
+}
+async function sendProfMessageToAdmin(){
+  const input = document.getElementById('profMsgInput');
+  const body = input.value.trim();
+  if(!body) return;
+  input.disabled = true;
+  try{
+    await apiPost('/professors/me/messages', {body});
+    input.value = '';
+    await loadProfMessagesPanel();
+  }catch(e){ showToast('Erreur : '+e.message); }
+  finally{ input.disabled = false; input.focus(); }
+}
+
 async function enterDashboard(role){
   closeModal();
   // Rafraîchit currentUser depuis le serveur avant tout — essentiel pour un
@@ -2088,12 +2478,16 @@ async function enterDashboard(role){
     renderAiPanel();
     renderPremiumBanner();
     loadSponsorBanner();
+    renderRatingStars('studentRatingStars');
     showView('view-student');
     enableTilts();
   } else {
     await loadWallet();
     await loadProfAiSubmissions();
     renderProfDashboard();
+    loadDashboardAdBanner();
+    renderRatingStars('profRatingStars');
+    loadProfMsgUnreadBadge();
     showView('view-professor');
     enableTilts();
   }
@@ -3097,7 +3491,7 @@ function setProfTab(tab){
   currentProfTab = tab;
   renderApprovalBanner();
   document.querySelectorAll('[data-ptab]').forEach(b=>b.classList.toggle('active', b.dataset.ptab===tab));
-  ['overview','documents','upload','wallet','account'].forEach(t=>{
+  ['overview','documents','upload','wallet','messages','account'].forEach(t=>{
     document.getElementById('prof-'+t+'-panel').classList.toggle('hidden', t!==tab);
   });
   const profLabel = currentUser ? (currentUser.fullName + (currentUser.matieres ? ' · '+currentUser.matieres : '') + ' · Série C') : '';
@@ -3106,11 +3500,13 @@ function setProfTab(tab){
     documents:['Mes documents','Gérer vos sujets, cours, exercices, vidéos et corrections publiés'],
     upload:['Publier un document','Ajoutez une nouvelle ressource au catalogue Série C'],
     wallet:['Portefeuille','Solde, retraits, Boost et méthodes de paiement'],
+    messages:['Messages admin','Discutez directement avec l\'administrateur Khatam'],
     account:['Mon compte','Sécurité et déconnexion']
   };
   document.getElementById('profTitle').textContent = titles[tab][0];
   document.getElementById('profSub').textContent = titles[tab][1];
   if(tab==='account') renderProfAccountPanel();
+  if(tab==='messages') loadProfMessagesPanel();
 }
 
 function renderProfAccountPanel(){
