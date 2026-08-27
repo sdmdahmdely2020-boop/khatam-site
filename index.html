@@ -2446,6 +2446,11 @@ function renderPaymentReferenceForm(prefillRef){
         <label>Numéro de reçu / référence</label>
         <input type="text" id="payRef" placeholder="Ex. TXN123456" value="${prefillRef ? prefillRef.replace(/"/g,'&quot;') : ''}">
       </div>
+      <div class="field" style="margin-bottom:16px;">
+        <label>Capture d'écran du reçu (facultatif)</label>
+        <input type="file" id="payReceipt" accept="image/png,image/jpeg,image/webp">
+        <p style="font-size:11px;color:var(--ink-muted);margin:6px 0 0;">Aide visuelle pour l'administrateur en plus du numéro de reçu — pas une vérification automatique.</p>
+      </div>
       <button class="btn btn-primary btn-block" onclick="submitPaymentReference()">J'ai payé — envoyer le reçu</button>
     </div>
   `);
@@ -2453,10 +2458,21 @@ function renderPaymentReferenceForm(prefillRef){
 async function submitPaymentReference(){
   const ref = (document.getElementById('payRef').value || '').trim();
   if(!ref){ showToast('Entrez le numéro de reçu de votre paiement.'); return; }
+  const receiptFile = (document.getElementById('payReceipt') || {}).files;
+  const receiptToUpload = receiptFile && receiptFile[0] ? receiptFile[0] : null;
   const doc = pendingDoc;
   openModal(`<div class="modal-pad"><div class="pay-status"><div class="spin"></div><h4>Envoi…</h4></div></div>`);
   try{
     await apiPost(`/payments/${pendingPurchaseId}/submit-reference`, {reference: ref});
+    if(receiptToUpload){
+      // Facultatif : si l'envoi de la capture échoue (ex. réseau), on continue
+      // quand même — le numéro de reçu seul suffit pour que l'admin vérifie.
+      try{
+        const fd = new FormData();
+        fd.append('receipt', receiptToUpload);
+        await apiPost(`/payments/${pendingPurchaseId}/receipt`, fd);
+      }catch(e){ /* silencieux : la capture n'est qu'un appui visuel facultatif */ }
+    }
     openModal(`
       <div class="modal-pad">
         <div class="pay-status">
