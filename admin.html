@@ -159,7 +159,12 @@
       <button class="btn" onclick="loadOverview()">Voir toutes les données</button>
       <button class="btn btn-danger" onclick="resetDemoData()">Supprimer les données de démonstration</button>
     </div>
-    <p class="sub" style="margin:-6px 0 14px;">Le bouton rouge supprime uniquement les 2 professeurs, 2 élèves et documents de démonstration créés automatiquement au lancement du site (repérables ci-dessous par le badge "Démo") — vos vrais comptes ne sont jamais touchés.</p>
+    <p class="sub" style="margin:-6px 0 14px;">Le bouton rouge ci-dessus supprime uniquement les 2 professeurs, 2 élèves et documents de démonstration créés automatiquement au lancement du site (repérables ci-dessous par le badge "Démo") — vos vrais comptes ne sont jamais touchés.</p>
+
+    <div class="row" style="margin-bottom:14px;">
+      <button class="btn btn-danger" style="background:#7a1414;border-color:#7a1414;" onclick="resetAllUsers()">Tout réinitialiser — supprimer TOUS les comptes</button>
+    </div>
+    <p class="sub" style="margin:-6px 0 14px;">Ce bouton supprime <strong>absolument tous les comptes</strong> (élèves ET professeurs, réels ou de démonstration) et toutes leurs données (documents, achats, favoris, corrections IA, retraits) — utile pour repartir d'une base vide avant l'arrivée de vrais utilisateurs. Aucun compte n'est épargné. Cette action est irréversible et demande de taper une phrase de confirmation exacte.</p>
 
     <div id="overviewCounts"></div>
     <div id="overviewBody"></div>
@@ -518,6 +523,25 @@ async function resetDemoData(){
   if(!confirm('Supprimer tous les comptes et documents de démonstration (créés automatiquement au lancement du site) ? Vos vrais comptes ne seront pas touchés. Cette action est irréversible.')) return;
   try{
     const data = await adminFetch('/admin/reset-demo-data', { method:'POST' });
+    showToast(data.message);
+    loadOverview();
+  }catch(e){ showToast('Erreur : ' + e.message); }
+}
+
+// Réinitialisation totale : supprime TOUS les comptes (pas seulement la
+// démo) via POST /api/admin/reset-all-users. Deux barrières volontairement
+// redondantes avant l'appel réseau (confirm() puis une phrase tapée
+// exactement) car l'action est irréversible et bien plus large que
+// resetDemoData() — un simple clic accidentel ne doit jamais suffire.
+async function resetAllUsers(){
+  if(!confirm('Ceci supprime absolument TOUS les comptes (élèves ET professeurs, réels ou de démonstration) et toutes leurs données. Aucun compte ne sera épargné. Continuer ?')) return;
+  const typed = prompt('Pour confirmer cette suppression totale et irréversible, tapez exactement : SUPPRIMER TOUT');
+  if(typed !== 'SUPPRIMER TOUT'){
+    showToast('Annulé — la phrase ne correspond pas.');
+    return;
+  }
+  try{
+    const data = await adminFetch('/admin/reset-all-users', { method:'POST', body: JSON.stringify({confirm: typed}) });
     showToast(data.message);
     loadOverview();
   }catch(e){ showToast('Erreur : ' + e.message); }
