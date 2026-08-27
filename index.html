@@ -1364,6 +1364,10 @@
                   <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
                   Se déconnecter
                 </button>
+                <button class="btn btn-ghost btn-block" style="color:#fff;background:var(--status-critical);border-color:var(--status-critical);" onclick="openDeleteAccountModal()">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6h16Z"/></svg>
+                  Supprimer mon compte
+                </button>
               </div>
             </div>
           </div>
@@ -1594,6 +1598,10 @@
                   <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
                   Se déconnecter
                 </button>
+                <button class="btn btn-ghost btn-block" style="color:#fff;background:var(--status-critical);border-color:var(--status-critical);" onclick="openDeleteAccountModal()">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6h16Z"/></svg>
+                  Supprimer mon compte
+                </button>
               </div>
             </div>
           </div>
@@ -1665,7 +1673,7 @@ async function apiFetch(path, opts={}){
 function apiGet(path){ return apiFetch(path, {method:'GET'}); }
 function apiPost(path, body){ return apiFetch(path, {method:'POST', body: body instanceof FormData ? body : JSON.stringify(body||{})}); }
 function apiPatch(path, body){ return apiFetch(path, {method:'PATCH', body: body instanceof FormData ? body : JSON.stringify(body||{})}); }
-function apiDelete(path){ return apiFetch(path, {method:'DELETE'}); }
+function apiDelete(path, body){ return apiFetch(path, {method:'DELETE', body: body!==undefined ? (body instanceof FormData ? body : JSON.stringify(body||{})) : undefined}); }
 async function apiFetchBlob(path){
   const res = await fetch(API_BASE + path, {
     headers:{ 'Authorization':'Bearer '+authToken, 'X-Device-Id': getDeviceId() },
@@ -2648,6 +2656,59 @@ function simulateOtherDevice(){
     </div>
     <button class="btn btn-primary btn-block" style="margin-top:14px;" onclick="openSecurityModal()">Revenir à mon appareil</button>
   `;
+}
+
+/* ============================================================ SUPPRESSION DE COMPTE ============================================================ */
+// Suppression définitive et en libre-service du compte connecté (élève ou
+// professeur), demandée par l'utilisateur (voir DELETE /api/auth/me côté
+// serveur, routes/auth.js) : redemande le mot de passe pour confirmer, comme
+// pour la déliaison d'appareil — une action irréversible ne doit jamais
+// dépendre du seul fait que la session est restée ouverte sur ce téléphone.
+function openDeleteAccountModal(){
+  openModal(`
+    <div class="modal-pad" id="deleteAccountModalBody">
+      <div class="modal-head">
+        <div><h3>Supprimer mon compte</h3><p class="modal-sub">Action définitive et irréversible</p></div>
+        <button class="modal-close" onclick="closeModal()"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <p style="font-size:13px;color:var(--ink-muted);margin-bottom:14px;">Votre compte, vos documents (si vous êtes professeur), vos achats, favoris et votre historique seront supprimés définitivement. Cette action ne peut pas être annulée.</p>
+      <div class="field" style="margin-bottom:10px;"><label for="deleteAccountPassword">Confirmez avec votre mot de passe</label><input type="password" id="deleteAccountPassword" placeholder="••••••••" autocomplete="current-password"></div>
+      <p id="deleteAccountError" class="hidden" style="color:#C0392B;font-size:12.5px;margin-bottom:10px;"></p>
+      <button class="btn btn-block" style="color:#fff;background:var(--status-critical);border-color:var(--status-critical);" onclick="confirmDeleteAccount()" id="deleteAccountBtn">Supprimer définitivement mon compte</button>
+    </div>
+  `);
+}
+async function confirmDeleteAccount(){
+  const password = document.getElementById('deleteAccountPassword').value;
+  const errEl = document.getElementById('deleteAccountError');
+  errEl.classList.add('hidden');
+  if(!password){
+    errEl.textContent = 'Mot de passe requis.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  const btn = document.getElementById('deleteAccountBtn');
+  btn.disabled = true; btn.textContent = 'Suppression…';
+  try{
+    await apiDelete('/auth/me', {password});
+    // Nettoyage identique à logout() — le compte n'existe plus côté serveur,
+    // rien de local ne doit continuer à y faire référence.
+    authToken = null; currentUser = null;
+    localStorage.removeItem('khatam_token'); localStorage.removeItem('khatam_user');
+    localStorage.removeItem('khatam_favorites');
+    localStorage.removeItem('khatam_unlocked');
+    localStorage.removeItem('khatam_ai_history');
+    localStorage.removeItem('khatam_premium');
+    localStorage.removeItem('khatam_liked_profs');
+    favorites = new Set(); unlocked = new Set(); aiHistory = []; premiumActive = false; likedProfs = new Set();
+    closeModal();
+    showToast('Compte supprimé définitivement.');
+    goLanding();
+  }catch(e){
+    btn.disabled = false; btn.textContent = 'Supprimer définitivement mon compte';
+    errEl.textContent = e.message || 'Erreur lors de la suppression du compte.';
+    errEl.classList.remove('hidden');
+  }
 }
 
 /* ============================================================ AI GRADING (student side) ============================================================ */
