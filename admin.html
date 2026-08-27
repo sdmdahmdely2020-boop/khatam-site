@@ -139,9 +139,16 @@
     <div class="row">
       <div class="field" style="max-width:200px;">
         <label>Emplacement</label>
-        <select id="adPlacement" style="width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--bg);color:var(--ink);">
+        <select id="adPlacement" style="width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--bg);color:var(--ink);" onchange="onAdPlacementChange()">
           <option value="banner">Bandeau (catalogue)</option>
           <option value="ad-gate">Déblocage pub</option>
+        </select>
+      </div>
+      <div class="field" style="max-width:200px;" id="adZoneField">
+        <label>Zone (carrousel)</label>
+        <select id="adZone" style="width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--bg);color:var(--ink);">
+          <option value="catalog">Catalogue (page de parcours)</option>
+          <option value="dashboard">Tableau de bord (accueil du compte)</option>
         </select>
       </div>
       <div class="field"><label>Image (JPEG/PNG/WEBP, 5 Mo max)</label><input type="file" id="adImage" accept="image/*"></div>
@@ -149,6 +156,47 @@
     <button class="btn btn-primary" onclick="createAd()">Publier l'annonce</button>
     <div class="msg hidden" id="adMsg"></div>
     <div id="adsList" style="margin-top:16px;"></div>
+  </div>
+
+  <div class="card">
+    <h2>Note de l'application <span id="ratingsAvgBadge"></span></h2>
+    <p class="sub">Avis laissés par les élèves et professeurs sur Khatam lui-même (pas sur un document) — visible uniquement ici, jamais affiché publiquement.</p>
+    <div id="ratingsList"></div>
+  </div>
+
+  <div class="card">
+    <h2>Retours des utilisateurs (feedback)</h2>
+    <p class="sub">Envoyés depuis le formulaire "Donner un avis" du site. Un message vous est aussi transmis automatiquement sur WhatsApp quand c'est configuré (colonne "WhatsApp" ci-dessous).</p>
+    <div id="feedbackList"></div>
+  </div>
+
+  <div class="card">
+    <h2>FAQ et À propos</h2>
+    <p class="sub">Contenu affiché aux élèves et professeurs sur les pages publiques "FAQ" et "À propos". Modifiez puis enregistrez.</p>
+    <div id="faqEditorList"></div>
+    <button class="btn" onclick="addFaqRow()" style="margin-bottom:12px;">+ Ajouter une question</button>
+    <div class="field">
+      <label>Texte "À propos de nous"</label>
+      <textarea id="aboutText" rows="6" style="width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--bg);color:var(--ink);font-family:inherit;"></textarea>
+    </div>
+    <button class="btn btn-primary" onclick="saveContent()">Enregistrer FAQ et À propos</button>
+    <div class="msg hidden" id="contentMsg"></div>
+  </div>
+
+  <div class="card">
+    <h2>Messagerie avec les professeurs <span id="msgUnreadBadge"></span></h2>
+    <p class="sub">Un seul fil de discussion par professeur, pour répondre à une question ou clarifier un document sans passer par le téléphone.</p>
+    <div class="field" style="max-width:360px;">
+      <label>Choisir un professeur</label>
+      <select id="msgProfSelect" style="width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--bg);color:var(--ink);" onchange="loadProfMessages()">
+        <option value="">— Sélectionner —</option>
+      </select>
+    </div>
+    <div id="msgThread" style="margin:14px 0;"></div>
+    <div class="row" id="msgComposeRow" style="display:none;">
+      <div class="field" style="flex:3;min-width:220px;"><input type="text" id="msgComposeInput" placeholder="Écrire un message…"></div>
+      <button class="btn btn-primary" onclick="sendProfMessage()">Envoyer</button>
+    </div>
   </div>
 
   <div class="card">
@@ -230,7 +278,10 @@ async function enter(){
 }
 
 async function refreshAll(){
-  await Promise.all([loadSettings(), loadProfessorsPending(), loadPurchases(), loadWithdrawals(), loadAds()]);
+  await Promise.all([
+    loadSettings(), loadProfessorsPending(), loadPurchases(), loadWithdrawals(), loadAds(),
+    loadRatings(), loadFeedback(), loadContent(), loadProfessorsForMessaging(), loadMsgUnreadBadge(),
+  ]);
 }
 
 async function loadProfessorsPending(){
@@ -398,6 +449,15 @@ function formatDate(s){
 }
 
 function placementLabel(p){ return p === 'banner' ? 'Bandeau' : 'Déblocage pub'; }
+function zoneLabel(z){ return z === 'dashboard' ? 'Tableau de bord' : 'Catalogue'; }
+
+// Le champ "zone" ne s'applique qu'au bandeau carrousel (placement=banner) —
+// pour "Déblocage pub" il n'y a qu'un seul emplacement possible, la zone
+// n'a pas de sens et on la masque pour ne pas dérouter sidi.
+function onAdPlacementChange(){
+  const placement = document.getElementById('adPlacement').value;
+  document.getElementById('adZoneField').classList.toggle('hidden', placement !== 'banner');
+}
 
 async function loadAds(){
   const el = document.getElementById('adsList');
@@ -408,7 +468,7 @@ async function loadAds(){
       <div class="item">
         <div class="top">
           <div class="title">${escapeHtml(ad.advertiserName)}</div>
-          <span class="badge">${placementLabel(ad.placement)}</span>
+          <span class="badge">${placementLabel(ad.placement)}${ad.placement==='banner' ? ' · ' + zoneLabel(ad.zone) : ''}</span>
         </div>
         ${ad.imagePath ? `<img src="${API_BASE.replace('/api','')}/uploads/ads/${escapeHtml(ad.imagePath)}" alt="" style="width:220px;height:80px;border-radius:6px;display:block;margin:8px 0;object-fit:cover;background:var(--bg);">` : ''}
         <div class="meta">Lien : ${ad.targetUrl ? escapeHtml(ad.targetUrl) : '<em>aucun</em>'}</div>
@@ -426,6 +486,7 @@ async function createAd(){
   const advertiserName = document.getElementById('adName').value.trim();
   const targetUrl = document.getElementById('adUrl').value.trim();
   const placement = document.getElementById('adPlacement').value;
+  const zone = document.getElementById('adZone').value;
   const fileInput = document.getElementById('adImage');
   if(!advertiserName){ showToast('Nom de l\'annonceur requis.'); return; }
 
@@ -433,6 +494,7 @@ async function createAd(){
   form.append('advertiserName', advertiserName);
   form.append('targetUrl', targetUrl);
   form.append('placement', placement);
+  if(placement === 'banner') form.append('zone', zone);
   if(fileInput.files[0]) form.append('image', fileInput.files[0]);
 
   try{
@@ -561,6 +623,151 @@ async function resetAllUsers(){
     showToast(data.message);
     loadOverview();
   }catch(e){ showToast('Erreur : ' + e.message); }
+}
+
+/* ============================================================ NOTE DE L'APPLICATION ============================================================ */
+function starsHtml(n){
+  return '★★★★★☆☆☆☆☆'.slice(5-n, 10-n);
+}
+async function loadRatings(){
+  const el = document.getElementById('ratingsList');
+  const badge = document.getElementById('ratingsAvgBadge');
+  try{
+    const data = await adminFetch('/admin/ratings');
+    badge.innerHTML = data.count ? `<span class="badge">${Number(data.average).toFixed(1)} / 5 · ${data.count} avis</span>` : '';
+    if(!data.ratings.length){ el.innerHTML = '<div class="empty">Aucun avis pour le moment.</div>'; return; }
+    el.innerHTML = data.ratings.map(r => `
+      <div class="item">
+        <div class="top">
+          <div class="title">${escapeHtml(r.userFullName)} <span class="badge">${roleLabel(r.role)}</span></div>
+          <div class="amount" style="color:var(--gold-strong);">${starsHtml(r.stars)}</div>
+        </div>
+        ${r.comment ? `<div class="meta">${escapeHtml(r.comment)}</div>` : ''}
+        <div class="meta">${formatDate(r.createdAt)}</div>
+      </div>
+    `).join('');
+  }catch(e){ el.innerHTML = `<div class="empty">Erreur : ${escapeHtml(e.message)}</div>`; }
+}
+
+/* ============================================================ FEEDBACK ============================================================ */
+async function loadFeedback(){
+  const el = document.getElementById('feedbackList');
+  try{
+    const data = await adminFetch('/admin/feedback');
+    if(!data.feedback.length){ el.innerHTML = '<div class="empty">Aucun retour pour le moment.</div>'; return; }
+    el.innerHTML = data.feedback.map(f => `
+      <div class="item">
+        <div class="top">
+          <div class="title">${escapeHtml(f.name || f.userFullName || 'Anonyme')}</div>
+          <span class="badge" style="${f.whatsappSent ? '' : 'background:var(--danger-soft);color:var(--danger);'}">${f.whatsappSent ? 'Envoyé sur WhatsApp' : 'Non envoyé sur WhatsApp'}</span>
+        </div>
+        <div class="meta">${escapeHtml(f.message)}</div>
+        ${f.contact ? `<div class="meta">Contact : ${escapeHtml(f.contact)}</div>` : ''}
+        <div class="meta">${formatDate(f.createdAt)}</div>
+      </div>
+    `).join('');
+  }catch(e){ el.innerHTML = `<div class="empty">Erreur : ${escapeHtml(e.message)}</div>`; }
+}
+
+/* ============================================================ FAQ / À PROPOS ============================================================ */
+let faqRows = [];
+async function loadContent(){
+  try{
+    const data = await adminFetch('/admin/content');
+    faqRows = data.faq || [];
+    document.getElementById('aboutText').value = data.about || '';
+    renderFaqEditor();
+  }catch(e){ showToast('Erreur FAQ/À propos : ' + e.message); }
+}
+function renderFaqEditor(){
+  const el = document.getElementById('faqEditorList');
+  if(!faqRows.length){ el.innerHTML = '<div class="empty">Aucune question — ajoutez-en une ci-dessous.</div>'; return; }
+  el.innerHTML = faqRows.map((f, i) => `
+    <div class="item">
+      <div class="field"><label>Question</label><input type="text" value="${escapeHtml(f.question)}" oninput="faqRows[${i}].question=this.value"></div>
+      <div class="field"><label>Réponse</label><input type="text" value="${escapeHtml(f.reponse)}" oninput="faqRows[${i}].reponse=this.value"></div>
+      <div class="actions"><button class="btn btn-danger" onclick="removeFaqRow(${i})">Supprimer cette question</button></div>
+    </div>
+  `).join('');
+}
+function addFaqRow(){
+  faqRows.push({question:'', reponse:''});
+  renderFaqEditor();
+}
+function removeFaqRow(i){
+  faqRows.splice(i, 1);
+  renderFaqEditor();
+}
+async function saveContent(){
+  const msg = document.getElementById('contentMsg');
+  const cleaned = faqRows.filter(f => f.question.trim() && f.reponse.trim());
+  try{
+    await adminFetch('/admin/content', { method:'PATCH', body: JSON.stringify({
+      faq: cleaned,
+      about: document.getElementById('aboutText').value,
+    })});
+    faqRows = cleaned;
+    renderFaqEditor();
+    msg.textContent = 'Enregistré.'; msg.className = 'msg ok'; msg.classList.remove('hidden');
+    showToast('FAQ et À propos enregistrés.');
+  }catch(e){ showToast('Erreur : ' + e.message); }
+}
+
+/* ============================================================ MESSAGERIE ADMIN <-> PROFESSEUR ============================================================
+   Il n'existe pas de route dédiée "liste de tous les professeurs" — on
+   réutilise /admin/overview (déjà chargé pour la carte "Données de
+   l'application" plus bas) et on filtre côté client sur role==='PROFESSOR'. */
+let msgSelectedProfId = null;
+async function loadProfessorsForMessaging(){
+  const sel = document.getElementById('msgProfSelect');
+  try{
+    const data = await adminFetch('/admin/overview');
+    const profs = (data.users || []).filter(u => u.role === 'PROFESSOR');
+    const prevValue = sel.value;
+    sel.innerHTML = '<option value="">— Sélectionner —</option>' + profs.map(p =>
+      `<option value="${p.id}">${escapeHtml(p.fullName)} (${escapeHtml(p.phone)})</option>`
+    ).join('');
+    if(prevValue && profs.some(p => p.id === prevValue)) sel.value = prevValue;
+  }catch(e){ showToast('Erreur chargement professeurs : ' + e.message); }
+}
+async function loadProfMessages(){
+  const sel = document.getElementById('msgProfSelect');
+  const threadEl = document.getElementById('msgThread');
+  const composeRow = document.getElementById('msgComposeRow');
+  msgSelectedProfId = sel.value || null;
+  if(!msgSelectedProfId){ threadEl.innerHTML = ''; composeRow.style.display = 'none'; return; }
+  composeRow.style.display = 'flex';
+  threadEl.innerHTML = '<div class="empty">Chargement…</div>';
+  try{
+    const data = await adminFetch(`/admin/professors/${msgSelectedProfId}/messages`);
+    if(!data.messages.length){ threadEl.innerHTML = '<div class="empty">Aucun message échangé pour le moment.</div>'; }
+    else{
+      threadEl.innerHTML = data.messages.map(m => `
+        <div class="item" style="${m.sender === 'admin' ? 'background:var(--accent-soft);' : ''}">
+          <div class="meta"><strong>${m.sender === 'admin' ? 'Vous (admin)' : 'Professeur'}</strong> · ${formatDate(m.createdAt)}</div>
+          <div>${escapeHtml(m.body)}</div>
+        </div>
+      `).join('');
+    }
+    loadMsgUnreadBadge();
+  }catch(e){ threadEl.innerHTML = `<div class="empty">Erreur : ${escapeHtml(e.message)}</div>`; }
+}
+async function sendProfMessage(){
+  const input = document.getElementById('msgComposeInput');
+  const body = input.value.trim();
+  if(!body || !msgSelectedProfId) return;
+  try{
+    await adminFetch(`/admin/professors/${msgSelectedProfId}/messages`, { method:'POST', body: JSON.stringify({body}) });
+    input.value = '';
+    loadProfMessages();
+  }catch(e){ showToast('Erreur : ' + e.message); }
+}
+async function loadMsgUnreadBadge(){
+  const badge = document.getElementById('msgUnreadBadge');
+  try{
+    const data = await adminFetch('/admin/professors/unread-messages-count');
+    badge.innerHTML = data.count ? `<span class="badge" style="background:var(--danger-soft);color:var(--danger);">${data.count} non lu(s)</span>` : '';
+  }catch(e){ /* pas bloquant */ }
 }
 
 if(adminKey){ enter(); }
