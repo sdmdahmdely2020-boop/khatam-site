@@ -319,10 +319,26 @@ async function loadPurchases(){
         <div class="actions">
           <button class="btn btn-primary" onclick="confirmPurchase('${p.id}')">Confirmer — argent reçu</button>
           <button class="btn btn-danger" onclick="rejectPurchase('${p.id}')">Refuser</button>
+          ${p.hasReceipt ? `<button class="btn" onclick="viewReceipt('${p.id}')">Voir la capture d'écran</button>` : ''}
         </div>
       </div>
     `).join('');
   }catch(e){ el.innerHTML = `<div class="empty">Erreur : ${escapeHtml(e.message)}</div>`; }
+}
+
+// Affiche la capture d'écran du reçu (facultative, voir routes/payments.js
+// POST /:id/receipt) dans un nouvel onglet — simple appui visuel pour
+// vérifier manuellement, jamais une preuve automatique en soi (une image
+// peut être modifiée ou réutilisée). adminFetch() n'est pas utilisée ici
+// car elle tente toujours de parser du JSON ; l'image est récupérée en blob.
+async function viewReceipt(purchaseId){
+  try{
+    const res = await fetch(`${API_BASE}/admin/purchases/${purchaseId}/receipt`, { headers: {'X-Admin-Key': adminKey} });
+    if(!res.ok) throw new Error('Capture introuvable (' + res.status + ').');
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    window.open(url, '_blank');
+  }catch(e){ showToast('Erreur : ' + e.message); }
 }
 
 async function confirmPurchase(id){
