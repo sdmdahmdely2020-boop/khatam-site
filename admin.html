@@ -200,6 +200,21 @@
   </div>
 
   <div class="card">
+    <h2>Bot WhatsApp <span id="waUnreadBadge"></span></h2>
+    <p class="sub">Conversations avec les élèves/professeurs qui écrivent sur le numéro WhatsApp Business de Khatam. Le bot répond automatiquement aux questions simples (FAQ, à propos, paiement) ; les sujets délicats (remboursement, plainte, problème de compte...) sont escaladés ici pour que vous répondiez vous-même, en direct, depuis votre téléphone — cliquez ensuite "Marquer comme traité".</p>
+    <div class="field" style="max-width:360px;">
+      <label>Choisir une conversation</label>
+      <select id="waConvSelect" style="width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--bg);color:var(--ink);" onchange="loadWaThread()">
+        <option value="">— Sélectionner —</option>
+      </select>
+    </div>
+    <div id="waThread" style="margin:14px 0;"></div>
+    <div class="row" id="waResolveRow" style="display:none;">
+      <button class="btn btn-primary" onclick="resolveWaConversation()">Marquer comme traité</button>
+    </div>
+  </div>
+
+  <div class="card">
     <h2>Données de l'application</h2>
     <p class="sub">Voir tous les comptes et documents actuellement en base, et en supprimer si besoin. Une suppression est définitive.</p>
 
@@ -281,6 +296,7 @@ async function refreshAll(){
   await Promise.all([
     loadSettings(), loadProfessorsPending(), loadPurchases(), loadWithdrawals(), loadAds(),
     loadRatings(), loadFeedback(), loadContent(), loadProfessorsForMessaging(), loadMsgUnreadBadge(),
+    loadWaConversations(), loadWaUnreadBadge(),
   ]);
 }
 
@@ -767,6 +783,71 @@ async function loadMsgUnreadBadge(){
   try{
     const data = await adminFetch('/admin/professors/unread-messages-count');
     badge.innerHTML = data.count ? `<span class="badge" style="background:var(--danger-soft);color:var(--danger);">${data.count} non lu(s)</span>` : '';
+  }catch(e){ /* pas bloquant */ }
+}
+
+/* ============================================================ BOT WHATSAPP ============================================================
+   Le bot lui-même (réception + réponse auto) tourne côté serveur (voir
+   routes/whatsapp.js) ; ici on consulte seulement ce qu'il a échangé, et on
+   marque une conversation "traitée" une fois qu'on y a répondu à la main
+   depuis son propre téléphone WhatsApp. */
+let waSelectedNumber = null;
+async function loadWaConversations(){
+  const sel = document.getElementById('waConvSelect');
+  try{
+    const data = await adminFetch('/admin/whatsapp/conversations');
+    const prevValue = sel.value;
+    if(!data.conversations.length){
+      sel.innerHTML = '<option value="">— Aucune conversation pour le moment —</option>';
+      return;
+    }
+    sel.innerHTML = '<option value="">— Sélectionner —</option>' + data.conversations.map(c =>
+      `<option value="${escapeHtml(c.fromNumber)}">${escapeHtml(c.fromNumber)}${c.escalatedCount ? ' — ' + c.escalatedCount + ' en attente' : ''} (${c.total} message${c.total>1?'s':''})</option>`
+    ).join('');
+    if(prevValue && data.conversations.some(c => c.fromNumber === prevValue)) sel.value = prevValue;
+  }catch(e){ showToast('Erreur chargement conversations WhatsApp : ' + e.message); }
+}
+async function loadWaThread(){
+  const sel = document.getElementById('waConvSelect');
+  const threadEl = document.getElementById('waThread');
+  const resolveRow = document.getElementById('waResolveRow');
+  waSelectedNumber = sel.value || null;
+  if(!waSelectedNumber){ threadEl.innerHTML = ''; resolveRow.style.display = 'none'; return; }
+  threadEl.innerHTML = '<div class="empty">Chargement…</div>';
+  try{
+    const data = await adminFetch(`/admin/whatsapp/conversations/${encodeURIComponent(waSelectedNumber)}/messages`);
+    if(!data.messages.length){ threadEl.innerHTML = '<div class="empty">Aucun message.</div>'; }
+    else{
+      threadEl.innerHTML = data.messages.map(m => `
+        <div class="item" style="${m.direction === 'out' ? 'background:var(--accent-soft);' : ''}">
+          <div class="meta">
+            <strong>${m.direction === 'out' ? (m.autoReplied ? 'Bot (réponse automatique)' : 'Vous') : 'Élève / Professeur'}</strong>
+            · ${formatDate(m.createdAt)}
+            ${m.escalated ? '<span class="badge" style="background:var(--danger-soft);color:var(--danger);margin-left:6px;">en attente de votre réponse</span>' : ''}
+          </div>
+          <div>${escapeHtml(m.body)}</div>
+        </div>
+      `).join('');
+    }
+    const hasEscalated = data.messages.some(m => m.escalated);
+    resolveRow.style.display = hasEscalated ? 'flex' : 'none';
+    loadWaUnreadBadge();
+  }catch(e){ threadEl.innerHTML = `<div class="empty">Erreur : ${escapeHtml(e.message)}</div>`; }
+}
+async function resolveWaConversation(){
+  if(!waSelectedNumber) return;
+  try{
+    await adminFetch(`/admin/whatsapp/conversations/${encodeURIComponent(waSelectedNumber)}/resolve`, { method:'POST' });
+    showToast('Conversation marquée comme traitée.');
+    loadWaThread();
+    loadWaConversations();
+  }catch(e){ showToast('Erreur : ' + e.message); }
+}
+async function loadWaUnreadBadge(){
+  const badge = document.getElementById('waUnreadBadge');
+  try{
+    const data = await adminFetch('/admin/whatsapp/unread-count');
+    badge.innerHTML = data.count ? `<span class="badge" style="background:var(--danger-soft);color:var(--danger);">${data.count} en attente</span>` : '';
   }catch(e){ /* pas bloquant */ }
 }
 
