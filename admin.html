@@ -72,6 +72,14 @@
     opacity:0;pointer-events:none;transition:opacity .2s;z-index:50;
   }
   .toast.show{opacity:1;}
+  .simple-table{width:100%;border-collapse:collapse;font-size:13px;}
+  .simple-table th,.simple-table td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);}
+  .simple-table th{color:var(--ink-muted);font-weight:600;font-size:12px;}
+  .simple-table td.num{font-family:ui-monospace,Menlo,monospace;}
+  .table-wrap{overflow-x:auto;}
+  .badge.plan-premium{background:var(--gold-soft);color:var(--gold-strong);}
+  .badge.plan-basic{background:var(--accent-soft);color:var(--accent-strong);}
+  .badge.plan-free{background:var(--border);color:var(--ink-muted);}
 </style>
 </head>
 <body>
@@ -109,6 +117,36 @@
     </div>
     <button class="btn btn-primary" onclick="saveSettings()">Enregistrer</button>
     <div class="msg hidden" id="settingsMsg"></div>
+  </div>
+
+  <div class="card">
+    <h2>Abonnements — réglages</h2>
+    <p class="sub">Prix, durée et réduction de l'abonnement Basic — modifiables ici à tout moment, sans redéploiement. Basic donne une réduction sur les achats de documents à l'unité ; Premium donne l'accès complet sans achat individuel.</p>
+    <div class="row">
+      <div class="field"><label>Prix Basic (MRU)</label><input type="text" id="subBasicPrice" placeholder="300"></div>
+      <div class="field"><label>Prix Premium (MRU)</label><input type="text" id="subPremiumPrice" placeholder="800"></div>
+      <div class="field"><label>Durée (jours)</label><input type="text" id="subDurationDays" placeholder="30"></div>
+      <div class="field"><label>Réduction Basic (%)</label><input type="text" id="subDiscountPercent" placeholder="20"></div>
+    </div>
+    <button class="btn btn-primary" onclick="saveSubscriptionSettings()">Enregistrer</button>
+    <div class="msg hidden" id="subSettingsMsg"></div>
+  </div>
+
+  <div class="card">
+    <h2>Abonnements en attente de vérification</h2>
+    <p class="sub">Comme pour les paiements de documents : vérifiez dans votre application Bankily/Masrivi/Sedad que le montant est bien arrivé, en comparant avec le numéro de reçu indiqué, puis confirmez ou refusez.</p>
+    <div id="subscriptionsPendingList"></div>
+  </div>
+
+  <div class="card">
+    <h2>Abonnés <span id="subUsersCountBadge"></span></h2>
+    <p class="sub">Élèves ayant souscrit à un abonnement au moins une fois. "Statut" est calculé au moment de l'affichage — un abonnement expiré repasse automatiquement à "Gratuit" ici, même sans action de votre part.</p>
+    <div class="table-wrap">
+      <table class="simple-table">
+        <thead><tr><th>Élève</th><th>Téléphone</th><th>Statut</th><th>Expire le</th></tr></thead>
+        <tbody id="subUsersBody"></tbody>
+      </table>
+    </div>
   </div>
 
   <div class="card">
@@ -294,7 +332,8 @@ async function enter(){
 
 async function refreshAll(){
   await Promise.all([
-    loadSettings(), loadProfessorsPending(), loadPurchases(), loadWithdrawals(), loadAds(),
+    loadSettings(), loadSubscriptionSettings(), loadSubscriptionsPending(), loadSubscriptionUsers(),
+    loadProfessorsPending(), loadPurchases(), loadWithdrawals(), loadAds(),
     loadRatings(), loadFeedback(), loadContent(), loadProfessorsForMessaging(), loadMsgUnreadBadge(),
     loadWaConversations(), loadWaUnreadBadge(),
   ]);
@@ -361,6 +400,108 @@ async function saveSettings(){
     msg.textContent = 'Enregistré.'; msg.className = 'msg ok';
     showToast('Numéros enregistrés.');
   }catch(e){ showToast('Erreur : ' + e.message); }
+}
+
+/* ============================================================ ABONNEMENTS (Basic/Premium) ============================================================
+   S'ajoute au système d'achat par document ci-dessus, ne le remplace pas —
+   voir src/lib/subscriptions.js côté backend. Même circuit que les paiements
+   de documents : confirmation TOUJOURS manuelle après vérification du
+   numéro de reçu, jamais automatique. */
+function planLabel(p){
+  return { basic:'Basic', premium:'Premium', free:'Gratuit' }[p] || p;
+}
+function planBadgeClass(p){
+  return { basic:'plan-basic', premium:'plan-premium', free:'plan-free' }[p] || '';
+}
+
+async function loadSubscriptionSettings(){
+  try{
+    const data = await adminFetch('/admin/subscription-settings');
+    document.getElementById('subBasicPrice').value = data.settings.basicPrice;
+    document.getElementById('subPremiumPrice').value = data.settings.premiumPrice;
+    document.getElementById('subDurationDays').value = data.settings.durationDays;
+    document.getElementById('subDiscountPercent').value = data.settings.basicDiscountPercent;
+  }catch(e){ showToast('Erreur réglages abonnements : ' + e.message); }
+}
+
+async function saveSubscriptionSettings(){
+  const msg = document.getElementById('subSettingsMsg');
+  try{
+    await adminFetch('/admin/subscription-settings', { method:'PATCH', body: JSON.stringify({
+      basicPrice: document.getElementById('subBasicPrice').value.trim(),
+      premiumPrice: document.getElementById('subPremiumPrice').value.trim(),
+      durationDays: document.getElementById('subDurationDays').value.trim(),
+      basicDiscountPercent: document.getElementById('subDiscountPercent').value.trim(),
+    })});
+    msg.textContent = 'Enregistré.'; msg.className = 'msg ok'; msg.classList.remove('hidden');
+    showToast('Réglages d\'abonnement enregistrés.');
+  }catch(e){ showToast('Erreur : ' + e.message); }
+}
+
+async function loadSubscriptionsPending(){
+  const el = document.getElementById('subscriptionsPendingList');
+  try{
+    const data = await adminFetch('/admin/subscriptions/pending');
+    if(!data.subscriptions.length){ el.innerHTML = '<div class="empty">Aucun abonnement en attente.</div>'; return; }
+    el.innerHTML = data.subscriptions.map(s => `
+      <div class="item">
+        <div class="top">
+          <div class="title">${escapeHtml(s.studentName)} <span class="badge ${planBadgeClass(s.plan)}">${planLabel(s.plan)}</span></div>
+          <div class="amount">${s.amount} MRU</div>
+        </div>
+        <div class="meta">Téléphone : ${escapeHtml(s.studentPhone)}</div>
+        <div class="meta">Méthode : <span class="badge">${methodLabel(s.method)}</span> · Durée : ${s.durationDays} jours</div>
+        <div class="meta">Numéro de reçu donné par l'élève : ${s.studentRef ? `<span class="ref">${escapeHtml(s.studentRef)}</span>` : '<em>non renseigné</em>'}</div>
+        <div class="meta">Demandé le ${formatDate(s.createdAt)}</div>
+        <div class="actions">
+          <button class="btn btn-primary" onclick="confirmSubscriptionPurchase('${s.id}')">Confirmer — argent reçu</button>
+          <button class="btn btn-danger" onclick="rejectSubscriptionPurchase('${s.id}')">Refuser</button>
+        </div>
+      </div>
+    `).join('');
+  }catch(e){ el.innerHTML = `<div class="empty">Erreur : ${escapeHtml(e.message)}</div>`; }
+}
+
+async function confirmSubscriptionPurchase(id){
+  if(!confirm('Confirmer : vous avez bien vérifié que l\'argent est arrivé sur votre compte ?')) return;
+  try{
+    await adminFetch(`/admin/subscriptions/${id}/confirm`, { method:'POST' });
+    showToast('Abonnement confirmé et activé pour l\'élève.');
+    loadSubscriptionsPending();
+    loadSubscriptionUsers();
+  }catch(e){ showToast('Erreur : ' + e.message); }
+}
+async function rejectSubscriptionPurchase(id){
+  if(!confirm('Refuser cet abonnement ? L\'élève devra recommencer.')) return;
+  try{
+    await adminFetch(`/admin/subscriptions/${id}/reject`, { method:'POST' });
+    showToast('Abonnement refusé.');
+    loadSubscriptionsPending();
+  }catch(e){ showToast('Erreur : ' + e.message); }
+}
+
+async function loadSubscriptionUsers(){
+  const body = document.getElementById('subUsersBody');
+  const badge = document.getElementById('subUsersCountBadge');
+  try{
+    const data = await adminFetch('/admin/subscriptions/users');
+    badge.innerHTML = data.users.length ? `<span class="badge">${data.users.length}</span>` : '';
+    if(!data.users.length){
+      body.innerHTML = '<tr><td colspan="4" class="empty">Aucun élève n\'a encore souscrit à un abonnement.</td></tr>';
+      return;
+    }
+    body.innerHTML = data.users.map(u => `
+      <tr>
+        <td>${escapeHtml(u.fullName)}</td>
+        <td class="num">${escapeHtml(u.phone)}</td>
+        <td>
+          <span class="badge ${planBadgeClass(u.effectivePlan)}">${planLabel(u.effectivePlan)}</span>
+          ${u.effectivePlan === 'free' ? '<span class="meta" style="display:inline;"> (expiré)</span>' : ''}
+        </td>
+        <td>${u.subscriptionExpiresAt ? formatIsoDate(u.subscriptionExpiresAt) : '—'}</td>
+      </tr>
+    `).join('');
+  }catch(e){ body.innerHTML = `<tr><td colspan="4" class="empty">Erreur : ${escapeHtml(e.message)}</td></tr>`; }
 }
 
 function methodLabel(m){
@@ -462,6 +603,17 @@ function escapeHtml(s){
 function formatDate(s){
   if(!s) return '';
   return s.replace(' ', ' à ').slice(0, 16);
+}
+// subscriptionExpiresAt est stocké en ISO (new Date().toISOString(), voir
+// lib/subscriptions.js confirmSubscription()) — un format différent de
+// datetime('now') utilisé partout ailleurs en base (ex. purchases.createdAt),
+// donc formatDate() seule ne suffit pas ici (pas d'espace à remplacer).
+function formatIsoDate(iso){
+  if(!iso) return '';
+  const d = new Date(iso);
+  if(isNaN(d.getTime())) return iso;
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} à ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
 function placementLabel(p){ return p === 'banner' ? 'Bandeau' : 'Déblocage pub'; }
